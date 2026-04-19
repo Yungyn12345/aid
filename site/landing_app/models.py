@@ -8,8 +8,10 @@ class Lead(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    company = db.Column(db.String(180), nullable=True)
     phone = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(180), nullable=False)
+    score = db.Column(db.Integer, nullable=True)
     message = db.Column(db.Text, nullable=True)
     created_at = db.Column(
         db.DateTime(timezone=True),

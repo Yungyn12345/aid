@@ -23,9 +23,12 @@ def submit_lead():
         return redirect(url_for("main.index"))
 
     name = request.form.get("name", "").strip()
+    company = request.form.get("company", "").strip()
     phone = request.form.get("phone", "").strip()
     email = request.form.get("email", "").strip()
+    score_raw = request.form.get("score", "").strip()
     message = request.form.get("message", "").strip()
+    score = None
 
     errors = []
     if len(name) < 2:
@@ -34,6 +37,13 @@ def submit_lead():
         errors.append("Укажите телефон.")
     if "@" not in email or "." not in email:
         errors.append("Укажите корректный email.")
+    if score_raw:
+        try:
+            score = int(score_raw)
+            if score < 1 or score > 10:
+                errors.append("Оценка проекта должна быть от 1 до 10.")
+        except ValueError:
+            errors.append("Оценка проекта должна быть числом.")
 
     wants_json = request.accept_mimetypes.best == "application/json"
     if errors:
@@ -43,7 +53,14 @@ def submit_lead():
             flash(error, "error")
         return redirect(url_for("main.index", _anchor="contact"))
 
-    lead = Lead(name=name, phone=phone, email=email, message=message or None)
+    lead = Lead(
+        name=name,
+        company=company or None,
+        phone=phone,
+        email=email,
+        score=score,
+        message=message or None,
+    )
     db.session.add(lead)
     db.session.commit()
 

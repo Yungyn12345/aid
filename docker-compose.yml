@@ -30,6 +30,18 @@ services:
       - site_sqlite_data:/data
     restart: unless-stopped
 
+  admin_panel:
+    build:
+      context: ./admin_panel
+    environment:
+      DATABASE_PATH: ${ADMIN_DATABASE_PATH:-/data/site.sqlite3}
+      ADMIN_PANEL_USERNAME: ${ADMIN_PANEL_USERNAME:-admin}
+      ADMIN_PANEL_PASSWORD: ${ADMIN_PANEL_PASSWORD:-change-me}
+      ADMIN_PANEL_SECRET_KEY: ${ADMIN_PANEL_SECRET_KEY:-change-me}
+    volumes:
+      - site_sqlite_data:/data
+    restart: unless-stopped
+
   backend:
     build:
       context: ./site/backend
@@ -61,6 +73,7 @@ services:
     depends_on:
       - aideclarant
       - frontend
+      - admin_panel
       - backend
     volumes:
       - ./site/infra/nginx/conf.d/default.conf.template:/etc/nginx/templates/default.conf.template:ro

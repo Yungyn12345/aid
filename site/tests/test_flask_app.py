@@ -29,8 +29,10 @@ def test_submit_lead_saves_to_sqlite():
         "/lead",
         data={
             "name": "Иван",
+            "company": "AIDDoc",
             "phone": "+79991234567",
             "email": "ivan@example.com",
+            "score": "9",
             "message": "Нужна демонстрация",
         },
         headers={"Accept": "application/json"},
@@ -44,3 +46,5 @@ def test_submit_lead_saves_to_sqlite():
         assert lead is not None
         assert lead.status == "new"
         assert lead.email == "ivan@example.com"
+        assert lead.company == "AIDDoc"
+        assert lead.score == 9
