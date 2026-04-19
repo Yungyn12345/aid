@@ -1,0 +1,705 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    background: #eee;
+    min-height: 100vh;
+}
+
+/* Мобильная навигация */
+.mobile-padding-item {
+    display: none;
+    height: 50px;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    background: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Основной контейнер с боковой панелью */
+.app-container {
+    display: flex;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Боковая панель для загрузки документов */
+.sidebar {
+    width: 280px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.sidebar-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Стили для загрузки файлов */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #0056b3;
+    background: #f0f7ff;
+}
+
+.upload-icon {
+    font-size: 24px;
+    color: #0056b3;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.upload-hint {
+    font-size: 10px;
+    color: #888;
+}
+
+/* Список загруженных файлов */
+.uploaded-files {
+    margin-top: 20px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    font-size: 11px;
+}
+
+.file-icon {
+    color: #0056b3;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.file-name {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-status {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #e9ecef;
+}
+
+.file-status.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.file-status.processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Основная область с формой */
+.main-content {
+    flex-grow: 1;
+    min-width: 0;
+    /* Для корректной работы flex-сжатия */
+}
+
+.page {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #0056b3;
+}
+
+/* Общая сетка страницы */
+.layout {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    grid-template-rows: auto auto auto 1fr auto auto;
+    grid-template-areas:
+        "sender   headerRight"
+        "receiver headerRight"
+        "transport headerRight"
+        "goods   goods"
+        "payments payments"
+        "representative representative";
+    gap: 12px;
+}
+
+.section {
+    border: 1px solid #999;
+    padding: 12px;
+    background: #fafafa;
+    position: relative;
+    border-radius: 3px;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #333;
+}
+
+.section-number {
+    position: absolute;
+    top: -8px;
+    right: 4px;
+    font-size: 10px;
+    background: #fff;
+    padding: 0 3px;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+}
+
+/* Вспомогательная сетка внутри секций */
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.field {
+    border: 1px solid #bbb;
+    padding: 6px 8px 8px;
+    background: #fff;
+    position: relative;
+    min-height: 32px;
+    border-radius: 2px;
+}
+
+.field-label {
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.field-number {
+    position: absolute;
+    top: -7px;
+    right: 2px;
+    font-size: 9px;
+    background: #fdfdfd;
+    padding: 0 2px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+
+/* АКТИВНЫЕ ПОЛЯ ВВОДА */
+.field-input {
+    width: 100%;
+    height: 24px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    padding: 4px 6px;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    background: white;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.field-input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.1);
+}
+
+.field-input:hover {
+    border-color: #888;
+}
+
+.field-input.readonly {
+    background-color: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.field-input.auto-filled {
+    background-color: #e8f4ff;
+    border-color: #b6d4fe;
+}
+
+.field.field-unfilled {
+    border-color: #d93025;
+}
+
+.field-input.unfilled-field,
+[contenteditable="true"].unfilled-field {
+    border-color: #d93025;
+    box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.14);
+}
+
+/* Спаны колонок (для сеток 12 колонок) */
+.span-1 {
+    grid-column: span 1;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.span-3 {
+    grid-column: span 3;
+}
+
+.span-4 {
+    grid-column: span 4;
+}
+
+.span-5 {
+    grid-column: span 5;
+}
+
+.span-6 {
+    grid-column: span 6;
+}
+
+.span-7 {
+    grid-column: span 7;
+}
+
+.span-8 {
+    grid-column: span 8;
+}
+
+.span-9 {
+    grid-column: span 9;
+}
+
+.span-10 {
+    grid-column: span 10;
+}
+
+.span-11 {
+    grid-column: span 11;
+}
+
+.span-12 {
+    grid-column: span 12;
+}
+
+/* Привязка крупных секций к областям страницы */
+.sender-section {
+    grid-area: sender;
+}
+
+.receiver-section {
+    grid-area: receiver;
+}
+
+.header-right-section {
+    grid-area: headerRight;
+}
+
+.transport-section {
+    grid-area: transport;
+}
+
+.goods-section {
+    grid-area: goods;
+    min-height: 320px;
+}
+
+.payments-section {
+    grid-area: payments;
+    min-height: 220px;
+}
+
+.representative-section {
+    grid-area: representative;
+    min-height: 260px;
+}
+
+/* Дополнительные стили внутри крупных блоков */
+.goods-table {
+    border: 1px solid #bbb;
+    min-height: 180px;
+    margin-top: 8px;
+    background: #fff;
+    border-radius: 2px;
+    padding: 8px;
+    font-size: 11px;
+    color: #666;
+}
+
+.notes {
+    border: 1px solid #bbb;
+    min-height: 70px;
+    background: #fff;
+    margin-top: 8px;
+    border-radius: 2px;
+    padding: 8px;
+    font-size: 11px;
+    color: #666;
+}
+
+.subsection-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+/* Кнопки действий */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background: #0056b3;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #004494;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 1024px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "headerRight"
+            "sender"
+            "receiver"
+            "transport"
+            "goods"
+            "payments"
+            "representative";
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .mobile-padding-item {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 300px;
+        height: 100vh;
+        z-index: 1000;
+        margin: 0;
+        transition: left 0.3s;
+        overflow-y: auto;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .grid-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .field {
+        grid-column: span 1 !important;
+    }
+
+    .span-1,
+    .span-2,
+    .span-3,
+    .span-4,
+    .span-5,
+    .span-6,
+    .span-7,
+    .span-8,
+    .span-9,
+    .span-10,
+    .span-11,
+    .span-12 {
+        grid-column: span 1;
+    }
+
+    .page {
+        padding: 12px;
+    }
+
+    .section {
+        padding: 10px;
+    }
+
+    .page-title {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .field-input {
+        height: 28px;
+        font-size: 12px;
+    }
+
+    .section-title {
+        font-size: 12px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 12px;
+        flex: 1;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+/* Оверлей для мобильного меню */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* Кнопка закрытия мобильного меню */
+.close-sidebar {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .close-sidebar {
+        display: block;
+    }
+}
+
+/* Стили для кнопок действий ТНВЭД */
+.tnved-action-buttons {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.tnved-apply-main-btn,
+.tnved-clear-btn {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    min-width: 200px;
+    text-align: center;
+}
+
+.tnved-apply-main-btn {
+    background: #28a745;
+    color: white;
+}
+
+.tnved-apply-main-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.tnved-clear-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.tnved-clear-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Медиа-запросы для адаптивности кнопок */
+@media (max-width: 768px) {
+    .tnved-action-buttons {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+
+    .tnved-apply-main-btn,
+    .tnved-clear-btn {
+        width: 100%;
+        max-width: 280px;
+        min-width: unset;
+        margin: 0 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .tnved-action-buttons {
+        gap: 10px;
+    }
+
+    .tnved-apply-main-btn,
+    .tnved-clear-btn {
+        padding: 12px 20px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 360px) {
+
+    .tnved-apply-main-btn,
+    .tnved-clear-btn {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+}
+
+.btn-pulse {
+    appearance: none;
+    border: 0;
+    border-radius: 14px;
+    padding: 14px 22px;
+
+    background: #1e66ff;
+    color: #fff;
+    font: 600 16px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+    cursor: pointer;
+    animation: bluePulseSoft 3.2s ease-in-out infinite;
+
+    font-size: 14px;
+}
+
+@keyframes bluePulseSoft {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(30, 102, 255, 0.22);
+    }
+
+    60% {
+        transform: scale(1.015);
+        box-shadow: 0 0 0 10px rgba(30, 102, 255, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(30, 102, 255, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-pulse-soft {
+        animation: none;
+    }
+}

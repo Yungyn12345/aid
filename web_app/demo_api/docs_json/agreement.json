@@ -1,0 +1,76 @@
+{
+  "contract_number": "TI-GM/2025-012",
+  "contract_date": "2025-09-15",
+  "seller": {
+    "name": "Gerhardt Maschinen GmbH",
+    "legal_address": "Komturstraße 10, 12099 Berlin, Germany",
+    "country": "Germany",
+    "vat_or_reg_number": "VAT DE123456789, HRB 123456",
+    "bank_details": {
+      "beneficiary_name": "Gerhardt Maschinen GmbH",
+      "bank_name": "",
+      "iban": "DE12 1002 0500 0001 2345 67",
+      "swift_bic": "BEVODEBB",
+      "account_number": ""
+    },
+    "contacts": "E-mail: sales@gerhardt-maschinen.example, Tel.: +49 (30) 1234 5678"
+  },
+  "buyer": {
+    "name": "ООО «ТехИмпорт Рус»",
+    "legal_address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+    "country": "Россия",
+    "inn": "7705123456",
+    "kpp": "770501001",
+    "ogrn": "1227700123456",
+    "bank_details": {
+      "beneficiary_name": "ООО «ТехИмпорт Рус»",
+      "bank_name": "ПАО «Банк»",
+      "iban": "RU12 0445 0123 4567 8901 23",
+      "swift_bic": "044525225",
+      "account_number": ""
+    },
+    "contacts": "E-mail: info@techimportrus.example, Тел.: +7 (495) 000-00-00"
+  },
+  "subject": "Запасные части к упаковочному оборудованию производства Gerhardt Maschinen GmbH. При большом ассортименте применяются Спецификации к договору.",
+  "incoterms": {
+    "rule": "FCA",
+    "place": "Berlin, Germany",
+    "version": "Incoterms 2020"
+  },
+  "currency": {
+    "code": "EUR"
+  },
+  "payment_terms": "100% предоплата на счет Продавца. Срок предоплаты — не позднее 5 банковских дней с даты выставления соответствующего инвойса.",
+  "transport_terms": {
+    "mode": "road",
+    "details": "Международная автоперевозка. Поставка на условиях FCA Berlin, Germany."
+  },
+  "appendices": [
+    {
+      "type": "Specification",
+      "number": "",
+      "date": "2025-09-15"
+    }
+  ],
+  "origin_and_manufacturer": "Страна происхождения товара — Германия. Производитель — Gerhardt Maschinen GmbH.",
+  "packaging_and_marking_requirements": "Упаковка обеспечивает сохранность при международной автоперевозке с учетом возможных перегрузок. Маркировка на английском языке: страна назначения, пункт назначения, наименование и адрес Покупателя, количество мест, вес брутто/нетто и иная согласованная информация.",
+  "compliance_documents": [
+    {
+      "type": "Certificate of Origin",
+      "number": "",
+      "date": "2025-09-15"
+    }
+  ],
+  "catalog_references": [],
+  "cross_links": {
+    "invoice_ref": {
+      "number": "",
+      "date": "2025-09-15"
+    },
+    "packing_list_ref": {
+      "number": "",
+      "date": "2025-09-15"
+    }
+  },
+  "notes": ""
+}

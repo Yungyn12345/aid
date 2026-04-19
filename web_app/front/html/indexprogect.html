@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Декларация на товары (ДТ) - Онлайн</title>
+    <link rel="stylesheet" href="{{ static_prefix }}/styles.css">
+    <script>
+        window.APP_BASE_PATH = "{{ app_root }}";
+        window.appUrl = function (path) {
+            const base = window.APP_BASE_PATH || "";
+            if (!path) return base || "/";
+            return `${base}${path}`;
+        };
+    </script>
+</head>
+
+<body>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰ Меню</button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-container">
+        <!-- Боковая панель для загрузки документов -->
+        <aside class="sidebar" id="sidebar">
+            <div class="mobile-padding-item"></div>
+            <button class="close-sidebar" id="closeSidebar">×</button>
+            <div class="sidebar-title">📁 Загрузка документов</div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Перетащите файлы сюда или</div>
+                <div class="upload-text" style="color: #0056b3; font-weight: bold;">нажмите для выбора</div>
+                <div class="upload-hint">Поддерживаемые форматы: только PDF (поддержка других форматов будет добавлена в следующих версиях)</div>
+                <input type="file" id="fileInput" multiple style="display: none;"
+                    accept=".pdf">
+            </div>
+
+            <div class="uploaded-files">
+                <div class="sidebar-title" style="font-size: 13px;">📋 Загруженные документы</div>
+                <div id="fileList">
+                    <!-- Файлы будут добавляться здесь динамически -->
+                    <!-- <div class="file-item">
+                        <div class="file-icon">📄</div>
+                        <div class="file-name">Пример_инвойса.pdf</div>
+                        <div class="file-status success">✓</div>
+                    </div> -->
+                </div>
+            </div>
+
+            <div>
+                <button id="start-demo-button" class="btn-pulse" type="button" onclick="startDemoLoading()">Загрузить демонстрационные документы</button>
+            </div>
+
+            <div style="margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 3px; font-size: 11px;">
+                <strong>ℹ️ Информация:</strong> Нейросеть автоматически проанализирует загруженные документы и заполнит
+                соответствующие поля формы.
+            </div>
+        </aside>
+
+        <!-- Основная область с формой -->
+        <main class="main-content">
+            <div class="mobile-padding-item"></div>
+            <div class="page">
+                <div class="page-title">ДЕКЛАРАЦИЯ НА ТОВАРЫ (ДТ) - Онлайн заполнение</div>
+
+                <div class="layout">
+
+                    <!-- ЛЕВАЯ КОЛОНКА: ОТПРАВИТЕЛЬ -->
+                    <section class="section sender-section">
+                        <div class="section-number">2</div>
+                        <div class="section-title">Отправитель</div>
+
+                        <div class="grid-row">
+                            <div class="field span-3">
+                                <div class="field-label">Страна</div>
+                                <input type="text" class="field-input" id="senderCountry" placeholder="Введите страну">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">Почтовый код</div>
+                                <input type="text" class="field-input" id="senderPostalCode"
+                                    placeholder="Почтовый индекс">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">Область, район, населённый пункт</div>
+                                <input type="text" class="field-input" id="senderRegion" placeholder="Населённый пункт">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-8">
+                                <div class="field-label">Адрес</div>
+                                <input type="text" class="field-input" id="senderAddress" placeholder="Полный адрес">
+                            </div>
+                            <div class="field span-2">
+                                <div class="field-label">ИНН/КПП</div>
+                                <input type="text" class="field-input" id="senderINN" placeholder="ИНН">
+                            </div>
+                            <div class="field span-2">
+                                <div class="field-label">ОКПО</div>
+                                <input type="text" class="field-input" id="senderOKPO" placeholder="ОКПО">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ЛЕВАЯ КОЛОНКА: ПОЛУЧАТЕЛЬ -->
+                    <section class="section receiver-section">
+                        <div class="section-number">8</div>
+                        <div class="section-title">Получатель</div>
+
+                        <div class="grid-row">
+                            <div class="field span-3">
+                                <div class="field-label">Страна</div>
+                                <input type="text" class="field-input" id="receiverCountry"
+                                    placeholder="Введите страну">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">Почтовый код</div>
+                                <input type="text" class="field-input" id="receiverPostalCode"
+                                    placeholder="Почтовый индекс">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">Область, район, населённый пункт</div>
+                                <input type="text" class="field-input" id="receiverRegion"
+                                    placeholder="Населённый пункт">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-8">
+                                <div class="field-label">Адрес</div>
+                                <input type="text" class="field-input" id="receiverAddress" placeholder="Полный адрес">
+                            </div>
+                            <div class="field span-2">
+                                <div class="field-label">ИНН/КПП</div>
+                                <input type="text" class="field-input" id="receiverINN" placeholder="ИНН">
+                            </div>
+                            <div class="field span-2">
+                                <div class="field-label">ОКПО</div>
+                                <input type="text" class="field-input" id="receiverOKPO" placeholder="ОКПО">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ПРАВАЯ ВЕРХНЯЯ КОЛОНКА: ОБЩИЕ РЕКВИЗИТЫ -->
+                    <section class="section header-right-section">
+                        <div class="section-title">Общие сведения</div>
+
+                        <div class="grid-row">
+                            <div class="field span-6">
+                                <div class="field-label">1 Декларация</div>
+                                <div class="field-number">1</div>
+                                <input type="text" class="field-input" id="declarationNumber"
+                                    placeholder="Номер декларации">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">A Внутренний номер</div>
+                                <div class="field-number">A</div>
+                                <input type="text" class="field-input" id="internalNumber"
+                                    placeholder="Внутренний номер">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-4">
+                                <div class="field-label">3 Форма</div>
+                                <div class="field-number">3</div>
+                                <input type="text" class="field-input" id="declarationForm" placeholder="Форма ДТ">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">4 Спец. процедура</div>
+                                <div class="field-number">4</div>
+                                <input type="text" class="field-input" id="specialProcedure"
+                                    placeholder="Спец. процедура">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">B Регистрационный номер</div>
+                                <div class="field-number">B</div>
+                                <input type="text" class="field-input" id="registrationNumber" placeholder="Рег. номер">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-4">
+                                <div class="field-label">5 Всего товаров</div>
+                                <div class="field-number">5</div>
+                                <input type="number" class="field-input" id="totalGoods" placeholder="0">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">6 Вес нетто</div>
+                                <div class="field-number">6</div>
+                                <input type="text" class="field-input" id="netWeight" placeholder="кг">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">7 Особенности декларирования</div>
+                                <div class="field-number">7</div>
+                                <input type="text" class="field-input" id="declarationFeatures"
+                                    placeholder="Особенности">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-12">
+                                <div class="field-label">9 Лицо, от имени которого подаётся декларация</div>
+                                <div class="field-number">9</div>
+                                <input type="text" class="field-input" id="declarantPerson"
+                                    placeholder="ФИО и должность">
+                            </div>
+                        </div>
+
+                        <div class="subsection-title">Таможенная стоимость</div>
+
+                        <div class="grid-row">
+                            <div class="field span-4">
+                                <div class="field-label">11 Торговая страна</div>
+                                <div class="field-number">11</div>
+                                <input type="text" class="field-input" id="tradeCountry" placeholder="Код страны">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">12 Общая таможенная стоимость</div>
+                                <div class="field-number">12</div>
+                                <input type="text" class="field-input" id="totalCustomsValue" placeholder="Сумма">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">13</div>
+                                <div class="field-number">13</div>
+                                <input type="text" class="field-input" id="field13" placeholder="Условия">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ЛЕВАЯ КОЛОНКА: ТРАНСПОРТ/УСЛОВИЯ ПОСТАВКИ -->
+                    <section class="section transport-section">
+                        <div class="section-title">Транспорт / условия поставки</div>
+
+                        <div class="grid-row">
+                            <div class="field span-4">
+                                <div class="field-label">18 Вид транспорта при отправлении</div>
+                                <div class="field-number">18</div>
+                                <input type="text" class="field-input" id="transportDeparture"
+                                    placeholder="Тип транспорта">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">21 Вид транспорта на границе</div>
+                                <div class="field-number">21</div>
+                                <input type="text" class="field-input" id="transportBorder"
+                                    placeholder="Тип транспорта">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">22 Валюта и общая сумма</div>
+                                <div class="field-number">22</div>
+                                <input type="text" class="field-input" id="currencyTotal" placeholder="Валюта, сумма">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-4">
+                                <div class="field-label">23 Курс валюты</div>
+                                <div class="field-number">23</div>
+                                <input type="text" class="field-input" id="currencyRate" placeholder="Курс">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">24 Характер сделки</div>
+                                <div class="field-number">24</div>
+                                <input type="text" class="field-input" id="transactionNature"
+                                    placeholder="Характер сделки">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">29 Таможня на границе</div>
+                                <div class="field-number">29</div>
+                                <input type="text" class="field-input" id="borderCustoms" placeholder="Таможня">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-6">
+                                <div class="field-label">30 Местонахождение товаров</div>
+                                <div class="field-number">30</div>
+                                <input type="text" class="field-input" id="goodsLocation" placeholder="Местонахождение">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">15 Страна отправления / 16 Страна происхождения / 17 Страна
+                                    назначения</div>
+                                <input type="text" class="field-input" id="countries" placeholder="Коды стран">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ЦЕНТРАЛЬНЫЙ БЛОК: ГРУЗОВЫЕ МЕСТА, ТОВАРЫ -->
+                    <section class="section goods-section">
+                        <div class="section-title">Товары</div>
+
+                        <div class="subsection-title">31 Грузовые места и описание товаров</div>
+                        <div class="goods-table" contenteditable="true" id="goodsDescription">
+                            Здесь можно ввести описание товаров. Нейросеть может автоматически заполнить это поле на
+                            основе загруженных документов.
+                        </div>
+
+                        <!-- БЛОКА ЗАПРОСА КОДА ТНВЭД -->
+                        <div>
+                            <button style="background-color: #0056b3; margin: 10px; padding: 5px; color: white;"
+                                onclick="getTnvedRecommendations()">
+                                Получить рекомендации по коду ТНВЭД
+                            </button>
+                            <div id="tnvedResult"
+                                style="margin: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; min-height: 50px;">
+                                <!-- Здесь появятся рекомендации -->
+                            </div>
+
+                            <script>
+                                // Глобальная переменная для хранения таймера опроса
+                                let pollInterval = null;
+
+                                async function getTnvedRecommendations() {
+                                    // Останавливаем предыдущий опрос, если он есть
+                                    if (pollInterval) {
+                                        clearInterval(pollInterval);
+                                        pollInterval = null;
+                                    }
+
+                                    // Получаем содержимое поля goodsDescription
+                                    const goodsDescription = document.getElementById('goodsDescription').textContent;
+
+                                    // Блок для отображения результата
+                                    const resultDiv = document.getElementById('tnvedResult');
+
+                                    // Показываем загрузку
+                                    resultDiv.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">' +
+                                        '<div style="font-size: 24px; margin-bottom: 10px;">⏳</div>' +
+                                        '<p>Отправляем запрос на анализ...</p>' +
+                                        '</div>';
+
+                                    try {
+                                        // Отправляем POST запрос на сервер для запуска анализа
+                                        const response = await fetch(window.appUrl('/tnvedcode/request'), {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({
+                                                "goodsDescription": goodsDescription
+                                            })
+                                        });
+
+                                        // Проверяем ответ
+                                        if (!response.ok) {
+                                            throw new Error(`Ошибка сервера: ${response.status}`);
+                                        }
+
+                                        // Получаем ID задачи
+                                        const data = await response.json();
+                                        const taskId = data.id;
+
+                                        if (!taskId) {
+                                            throw new Error('Не получен ID задачи');
+                                        }
+
+                                        // Начинаем опрос статуса
+                                        startPolling(taskId);
+
+                                    } catch (error) {
+                                        console.error('Ошибка:', error);
+                                        resultDiv.innerHTML = createErrorBlock(`❌ Ошибка: ${error.message}`);
+                                    }
+                                }
+
+                                function startPolling(taskId) {
+                                    const resultDiv = document.getElementById('tnvedResult');
+
+                                    // Показываем анимацию загрузки
+                                    resultDiv.innerHTML = createLoadingBlock();
+
+                                    // Запускаем опрос статуса каждую секунду
+                                    let attempt = 0;
+                                    pollInterval = setInterval(async () => {
+                                        attempt++;
+
+                                        try {
+                                            // Запрашиваем статус задачи
+                                            const response = await fetch(window.appUrl(`/tnvedcode/result/${taskId}`));
+
+                                            if (!response.ok) {
+                                                throw new Error(`Ошибка получения статуса: ${response.status}`);
+                                            }
+
+                                            const data = await response.json();
+
+                                            // Обрабатываем ответ
+                                            if (data.status === true) {
+                                                // Анализ завершен успешно
+                                                clearInterval(pollInterval);
+                                                pollInterval = null;
+
+                                                const resultData = JSON.parse(data.result);
+                                                displayFullTnvedResult(resultData);
+
+                                            } else if (data.status === false) {
+                                                // Анализ еще не завершен - обновляем счетчик
+                                                if (attempt % 5 === 0) { // Каждые 5 секунд показываем время
+                                                    const dots = '.'.repeat((attempt % 3) + 1);
+                                                    resultDiv.innerHTML = createLoadingBlock(`Анализируем описание товаров${dots} (${attempt} сек)`);
+                                                }
+
+                                            } else {
+                                                throw new Error('Неизвестный статус задачи');
+                                            }
+
+                                        } catch (error) {
+                                            // Останавливаем опрос при ошибке
+                                            clearInterval(pollInterval);
+                                            pollInterval = null;
+                                            resultDiv.innerHTML = createErrorBlock(`❌ Ошибка опроса: ${error.message}`);
+                                        }
+                                    }, 1000);
+                                }
+
+                                function displayFullTnvedResult(data) {
+                                    const resultDiv = document.getElementById('tnvedResult');
+
+                                    if (!data || !data.eaeu_hs_code) {
+                                        resultDiv.innerHTML = createErrorBlock('❌ Не удалось определить код ТНВЭД');
+                                        return;
+                                    }
+
+                                    // Форматируем код для отображения
+                                    const formattedCode = data.eaeu_hs_code.replace(/(\d{4})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+
+                                    // Создаем HTML с результатами
+                                    let html = `
+        <div style="max-width: 800px; margin: 0 auto;">
+            <!-- Основной код -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">РЕКОМЕНДОВАННЫЙ КОД ТН ВЭД ЕАЭС</div>
+                <div style="font-size: 36px; font-weight: bold; font-family: 'Courier New', monospace; margin: 10px 0;">
+                    ${formattedCode}
+                </div>
+                <div style="font-size: 14px; opacity: 0.9;">
+                    Уверенность: <strong>${(data.confidence * 100).toFixed(1)}%</strong>
+                </div>
+                <button onclick="applyTnvedCode('${data.eaeu_hs_code}')"
+                        style="margin-top: 15px; background: white; color: #667eea; border: none; padding: 10px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 16px;">
+                    ✅ Применить этот код
+                </button>
+            </div>
+
+            <!-- Объяснения -->
+            <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #f8f9fa; padding-bottom: 10px;">
+                    📋 Обоснование классификации
+                </h3>
+                <ol style="padding-left: 20px;">
+    `;
+
+                                    // Добавляем объяснения
+                                    data.explanations.forEach((exp, index) => {
+                                        html += `<li style="margin-bottom: 10px; line-height: 1.5;">${exp}</li>`;
+                                    });
+
+                                    html += `
+                </ol>
+            </div>
+
+            <!-- Альтернативные коды -->
+            <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #f8f9fa; padding-bottom: 10px;">
+                    ⚠️ Рассмотренные альтернативные коды
+                </h3>
+    `;
+
+                                    // Добавляем альтернативные коды
+                                    data.candidate_codes.forEach((candidate, index) => {
+                                        html += `
+            <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid #ffc107;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <strong style="font-family: 'Courier New', monospace; color: #dc3545;">${candidate.code}</strong>
+                    <span style="font-size: 12px; color: #6c757d;">не подходит</span>
+                </div>
+                <div style="font-size: 14px; color: #495057;">${candidate.why_not}</div>
+            </div>
+        `;
+                                    });
+
+                                    html += `
+            </div>
+
+            <!-- Дополнительная информация -->
+            <div style="display: grid; gap: 20px; margin-bottom: 20px;">
+                <!-- Источники -->
+                <div style="flex: 1; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #2c3e50; margin-top: 0; font-size: 16px;">🔗 Источники информации</h3>
+                    <div style="font-size: 13px;">
+    `;
+
+                                    // Добавляем ссылки на источники
+                                    data.evidence_urls.forEach((url, index) => {
+                                        const displayUrl = url.replace('https://', '').replace('www.', '').split('/')[0];
+                                        html += `
+            <a href="${url}" target="_blank" style="display: block; padding: 8px; margin-bottom: 5px; background: #f8f9fa; border-radius: 4px; color: #007bff; text-decoration: none;">
+                ${displayUrl}
+            </a>
+        `;
+                                    });
+
+                                    html += `
+                    </div>
+                </div>
+
+                <!-- Примечания -->
+                <div style="flex: 1; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #856404; margin-top: 0; font-size: 16px;">📝 Примечания</h3>
+                    <p style="color: #856404; font-size: 14px; line-height: 1.5;">${data.notes}</p>
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="tnved-action-buttons">
+            <button onclick="applyTnvedCode('${data.eaeu_hs_code}')" class="tnved-apply-main-btn">
+                ✅ Применить код ${data.eaeu_hs_code}
+            </button>
+            <button onclick="clearResults()" class="tnved-clear-btn">
+                🗑️ Очистить результаты
+            </button>
+            </div>
+        </div>
+    `;
+
+                                    resultDiv.innerHTML = html;
+                                }
+
+                                // Функция для применения кода
+                                function applyTnvedCode(code) {
+                                    const tnVedCodeField = document.getElementById('tnVedCode');
+                                    if (tnVedCodeField) {
+                                        tnVedCodeField.value = code;
+
+                                        // Показываем уведомление
+                                        showNotification(`✅ Код <strong>${code}</strong> применен в поле "33 ТН ВЭД"`, 'success');
+                                    }
+                                }
+
+                                // Функция очистки результатов
+                                function clearResults() {
+                                    document.getElementById('tnvedResult').innerHTML = '';
+                                    if (pollInterval) {
+                                        clearInterval(pollInterval);
+                                        pollInterval = null;
+                                    }
+                                }
+
+                                // Вспомогательные функции для создания блоков
+                                function createLoadingBlock(text = 'Анализируем описание товаров...') {
+                                    return `
+        <div style="color: #666; text-align: center; padding: 40px;">
+            <div style="font-size: 48px; margin-bottom: 20px; animation: pulse 1.5s infinite;">🔍</div>
+            <p style="font-size: 16px; margin-bottom: 10px;">${text}</p>
+            <div style="font-size: 14px; color: #999;">
+                ИИ анализирует описание и подбирает подходящие коды ТН ВЭД
+            </div>
+        </div>
+        <style>
+            @keyframes pulse {
+                0% { opacity: 0.6; }
+                50% { opacity: 1; }
+                100% { opacity: 0.6; }
+            }
+        </style>
+    `;
+                                }
+
+                                function createErrorBlock(message) {
+                                    return `
+        <div style="color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 15px;">❌</div>
+            <p style="font-size: 16px; margin: 0;">${message}</p>
+        </div>
+    `;
+                                }
+
+                                function showNotification(message, type = 'info') {
+                                    // Создаем уведомление
+                                    const notification = document.createElement('div');
+                                    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+        color: ${type === 'success' ? '#155724' : '#721c24'};
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        max-width: 400px;
+        animation: slideIn 0.3s ease;
+    `;
+
+                                    notification.innerHTML = message;
+                                    document.body.appendChild(notification);
+
+                                    // Удаляем через 5 секунд
+                                    setTimeout(() => {
+                                        notification.style.animation = 'slideOut 0.3s ease';
+                                        setTimeout(() => notification.remove(), 300);
+                                    }, 5000);
+                                }
+
+                                // Добавляем анимации
+                                const style = document.createElement('style');
+                                style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+                                document.head.appendChild(style);
+
+                                // Останавливаем опрос при закрытии страницы
+                                window.addEventListener('beforeunload', function () {
+                                    if (pollInterval) {
+                                        clearInterval(pollInterval);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <!-- КОНЕЦ БЛОКА ЗАПРОСА КОДА ТНВЭД -->
+
+                        <div class="grid-row" style="margin-top:6px;">
+                            <div class="field span-2">
+                                <div class="field-label">32 Товар №</div>
+                                <div class="field-number">32</div>
+                                <input type="text" class="field-input" id="productNumber" placeholder="№">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">33 ТН ВЭД</div>
+                                <div class="field-number">33</div>
+                                <input type="text" class="field-input" id="tnVedCode" placeholder="Код ТН ВЭД">
+                            </div>
+                            <div class="field span-2">
+                                <div class="field-label">34 Страна происх.</div>
+                                <div class="field-number">34</div>
+                                <input type="text" class="field-input" id="originCountry" placeholder="Код страны">
+                            </div>
+                            <div class="field span-2">
+                                <div class="field-label">35 Вес брутто</div>
+                                <div class="field-number">35</div>
+                                <input type="text" class="field-input" id="grossWeight" placeholder="кг">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">38 Вес нетто</div>
+                                <div class="field-number">38</div>
+                                <input type="text" class="field-input" id="netWeightProduct" placeholder="кг">
+                            </div>
+                        </div>
+                        <div class="grid-row">
+                            <div class="field span-3">
+                                <div class="field-label">Количество</div>
+                                <input type="text" class="field-input" id="quantity" placeholder="Кол-во">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">Ед. изм.</div>
+                                <input type="text" class="field-input" id="uom" placeholder="pcs / kg / etc">
+                            </div>
+                        </div>
+                        <div class="grid-row">
+                            <div class="field span-3">
+                                <div class="field-label">39 Квота</div>
+                                <div class="field-number">39</div>
+                                <input type="text" class="field-input" id="quota" placeholder="Квота">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">40 Предшествующий документ</div>
+                                <div class="field-number">40</div>
+                                <input type="text" class="field-input" id="previousDocument" placeholder="№ документа">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">41 Доп. единица измерения</div>
+                                <div class="field-number">41</div>
+                                <input type="text" class="field-input" id="additionalUnit" placeholder="Ед. измерения">
+                            </div>
+                            <div class="field span-3">
+                                <div class="field-label">42 Цена товара</div>
+                                <div class="field-number">42</div>
+                                <input type="text" class="field-input" id="productPrice" placeholder="Цена">
+                            </div>
+                        </div>
+
+                        <div class="subsection-title">44 Дополнительная информация / документы</div>
+                        <div class="notes" contenteditable="true" id="additionalInfo">
+                            Дополнительная информация, комментарии, примечания...
+                        </div>
+                    </section>
+
+                    <!-- БЛОК ПЛАТЕЖЕЙ -->
+                    <section class="section payments-section">
+                        <div class="section-title">Платежи</div>
+
+                        <div class="grid-row">
+                            <div class="field span-6">
+                                <div class="field-label">47 Исчисление платежей</div>
+                                <div class="field-number">47</div>
+                                <input type="text" class="field-input" id="paymentCalculation"
+                                    placeholder="Расчёт платежей">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">48 Отсрочка платежей</div>
+                                <div class="field-number">48</div>
+                                <input type="text" class="field-input" id="paymentDeferral"
+                                    placeholder="Условия отсрочки">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-6">
+                                <div class="field-label">45 Таможенная стоимость</div>
+                                <div class="field-number">45</div>
+                                <input type="text" class="field-input" id="customsValue" placeholder="Стоимость">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">46 Статистическая стоимость</div>
+                                <div class="field-number">46</div>
+                                <input type="text" class="field-input" id="statisticalValue"
+                                    placeholder="Стат. стоимость">
+                            </div>
+                        </div>
+
+                        <div class="subsection-title">50 Декларант / доверитель</div>
+                        <div class="notes" contenteditable="true" id="declarantInfo">
+                            Информация о декларанте...
+                        </div>
+                    </section>
+
+                    <!-- НИЖНИЙ БЛОК: ПРЕДСТАВИТЕЛЬ, ОТМЕТКИ ТАМОЖНИ -->
+                    <section class="section representative-section">
+                        <div class="section-title">54 Сведения о таможенном представителе / Отметки таможни</div>
+
+                        <div class="grid-row">
+                            <div class="field span-6">
+                                <div class="field-label">Таможенный представитель</div>
+                                <input type="text" class="field-input" id="customsRepresentative"
+                                    placeholder="Наименование">
+                            </div>
+                            <div class="field span-6">
+                                <div class="field-label">Договор с клиентом</div>
+                                <input type="text" class="field-input" id="clientContract" placeholder="№ договора">
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div class="field span-4">
+                                <div class="field-label">Декларант</div>
+                                <input type="text" class="field-input" id="declarant" placeholder="ФИО декларанта">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">Документ, удостоверяющий личность</div>
+                                <input type="text" class="field-input" id="identityDocument"
+                                    placeholder="Паспортные данные">
+                            </div>
+                            <div class="field span-4">
+                                <div class="field-label">Документ, подтверждающий полномочия</div>
+                                <input type="text" class="field-input" id="authorityDocument"
+                                    placeholder="Доверенность">
+                            </div>
+                        </div>
+
+                        <div class="subsection-title">Отметки таможни</div>
+                        <div class="notes" contenteditable="true" id="customsMarks">
+                            Отметки таможенных органов...
+                        </div>
+
+                        <div class="subsection-title">Решение по ДТ</div>
+                        <div class="notes" contenteditable="true" id="dtDecision">
+                            Решение таможенного органа...
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="saveDraft">Сохранить черновик</button>
+                    <button class="btn btn-primary" id="submitDeclaration">Отправить декларацию</button>
+                    <button class="btn btn-secondary" id="clearForm">Очистить форму</button>
+                    <button class="btn btn-secondary" id="exportPDF">Экспорт в PDF</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ static_prefix }}/script.js"></script>
+</body>
+
+</html>
