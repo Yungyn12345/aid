@@ -1,0 +1,79 @@
+{
+  "invoice_number": "GM-INV-2025/384",
+  "invoice_date": "2025-10-10",
+  "seller": {
+    "name": "Gerhardt Maschinen GmbH",
+    "address": "Komturstraße 10, 12099 Berlin, Germany",
+    "country": "Germany",
+    "vat_or_reg_number": "DE123456789"
+  },
+  "buyer": {
+    "name": "ООО «ТехИмпорт Рус»",
+    "inn": "7705123456",
+    "kpp": "770501001",
+    "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12"
+  },
+  "incoterms": {
+    "rule": "FCA",
+    "place": "Berlin, Germany",
+    "version": "Incoterms 2020"
+  },
+  "currency": {
+    "code": "EUR"
+  },
+  "total_amount": 7470.0,
+  "items": [
+    {
+      "description": "Spare parts for packaging machines (комплектующие к упаковочному оборудованию)",
+      "model_or_sku": "GM-SP-A100…A145",
+      "quantity": 250,
+      "uom": "pcs",
+      "unit_price": 18.0,
+      "line_total": 4500.0,
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH"
+    },
+    {
+      "description": "Pneumatic unit",
+      "model_or_sku": "GM-PN-U20",
+      "quantity": 10,
+      "uom": "pcs",
+      "unit_price": 125.0,
+      "line_total": 1250.0,
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH"
+    },
+    {
+      "description": "Control panel",
+      "model_or_sku": "GM-CP-450",
+      "quantity": 2,
+      "uom": "pcs",
+      "unit_price": 860.0,
+      "line_total": 1720.0,
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH"
+    }
+  ],
+  "subtotal_ex_vat": 7470.0,
+  "vat_amount": 0.0,
+  "grand_total": 7470.0,
+  "charges": {
+    "freight": 0,
+    "insurance": 0,
+    "packing": 0,
+    "discount": 0
+  },
+  "contract_reference": {
+    "number": "TI-GM/2025-012",
+    "date": "2025-09-15"
+  },
+  "payment_terms": "100% предоплата в течение 5 банковских дней с даты выставления инвойса.",
+  "bank_details": {
+    "beneficiary_name": "Gerhardt Maschinen GmbH",
+    "bank_name": "",
+    "iban": "DE12 1002 0500 0001 2345 67",
+    "swift_bic": "BEVODEBB",
+    "account_number": ""
+  },
+  "notes": "Назначение платежа: Оплата по инвойсу GM-INV-2025/384 по договору TI-GM/2025-012 от 15.09.2025."
+}

@@ -1,0 +1,112 @@
+{
+  "pl_number": "PL-2025/384",
+  "pl_date": "2025-10-10",
+  "invoice_ref": {
+    "number": "GM-INV-2025/384",
+    "date": "2025-10-10"
+  },
+  "packages": {
+    "total_packages": 12,
+    "package_type": "Cartons (boxes), Pallets",
+    "marks_and_numbers": "GM/TIR/10-2025/384/1-12"
+  },
+  "gross_weight_total": 1240.0,
+  "net_weight_total": 1060.0,
+  "dimensions_total": {
+    "length_cm": 0,
+    "width_cm": 0,
+    "height_cm": 0,
+    "volume_m3": 5.6
+  },
+  "items": [
+    {
+      "line_no": "1-8",
+      "description": "Spare parts",
+      "model_or_sku": "GM-SP-A100…A145",
+      "quantity": 250,
+      "uom": "pcs",
+      "net_weight": 520.0,
+      "gross_weight": 600.0,
+      "packaging": {
+        "packages_qty": 8,
+        "package_type": "Carton",
+        "marks_range": "GM/TIR/10-2025/384/1-8"
+      },
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH",
+      "dimensions": {
+        "length_cm": 60,
+        "width_cm": 40,
+        "height_cm": 35,
+        "volume_m3": 0.084
+      }
+    },
+    {
+      "line_no": "9-10",
+      "description": "Pneumatic unit",
+      "model_or_sku": "GM-PN-U20",
+      "quantity": 10,
+      "uom": "pcs",
+      "net_weight": 120.0,
+      "gross_weight": 150.0,
+      "packaging": {
+        "packages_qty": 2,
+        "package_type": "Carton",
+        "marks_range": "GM/TIR/10-2025/384/9-10"
+      },
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH",
+      "dimensions": {
+        "length_cm": 60,
+        "width_cm": 40,
+        "height_cm": 35,
+        "volume_m3": 0.084
+      }
+    },
+    {
+      "line_no": "11",
+      "description": "Control panel",
+      "model_or_sku": "GM-CP-450",
+      "quantity": 1,
+      "uom": "pc",
+      "net_weight": 200.0,
+      "gross_weight": 240.0,
+      "packaging": {
+        "packages_qty": 1,
+        "package_type": "Pallet",
+        "marks_range": "GM/TIR/10-2025/384/11"
+      },
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH",
+      "dimensions": {
+        "length_cm": 120,
+        "width_cm": 80,
+        "height_cm": 90,
+        "volume_m3": 0.864
+      }
+    },
+    {
+      "line_no": "12",
+      "description": "Control panel",
+      "model_or_sku": "GM-CP-450",
+      "quantity": 1,
+      "uom": "pc",
+      "net_weight": 220.0,
+      "gross_weight": 250.0,
+      "packaging": {
+        "packages_qty": 1,
+        "package_type": "Pallet",
+        "marks_range": "GM/TIR/10-2025/384/12"
+      },
+      "origin_country": "Germany",
+      "manufacturer": "Gerhardt Maschinen GmbH",
+      "dimensions": {
+        "length_cm": 120,
+        "width_cm": 80,
+        "height_cm": 95,
+        "volume_m3": 0.912
+      }
+    }
+  ],
+  "notes": "Распределение по коробкам может отличаться; фактическая маркировка наносится с обеих сторон каждой единицы тары."
+}

@@ -1,0 +1,10 @@
+.env
+frontend/.nuxt
+frontend/.output
+frontend/node_modules
+backend/.venv
+backend/landing.db
+backend/__pycache__
+backend/.pytest_cache
+backend/.ruff_cache
+postgres_data

@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiddoc-landing-backend"
+version = "0.1.0"
+description = "Backend API for the AIDDoc landing page"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "alembic>=1.15.2",
+  "fastapi>=0.115.12",
+  "psycopg[binary]>=3.2.6",
+  "pydantic-settings>=2.8.1",
+  "python-jose[cryptography]>=3.3.0",
+  "slowapi>=0.1.9",
+  "sqlalchemy>=2.0.40",
+  "uvicorn[standard]>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.28.1",
+  "pytest>=8.3.5",
+  "pytest-asyncio>=0.26.0",
+  "ruff>=0.11.5",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
