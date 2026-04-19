@@ -64,8 +64,6 @@ services:
       - backend
     volumes:
       - ./site/infra/nginx/conf.d/default.conf.template:/etc/nginx/templates/default.conf.template:ro
-    ports:
-      - "80:80"
     restart: unless-stopped
 
 volumes:
