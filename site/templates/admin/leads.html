@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Заявки | AIDDoc admin{% endblock %}
+
+{% block content %}
+<main class="admin-page">
+  <header class="admin-header">
+    <h1>Заявки</h1>
+    <a href="{{ url_for('main.index') }}">На сайт</a>
+  </header>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Дата</th>
+          <th>Имя</th>
+          <th>Телефон</th>
+          <th>Email</th>
+          <th>Статус</th>
+          <th>Комментарий</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+          <tr>
+            <td>{{ lead.id }}</td>
+            <td>{{ lead.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+            <td>{{ lead.name }}</td>
+            <td>{{ lead.phone }}</td>
+            <td>{{ lead.email }}</td>
+            <td>{{ lead.status }}</td>
+            <td>{{ lead.message or "" }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="7">Заявок пока нет.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}

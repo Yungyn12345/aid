@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="site-header" id="top">
+  <a class="brand" href="#top" aria-label="AIDDoc">
+    <img src="{{ url_for('static', filename='img/Union.svg') }}" alt="">
+    <span>AIDDoc</span>
+  </a>
+  <nav class="main-nav" aria-label="Главная навигация">
+    <a href="#features">Возможности</a>
+    <a href="#workflow">Процесс</a>
+    <a href="#contact">Заявка</a>
+  </nav>
+  <a class="header-link" href="/aideclarant/">Открыть сервис</a>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">ИИ для ВЭД-документов</p>
+      <h1>АИ Декларант помогает подготовить декларацию без ручной рутины</h1>
+      <p class="hero-text">
+        Загружайте инвойс, упаковочный лист, CMR и контракт. Сервис извлекает данные,
+        сверяет документы и готовит структурированный результат для дальнейшей работы.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="/aideclarant/">Заполнить декларацию</a>
+        <a class="button button-secondary" href="#contact">Получить консультацию</a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-label="Превью интерфейса">
+      <img src="{{ url_for('static', filename='img/Frame 16.svg') }}" alt="Интерфейс АИ Декларанта">
+    </div>
+  </section>
+
+  <section class="metrics" aria-label="Ключевые преимущества">
+    <article>
+      <strong>4</strong>
+      <span>типа документов в одном сценарии</span>
+    </article>
+    <article>
+      <strong>JSON</strong>
+      <span>структурированный результат для проверки</span>
+    </article>
+    <article>
+      <strong>ТН ВЭД</strong>
+      <span>подбор кода с учетом описания товара</span>
+    </article>
+  </section>
+
+  <section class="section split" id="features">
+    <div>
+      <p class="eyebrow">Что делает система</p>
+      <h2>Собирает данные из документов и показывает, где нужна проверка</h2>
+      <p>
+        Макет `Desktop` использует строгую белую страницу, темно-синий hero-блок,
+        желтый CTA и карточки с крупными иконками. Верстка повторяет эту композицию
+        HTML/CSS-блоками, а не вставкой SVG-макета целиком.
+      </p>
+    </div>
+    <div class="feature-grid">
+      <article class="feature-card">
+        <img src="{{ url_for('static', filename='img/Frame 56.svg') }}" alt="">
+        <h3>Извлечение</h3>
+        <p>Находит реквизиты, товары, количество, вес, стоимость и условия поставки.</p>
+      </article>
+      <article class="feature-card">
+        <img src="{{ url_for('static', filename='img/Frame 57.svg') }}" alt="">
+        <h3>Проверка</h3>
+        <p>Подсвечивает неполные данные, чтобы оператор не пропустил важные поля.</p>
+      </article>
+      <article class="feature-card">
+        <img src="{{ url_for('static', filename='img/Frame 53.svg') }}" alt="">
+        <h3>Сборка</h3>
+        <p>Формирует единый результат по документам и готовит данные для декларации.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section workflow" id="workflow">
+    <p class="eyebrow">Процесс</p>
+    <h2>От загрузки PDF до готового результата</h2>
+    <div class="steps">
+      <article>
+        <span>01</span>
+        <h3>Загрузите документы</h3>
+        <p>Пользователь добавляет комплект PDF в интерфейсе сервиса.</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h3>ИИ извлекает данные</h3>
+        <p>Система приводит разные документы к единой структуре.</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h3>Оператор проверяет</h3>
+        <p>Незаполненные и спорные места остаются видимыми для ручной проверки.</p>
+      </article>
+      <article>
+        <span>04</span>
+        <h3>Получаете итог</h3>
+        <p>Результат готов к копированию, экспорту и дальнейшей обработке.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section contact-section" id="contact">
+    <div class="contact-copy">
+      <p class="eyebrow">Заявка</p>
+      <h2>Оставьте контакты для подключения или демонстрации</h2>
+      <p>Форма отправляет POST-запрос во Flask и сохраняет заявку в SQLite.</p>
+    </div>
+    <form class="lead-form" action="{{ url_for('main.submit_lead') }}" method="post" novalidate>
+      <div class="flash-list" aria-live="polite">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+          <p class="flash flash-{{ category }}">{{ message }}</p>
+        {% endfor %}
+      </div>
+      <label>
+        <span>Имя</span>
+        <input name="name" type="text" minlength="2" maxlength="120" required placeholder="Иван">
+      </label>
+      <label>
+        <span>Телефон</span>
+        <input name="phone" type="tel" minlength="5" maxlength="80" required placeholder="+7 999 123-45-67">
+      </label>
+      <label>
+        <span>Email</span>
+        <input name="email" type="email" maxlength="180" required placeholder="mail@example.com">
+      </label>
+      <label>
+        <span>Комментарий</span>
+        <textarea name="message" rows="5" maxlength="2000" placeholder="Опишите задачу или нужный сценарий запуска"></textarea>
+      </label>
+      <input class="honeypot" name="website" type="text" tabindex="-1" autocomplete="off">
+      <button class="button button-primary" type="submit">Отправить заявку</button>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>AIDDoc</span>
+  <a href="#top">Наверх</a>
+</footer>
+{% endblock %}

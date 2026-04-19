@@ -20,14 +20,14 @@ services:
 
   frontend:
     build:
-      context: ./site/frontend
+      context: ./site
     environment:
-      NUXT_PUBLIC_SITE_URL: ${NUXT_PUBLIC_SITE_URL:-https://aiddoc.ru}
-      NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL:-/api/v1}
-      NUXT_API_BASE_URL: ${NUXT_API_BASE_URL:-http://backend:8000/api/v1}
-      NUXT_PUBLIC_CTA_URL: ${NUXT_PUBLIC_CTA_URL:-https://aiddoc.ru/aideclarant}
-      NUXT_PUBLIC_YANDEX_METRIKA_ID: ${NUXT_PUBLIC_YANDEX_METRIKA_ID:-}
-      NUXT_PUBLIC_GOOGLE_TAG_ID: ${NUXT_PUBLIC_GOOGLE_TAG_ID:-}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:-change-me}
+      DATABASE_URL: ${LANDING_SQLITE_URL:-sqlite:////data/site.sqlite3}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+    volumes:
+      - site_sqlite_data:/data
     restart: unless-stopped
 
   backend:
@@ -68,3 +68,4 @@ services:
 
 volumes:
   postgres_data:
+  site_sqlite_data:
