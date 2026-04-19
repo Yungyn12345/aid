@@ -1,3 +1,5 @@
+import mimetypes
+
 from flask import Flask, flash, redirect, render_template, url_for
 
 from auth import require_auth
@@ -6,6 +8,8 @@ from storage import delete_lead, get_stats, list_leads
 
 
 def create_app(config_object: type[Config] = Config) -> Flask:
+    mimetypes.add_type("application/javascript", ".js")
+
     app = Flask(
         __name__,
         static_folder="static",

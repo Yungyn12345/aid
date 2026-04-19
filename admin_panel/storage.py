@@ -79,12 +79,43 @@ def get_stats(database_path: str | Path) -> dict[str, Any]:
         new_count = connection.execute(
             "SELECT COUNT(*) FROM leads WHERE status = 'new'"
         ).fetchone()[0]
+        processed_count = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM leads
+            WHERE status IN ('done', 'processed')
+            """
+        ).fetchone()[0]
         scored = connection.execute(
             "SELECT AVG(score), COUNT(score) FROM leads WHERE score IS NOT NULL"
         ).fetchone()
         recent_count = connection.execute(
             "SELECT COUNT(*) FROM leads WHERE datetime(created_at) >= datetime(?)",
             (seven_days_ago.isoformat(),),
+        ).fetchone()[0]
+        today_count = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM leads
+            WHERE date(created_at) = date('now')
+            """
+        ).fetchone()[0]
+        with_email_count = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM leads
+            WHERE email IS NOT NULL AND email != ''
+            """
+        ).fetchone()[0]
+        with_message_count = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM leads
+            WHERE message IS NOT NULL AND message != ''
+            """
+        ).fetchone()[0]
+        last_lead_at = connection.execute(
+            "SELECT MAX(created_at) FROM leads"
         ).fetchone()[0]
         companies_count = connection.execute(
             """
@@ -97,8 +128,13 @@ def get_stats(database_path: str | Path) -> dict[str, Any]:
     return {
         "total": total,
         "new_count": new_count,
+        "processed_count": processed_count,
         "avg_score": round(scored[0], 1) if scored[0] is not None else None,
         "scored_count": scored[1],
         "recent_count": recent_count,
+        "today_count": today_count,
+        "with_email_count": with_email_count,
+        "with_message_count": with_message_count,
+        "last_lead_at": last_lead_at,
         "companies_count": companies_count,
     }

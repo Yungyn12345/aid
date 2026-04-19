@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}AIDDoc admin{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Навигация админ-панели">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+          <span class="brand-mark">A</span>
+          <span>
+            <strong>AIDDoc</strong>
+            <small>Admin panel</small>
+          </span>
+        </a>
+
+        <nav class="nav">
+          <a class="nav-link is-active" href="{{ url_for('dashboard') }}">
+            <span class="nav-dot"></span>
+            Заявки
+          </a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}" defer></script>
+  </body>
+</html>

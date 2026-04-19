@@ -1,105 +1,181 @@
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AIDDoc admin</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-  </head>
-  <body>
-    <main class="page">
-      <header class="header">
-        <div>
-          <p class="eyebrow">AIDDoc admin</p>
-          <h1>Заявки с лендинга</h1>
-        </div>
-        <a class="site-link" href="/" target="_blank">Открыть сайт</a>
-      </header>
+{% extends "base.html" %}
 
-      <section class="stats" aria-label="Статистика">
-        <article>
-          <span>Всего заявок</span>
-          <strong>{{ stats.total }}</strong>
-        </article>
-        <article>
-          <span>Новые</span>
-          <strong>{{ stats.new_count }}</strong>
-        </article>
-        <article>
-          <span>Средняя оценка</span>
-          <strong>{{ stats.avg_score if stats.avg_score is not none else "—" }}</strong>
-          <small>{{ stats.scored_count }} с оценкой</small>
-        </article>
-        <article>
-          <span>За 7 дней</span>
-          <strong>{{ stats.recent_count }}</strong>
-        </article>
-        <article>
-          <span>Компаний</span>
-          <strong>{{ stats.companies_count }}</strong>
-        </article>
+{% block title %}Заявки | AIDDoc admin{% endblock %}
+
+{% block content %}
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Dashboard</p>
+      <h1>Заявки</h1>
+      <p class="page-subtitle">Список заявок с сайта и сводная статистика по обращениям.</p>
+    </div>
+    <div class="header-actions">
+      <a class="button button-secondary" href="{{ url_for('dashboard') }}">Обновить</a>
+      <a class="button button-primary" href="/" target="_blank" rel="noreferrer">На сайт</a>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <section class="flash-list" aria-label="Уведомления">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
       </section>
+    {% endif %}
+  {% endwith %}
 
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <div class="flash">
-            {% for message in messages %}
-              <p>{{ message }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
+  <section class="stats-grid" aria-label="Сводная статистика">
+    <article class="stat-card">
+      <span class="stat-label">Всего заявок</span>
+      <strong>{{ stats.total }}</strong>
+      <small>Все сохраненные обращения</small>
+    </article>
 
-      <section class="table-card">
-        <div class="table-title">
-          <h2>Список заявок</h2>
-          <span>{{ leads|length }} записей</span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Дата</th>
-                <th>Имя</th>
-                <th>Компания</th>
-                <th>Телефон</th>
-                <th>Email</th>
-                <th>Оценка</th>
-                <th>Статус</th>
-                <th>Комментарий</th>
-                <th></th>
+    <article class="stat-card stat-card-blue">
+      <span class="stat-label">Новые заявки</span>
+      <strong>{{ stats.new_count }}</strong>
+      <small>Статус new</small>
+    </article>
+
+    <article class="stat-card stat-card-green">
+      <span class="stat-label">Обработанные</span>
+      <strong>{{ stats.processed_count }}</strong>
+      <small>Статусы done / processed</small>
+    </article>
+
+    <article class="stat-card stat-card-orange">
+      <span class="stat-label">Средняя заинтересованность</span>
+      <strong>{{ stats.avg_score if stats.avg_score is not none else "—" }}</strong>
+      <small>{{ stats.scored_count }} заявок с оценкой</small>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-label">Последняя заявка</span>
+      <strong class="stat-date">{{ stats.last_lead_at or "—" }}</strong>
+      <small>{{ stats.recent_count }} за последние 7 дней</small>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <h2>Список заявок</h2>
+        <p>
+          Показано <span data-visible-count>{{ leads|length }}</span> из {{ leads|length }}.
+          Заявок сегодня: {{ stats.today_count }}.
+        </p>
+      </div>
+
+      <div class="toolbar" aria-label="Фильтры заявок">
+        <label class="field">
+          <span>Поиск</span>
+          <input
+            type="search"
+            data-lead-search
+            placeholder="Имя, телефон, email..."
+            autocomplete="off"
+          >
+        </label>
+
+        <label class="field">
+          <span>Статус</span>
+          <select data-status-filter>
+            <option value="">Все статусы</option>
+            <option value="new">Новые</option>
+            <option value="in_progress">В работе</option>
+            <option value="done">Готово</option>
+            <option value="processed">Обработано</option>
+            <option value="rejected">Отклонено</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    {% if leads %}
+      <div class="table-scroll">
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Дата</th>
+              <th>Имя</th>
+              <th>Компания</th>
+              <th>Телефон</th>
+              <th>Email</th>
+              <th>Заинтересованность</th>
+              <th>Статус</th>
+              <th>Комментарий</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lead in leads %}
+              {% set status = (lead.status or "unknown")|lower %}
+              {% set status_class = status|replace("_", "-") %}
+              <tr
+                data-lead-row
+                data-status="{{ status }}"
+                data-search="{{ [lead.id, lead.name, lead.company, lead.phone, lead.email, lead.message, lead.status]|join(' ')|lower }}"
+              >
+                <td class="id-cell">#{{ lead.id }}</td>
+                <td class="date-cell">{{ lead.created_at or "—" }}</td>
+                <td>
+                  <strong>{{ lead.name or "—" }}</strong>
+                </td>
+                <td>{{ lead.company or "—" }}</td>
+                <td>
+                  {% if lead.phone %}
+                    <a class="contact-link" href="tel:{{ lead.phone }}">{{ lead.phone }}</a>
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>
+                  {% if lead.email %}
+                    <a class="contact-link" href="mailto:{{ lead.email }}">{{ lead.email }}</a>
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>
+                  {% if lead.score is not none %}
+                    <span class="score-pill">{{ lead.score }}/10</span>
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="status-badge status-{{ status_class }}">{{ lead.status or "unknown" }}</span>
+                </td>
+                <td class="comment-cell">{{ lead.message or "—" }}</td>
+                <td>
+                  <form action="{{ url_for('delete_lead_route', lead_id=lead.id) }}" method="post">
+                    <button
+                      class="delete-button"
+                      type="submit"
+                      onclick="return confirm('Удалить заявку #{{ lead.id }}?')"
+                    >
+                      Удалить
+                    </button>
+                  </form>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {% for lead in leads %}
-                <tr>
-                  <td>{{ lead.id }}</td>
-                  <td>{{ lead.created_at }}</td>
-                  <td>{{ lead.name }}</td>
-                  <td>{{ lead.company or "—" }}</td>
-                  <td><a href="tel:{{ lead.phone }}">{{ lead.phone }}</a></td>
-                  <td><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></td>
-                  <td>{{ lead.score if lead.score is not none else "—" }}</td>
-                  <td><span class="status">{{ lead.status }}</span></td>
-                  <td class="message">{{ lead.message or "—" }}</td>
-                  <td>
-                    <form action="{{ url_for('delete_lead_route', lead_id=lead.id) }}" method="post">
-                      <button class="delete-button" type="submit" onclick="return confirm('Удалить заявку #{{ lead.id }}?')">
-                        Удалить
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              {% else %}
-                <tr>
-                  <td colspan="10" class="empty">Заявок пока нет.</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-  </body>
-</html>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state is-hidden" data-no-results>
+        <h3>Ничего не найдено</h3>
+        <p>Измени поисковый запрос или фильтр по статусу.</p>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>Заявок пока нет</h3>
+        <p>Когда посетители отправят форму на сайте, обращения появятся в этой таблице.</p>
+        <a class="button button-primary" href="/" target="_blank" rel="noreferrer">Открыть сайт</a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
