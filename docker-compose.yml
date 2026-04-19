@@ -69,14 +69,13 @@ services:
     restart: unless-stopped
 
   nginx:
-    image: nginx:1.27-alpine
+    build:
+      context: ./site/infra/nginx
     depends_on:
       - aideclarant
       - frontend
       - admin_panel
       - backend
-    volumes:
-      - ./site/infra/nginx/conf.d/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     restart: unless-stopped
 
 volumes:
