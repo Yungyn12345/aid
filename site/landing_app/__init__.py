@@ -1,3 +1,4 @@
+import mimetypes
 from pathlib import Path
 
 from flask import Flask
@@ -12,6 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def create_app(config_object: type[Config] = Config) -> Flask:
+    mimetypes.add_type("application/javascript", ".js")
+
     app = Flask(
         __name__,
         template_folder=str(BASE_DIR / "templates"),

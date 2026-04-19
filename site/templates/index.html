@@ -1,145 +1,167 @@
 {% extends "base.html" %}
 
 {% block content %}
-<header class="site-header" id="top">
-  <a class="brand" href="#top" aria-label="AIDDoc">
-    <img src="{{ url_for('static', filename='img/Union.svg') }}" alt="">
-    <span>AIDDoc</span>
-  </a>
-  <nav class="main-nav" aria-label="Главная навигация">
-    <a href="#features">Возможности</a>
-    <a href="#workflow">Процесс</a>
-    <a href="#contact">Заявка</a>
+<header class="hero-shell" id="top">
+  <nav class="site-nav" aria-label="Главная навигация">
+    <a class="brand-mark" href="#top" aria-label="AIDDoc">
+      <img src="{{ url_for('static', filename='img/Union.svg') }}" alt="">
+    </a>
+    <div class="nav-links">
+      <a href="#contact">Подписаться</a>
+      <a href="#about">О нас</a>
+      <a href="#contact">Связаться</a>
+    </div>
+    <a class="nav-cta" href="/aideclarant/">Заполнить декларацию</a>
   </nav>
-  <a class="header-link" href="/aideclarant/">Открыть сервис</a>
+
+  <section class="hero">
+    <div class="hero-copy reveal">
+      <h1>АИ Декларант — оформление таможенных деклараций быстрее, чище и с меньшим числом ошибок</h1>
+      <p>
+        ИИ-платформа для декларантов, брокеров и ВЭД-отделов, которая автоматически
+        извлекает данные из документов, помогает заполнить ДТ и сокращает объем ручной работы.
+      </p>
+      <a class="button button-primary" href="/aideclarant/">Получить Демо версию</a>
+    </div>
+
+    <figure class="hero-preview reveal" aria-label="Скрин декларации">
+      <img src="{{ url_for('static', filename='img/image 53.png') }}" alt="Скрин декларации">
+    </figure>
+  </section>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="eyebrow">ИИ для ВЭД-документов</p>
-      <h1>АИ Декларант помогает подготовить декларацию без ручной рутины</h1>
-      <p class="hero-text">
-        Загружайте инвойс, упаковочный лист, CMR и контракт. Сервис извлекает данные,
-        сверяет документы и готовит структурированный результат для дальнейшей работы.
-      </p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="/aideclarant/">Заполнить декларацию</a>
-        <a class="button button-secondary" href="#contact">Получить консультацию</a>
-      </div>
-    </div>
-    <div class="hero-visual" aria-label="Превью интерфейса">
-      <img src="{{ url_for('static', filename='img/Frame 16.svg') }}" alt="Интерфейс АИ Декларанта">
-    </div>
-  </section>
-
-  <section class="metrics" aria-label="Ключевые преимущества">
-    <article>
-      <strong>4</strong>
-      <span>типа документов в одном сценарии</span>
-    </article>
-    <article>
-      <strong>JSON</strong>
-      <span>структурированный результат для проверки</span>
-    </article>
-    <article>
-      <strong>ТН ВЭД</strong>
-      <span>подбор кода с учетом описания товара</span>
-    </article>
-  </section>
-
-  <section class="section split" id="features">
-    <div>
-      <p class="eyebrow">Что делает система</p>
-      <h2>Собирает данные из документов и показывает, где нужна проверка</h2>
-      <p>
-        Макет `Desktop` использует строгую белую страницу, темно-синий hero-блок,
-        желтый CTA и карточки с крупными иконками. Верстка повторяет эту композицию
-        HTML/CSS-блоками, а не вставкой SVG-макета целиком.
-      </p>
-    </div>
-    <div class="feature-grid">
-      <article class="feature-card">
+  <section class="audience-section" id="about">
+    <h2 class="section-heading reveal">Кому подходит АИ Декларант</h2>
+    <div class="audience-grid">
+      <article class="audience-card reveal">
         <img src="{{ url_for('static', filename='img/Frame 56.svg') }}" alt="">
-        <h3>Извлечение</h3>
-        <p>Находит реквизиты, товары, количество, вес, стоимость и условия поставки.</p>
+        <h3>Декларантам</h3>
+        <p>Когда на вас десятки документов, сжатые сроки и цена ошибки слишком высока.</p>
       </article>
-      <article class="feature-card">
-        <img src="{{ url_for('static', filename='img/Frame 57.svg') }}" alt="">
-        <h3>Проверка</h3>
-        <p>Подсвечивает неполные данные, чтобы оператор не пропустил важные поля.</p>
-      </article>
-      <article class="feature-card">
+      <article class="audience-card reveal">
         <img src="{{ url_for('static', filename='img/Frame 53.svg') }}" alt="">
-        <h3>Сборка</h3>
-        <p>Формирует единый результат по документам и готовит данные для декларации.</p>
+        <h3>Таможенным брокерам</h3>
+        <p>Когда нужно ускорять оформление, снижать нагрузку на команду и держать качество на потоке.</p>
+      </article>
+      <article class="audience-card reveal">
+        <img src="{{ url_for('static', filename='img/Frame 57.svg') }}" alt="">
+        <h3>Компаниям с отделом ВЭД</h3>
+        <p>Когда важно, чтобы внутренняя команда оформляла ДТ быстрее, стабильнее и без лишних потерь времени.</p>
       </article>
     </div>
   </section>
 
-  <section class="section workflow" id="workflow">
-    <p class="eyebrow">Процесс</p>
-    <h2>От загрузки PDF до готового результата</h2>
-    <div class="steps">
-      <article>
-        <span>01</span>
-        <h3>Загрузите документы</h3>
-        <p>Пользователь добавляет комплект PDF в интерфейсе сервиса.</p>
+  <section class="why-section">
+    <h2 class="section-heading reveal">Почему выбирают нас</h2>
+    <div class="why-grid">
+      <article class="why-copy reveal">
+        <h3>Не просто поле для ручного ввода, а рабочий инструмент для ускорения оформления</h3>
+        <p>
+          АИ Декларант помогает убрать рутину из типовых операций и оставить специалисту главное —
+          контроль, проверку и принятие решений.
+        </p>
+        <img src="{{ url_for('static', filename='img/Frame 60 1.svg') }}" alt="">
       </article>
-      <article>
-        <span>02</span>
-        <h3>ИИ извлекает данные</h3>
-        <p>Система приводит разные документы к единой структуре.</p>
-      </article>
-      <article>
-        <span>03</span>
-        <h3>Оператор проверяет</h3>
-        <p>Незаполненные и спорные места остаются видимыми для ручной проверки.</p>
-      </article>
-      <article>
-        <span>04</span>
-        <h3>Получаете итог</h3>
-        <p>Результат готов к копированию, экспорту и дальнейшей обработке.</p>
+      <article class="why-card reveal">
+        <span>Меньше ручного труда</span>
+        <p>
+          Система берет на себя извлечение данных и подготовку заполнения из загруженных документов.
+        </p>
+        <div class="slider-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
       </article>
     </div>
   </section>
 
-  <section class="section contact-section" id="contact">
-    <div class="contact-copy">
-      <p class="eyebrow">Заявка</p>
-      <h2>Оставьте контакты для подключения или демонстрации</h2>
-      <p>Форма отправляет POST-запрос во Flask и сохраняет заявку в SQLite.</p>
-    </div>
-    <form class="lead-form" action="{{ url_for('main.submit_lead') }}" method="post" novalidate>
-      <div class="flash-list" aria-live="polite">
-        {% for category, message in get_flashed_messages(with_categories=true) %}
-          <p class="flash flash-{{ category }}">{{ message }}</p>
-        {% endfor %}
+  <section class="process-section" id="workflow">
+    <h2 class="section-heading reveal">Как это работает</h2>
+    <p class="section-subtitle reveal">Три шага вместо бесконечной ручной рутины</p>
+    <div class="process-panel reveal">
+      <div class="process-copy">
+        <div class="step-tabs" aria-hidden="true">
+          <span>шаг 1</span>
+          <span>шаг 2</span>
+          <span>шаг 3</span>
+        </div>
+        <h3>Загрузка документов</h3>
+        <p>Пользователь загружает документы в веб-интерфейс системы.</p>
+        <ul>
+          <li>инвойсы</li>
+          <li>сопроводительные документы</li>
+          <li>шаблонные формы</li>
+        </ul>
+        <div class="slider-dots slider-dots-light" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
       </div>
-      <label>
-        <span>Имя</span>
-        <input name="name" type="text" minlength="2" maxlength="120" required placeholder="Иван">
-      </label>
-      <label>
-        <span>Телефон</span>
-        <input name="phone" type="tel" minlength="5" maxlength="80" required placeholder="+7 999 123-45-67">
-      </label>
-      <label>
-        <span>Email</span>
-        <input name="email" type="email" maxlength="180" required placeholder="mail@example.com">
-      </label>
-      <label>
-        <span>Комментарий</span>
-        <textarea name="message" rows="5" maxlength="2000" placeholder="Опишите задачу или нужный сценарий запуска"></textarea>
-      </label>
-      <input class="honeypot" name="website" type="text" tabindex="-1" autocomplete="off">
-      <button class="button button-primary" type="submit">Отправить заявку</button>
-    </form>
+      <div class="process-image">
+        <img src="{{ url_for('static', filename='img/image 50.png') }}" alt="Загрузка документов в сервис">
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <div class="contact-panel reveal">
+      <div class="contact-copy">
+        <h2>Оставьте заявку</h2>
+        <p>Покажем, как АИ Декларант впишется в ваш процесс</p>
+        <div class="contact-benefits">
+          <span>Что вы получите после заявки:</span>
+          <ul>
+            <li>краткую презентацию продукта</li>
+            <li>разбор вашего сценария оформления ДТ</li>
+            <li>понимание, где именно можно ускорить работу команды</li>
+          </ul>
+        </div>
+      </div>
+
+      <form class="lead-form" action="{{ url_for('main.submit_lead') }}" method="post" novalidate>
+        <div class="flash-list" aria-live="polite">
+          {% for category, message in get_flashed_messages(with_categories=true) %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+        <label class="wide">
+          <span>Комментарий</span>
+          <textarea name="message" rows="3" maxlength="2000" placeholder="Ваш комментарий"></textarea>
+        </label>
+        <label>
+          <span>Оценка проекта</span>
+          <input name="score" type="text" maxlength="20" placeholder="1 - 10">
+        </label>
+        <label>
+          <span>Имя</span>
+          <input name="name" type="text" minlength="2" maxlength="120" required placeholder="Ваше имя">
+        </label>
+        <label>
+          <span>Компания</span>
+          <input name="company" type="text" maxlength="180" placeholder="Название компании">
+        </label>
+        <label>
+          <span>Телефон</span>
+          <input name="phone" type="tel" minlength="5" maxlength="80" required placeholder="+ 7 ...">
+        </label>
+        <label>
+          <span>Электронная почта</span>
+          <input name="email" type="email" maxlength="180" required placeholder="@">
+        </label>
+        <input class="honeypot" name="website" type="text" tabindex="-1" autocomplete="off">
+        <button class="button button-primary" type="submit">Отправить заявку</button>
+      </form>
+    </div>
   </section>
 </main>
 
 <footer class="site-footer">
-  <span>AIDDoc</span>
-  <a href="#top">Наверх</a>
+  <div class="footer-contacts">
+    <span>По сотрудничеству:</span>
+    <a href="https://t.me/yungyung0_0" target="_blank" rel="noreferrer">Telegram: @yungyung0_0</a>
+    <a href="mailto:chzhen.yg@dvfu.ru">Почта: chzhen.yg@dvfu.ru</a>
+  </div>
+  <a class="button button-primary" href="/aideclarant/">Получить Демо версию</a>
 </footer>
 {% endblock %}
