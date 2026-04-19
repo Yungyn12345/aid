@@ -13,7 +13,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     app = Flask(
         __name__,
         static_folder="static",
-        static_url_path="/admin/static",
+        static_url_path="/static",
         template_folder="templates",
     )
     app.config.from_object(config_object)
@@ -30,6 +30,11 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             stats=get_stats(database_path),
         )
 
+    @app.get("/admin/static/<path:filename>")
+    def admin_static_compat(filename: str):
+        return app.send_static_file(filename)
+
+    @app.post("/delete/<int:lead_id>")
     @app.post("/admin/delete/<int:lead_id>")
     @require_auth
     def delete_lead_route(lead_id: int):

@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}AIDDoc admin{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <link rel="stylesheet" href="static/admin.css">
   </head>
   <body>
     <div class="shell">
       <aside class="sidebar" aria-label="Навигация админ-панели">
-        <a class="brand" href="{{ url_for('dashboard') }}">
+        <a class="brand" href="./">
           <span class="brand-mark">A</span>
           <span>
             <strong>AIDDoc</strong>
@@ -18,7 +18,7 @@
         </a>
 
         <nav class="nav">
-          <a class="nav-link is-active" href="{{ url_for('dashboard') }}">
+          <a class="nav-link is-active" href="./">
             <span class="nav-dot"></span>
             Заявки
           </a>
@@ -30,6 +30,6 @@
       </main>
     </div>
 
-    <script src="{{ url_for('static', filename='admin.js') }}" defer></script>
+    <script src="static/admin.js" defer></script>
   </body>
 </html>
