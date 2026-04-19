@@ -1,9 +1,12 @@
 import mimetypes
 import os
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from tnved_request import tnvedcode_router
 from agreement_request import agreement_router
@@ -13,9 +16,34 @@ from cmr_request import cmr_router
 from demo_api import demo_router
 
 APP_ROOT_PATH = (os.getenv("APP_ROOT_PATH", "") or "").rstrip("/")
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = (BASE_DIR / "front" / "static").resolve()
+
+
+class StaticPrefixCompatMiddleware:
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] == "http":
+            path = scope.get("path", "")
+            prefixes = ["/static/"]
+            if APP_ROOT_PATH:
+                prefixes.append(f"{APP_ROOT_PATH}/static/")
+
+            for prefix in prefixes:
+                if path.startswith(prefix):
+                    relative_path = path[len(prefix):]
+                    file_path = (STATIC_DIR / relative_path).resolve()
+                    if STATIC_DIR in file_path.parents and file_path.is_file():
+                        await FileResponse(file_path)(scope, receive, send)
+                        return
+
+        await self.app(scope, receive, send)
 
 app = FastAPI(root_path=APP_ROOT_PATH)
 mimetypes.add_type("application/javascript", ".js")
+app.add_middleware(StaticPrefixCompatMiddleware)
 app.include_router(tnvedcode_router)
 app.include_router(agreement_router)
 app.include_router(invoice_router)
