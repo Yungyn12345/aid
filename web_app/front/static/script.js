@@ -6,7 +6,7 @@
 // 0) Состояние
 // ===========================
 const CTX = {
-  agreement: null,     // contract/agreement json
+  agreement: null,
   invoice: null,
   packingList: null,
   cmr: null,
@@ -27,14 +27,13 @@ function endBatch() {
   LOAD.pending = Math.max(0, LOAD.pending - 1);
   refreshDashboardUI();
 
-  // когда всё закончится — один раз применим autofillAll
   if (LOAD.pending === 0 && !LOAD.scheduled) {
     LOAD.scheduled = true;
     setTimeout(() => {
       LOAD.scheduled = false;
       autofillAll();
       refreshDashboardUI();
-      showNotification("✅ Все документы обработаны — поля заполнены");
+      showNotification("✅ Все документы обработаны — поля заполнены", "success");
     }, 0);
   }
 }
@@ -42,7 +41,9 @@ function endBatch() {
 // ===========================
 // 1) Утилиты (DOM + normalize)
 // ===========================
-function $(id) { return document.getElementById(id); }
+function $(id) {
+  return document.getElementById(id);
+}
 
 function getDomRefs() {
   return {
@@ -68,10 +69,15 @@ const APP_BASE_PATH = (() => {
   if (path === "/aideclarant" || path.startsWith("/aideclarant/")) {
     return "/aideclarant";
   }
+
   return "";
 })();
 
 function appUrl(path) {
+  if (typeof window.appUrl === "function" && window.appUrl !== appUrl) {
+    return window.appUrl(path);
+  }
+
   if (!path) return APP_BASE_PATH || "/";
   return `${APP_BASE_PATH}${path}`;
 }
@@ -80,7 +86,10 @@ function norm(v) {
   if (v === undefined || v === null) return "";
   return String(v).trim();
 }
-function isEmpty(v) { return !norm(v); }
+
+function isEmpty(v) {
+  return !norm(v);
+}
 
 function isInputEl(el) {
   if (!el) return false;
@@ -170,9 +179,13 @@ function setEditable(id, value, { force = false } = {}) {
   if (!v) return;
 
   const cur = norm(el.textContent);
+  const isPlaceholder =
+    cur.startsWith("Здесь можно") ||
+    cur.startsWith("Дополнительная информация") ||
+    cur.startsWith("Информация о декларанте") ||
+    cur.startsWith("Отметки таможенных органов") ||
+    cur.startsWith("Решение таможенного органа");
 
-  // не перетираем "заглушку" только если force=false
-  const isPlaceholder = cur.startsWith("Здесь можно") || cur.startsWith("Дополнительная информация");
   if (!force && cur && !isPlaceholder) return;
 
   el.textContent = v;
@@ -185,14 +198,24 @@ function addDoc44(line) {
   if (!s) return;
   CTX.docs44.add(s);
 }
+
 function flushDoc44() {
   const lines = Array.from(CTX.docs44);
   if (!lines.length) return;
   setEditable("additionalInfo", lines.join("\n"), { force: true });
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 // ===========================
-// 2a) Derived UI: upload dashboard + comparison table
+// 2) Derived UI: upload + comparison
 // ===========================
 const DOC_CONFIG = [
   { key: "agreement", label: "Договор" },
@@ -221,7 +244,11 @@ function getUploadMetrics() {
 
 function formatComparisonValue(value) {
   if (value === undefined || value === null) return "";
-  if (Array.isArray(value)) return value.map(formatComparisonValue).filter(Boolean).join(", ");
+
+  if (Array.isArray(value)) {
+    return value.map(formatComparisonValue).filter(Boolean).join(", ");
+  }
+
   if (typeof value === "object") {
     return [
       value.name,
@@ -232,6 +259,7 @@ function formatComparisonValue(value) {
       value.place,
     ].map(norm).filter(Boolean).join(" / ");
   }
+
   return norm(value);
 }
 
@@ -254,6 +282,14 @@ function comparisonLabel(status) {
   if (status === "partial") return "Частично";
   if (status === "mismatch") return "Расхождение";
   return LOAD.pending > 0 ? "Обработка" : "Нет данных";
+}
+
+function firstItem(doc) {
+  if (!doc) return null;
+  if (Array.isArray(doc.items) && doc.items.length) return doc.items[0];
+  if (Array.isArray(doc.goods) && doc.goods.length) return doc.goods[0];
+  if (Array.isArray(doc.products) && doc.products.length) return doc.products[0];
+  return null;
 }
 
 function buildComparisonRows() {
@@ -394,20 +430,20 @@ function renderUploadSummary() {
   const metrics = getUploadMetrics();
 
   summary.innerHTML = `
-    <div class="upload-summary-card">
-      <span class="upload-summary-card__label">Файлов в работе</span>
-      <span class="upload-summary-card__value">${metrics.total}</span>
+    <div class="summary-card upload-summary-card">
+      <small class="summary-label upload-summary-card__label">Файлов в работе</small>
+      <strong class="summary-value upload-summary-card__value">${metrics.total}</strong>
     </div>
-    <div class="upload-summary-card">
-      <span class="upload-summary-card__label">Успешно обработано</span>
-      <span class="upload-summary-card__value">${metrics.success}</span>
+    <div class="summary-card upload-summary-card">
+      <small class="summary-label upload-summary-card__label">Успешно обработано</small>
+      <strong class="summary-value upload-summary-card__value">${metrics.success}</strong>
     </div>
   `;
 
   badges.innerHTML = DOC_CONFIG.map((doc) => {
     const status = getDocStatus(doc.key);
     const label = status === "ready" ? "готов" : status === "processing" ? "в обработке" : "нет данных";
-    return `<span class="document-badge document-badge--${status}">${doc.label}: ${label}</span>`;
+    return `<span class="document-badge document-badge--${status}" data-status="${status}">${escapeHtml(doc.label)}: ${escapeHtml(label)}</span>`;
   }).join("");
 }
 
@@ -417,59 +453,61 @@ function renderComparisonTable() {
   if (!stateNode || !tbody) return;
 
   const docsLoaded = DOC_CONFIG.some((doc) => !!CTX[doc.key]);
+
   if (!docsLoaded && LOAD.pending === 0) {
     stateNode.innerHTML = `
-      <div class="comparison-state-card">
+      <div class="comparison-state-card comparison-state__body">
         <div>
-          <div class="comparison-state-card__title">Нет данных для сверки</div>
-          <div class="comparison-state-card__text">
+          <div class="comparison-state-card__title comparison-state__title">Нет данных для сверки</div>
+          <div class="comparison-state-card__text comparison-state__text">
             Загрузите хотя бы один документ, чтобы таблица показала извлечённые реквизиты и отметила совпадения.
           </div>
         </div>
-        <span class="comparison-badge comparison-badge--pending">Ожидание</span>
+        <span class="comparison-badge comparison-badge--pending comparison-state__status">Ожидание</span>
       </div>
     `;
     tbody.innerHTML = "";
     return;
   }
 
+  const rows = buildComparisonRows();
+  const mismatches = rows.filter((row) => {
+    const values = DOC_CONFIG.map((doc) => ({
+      normalized: normalizeComparisonValue(row.values[doc.key]),
+    }));
+    return resolveComparisonStatus(values) === "mismatch";
+  }).length;
+
   if (LOAD.pending > 0) {
     stateNode.innerHTML = `
-      <div class="comparison-state-card">
+      <div class="comparison-state-card comparison-state__body">
         <div>
-          <div class="comparison-state-card__title">Документы обрабатываются</div>
-          <div class="comparison-state-card__text">
+          <div class="comparison-state-card__title comparison-state__title">Документы обрабатываются</div>
+          <div class="comparison-state-card__text comparison-state__text">
             Как только ответы от сервиса будут получены, строки сверки обновятся автоматически.
           </div>
         </div>
-        <span class="comparison-badge comparison-badge--partial">В обработке</span>
+        <span class="comparison-badge comparison-badge--partial comparison-state__status">В обработке</span>
       </div>
     `;
   } else {
-    const rows = buildComparisonRows();
-    const mismatches = rows.filter((row) => {
-      const values = DOC_CONFIG.map((doc) => ({
-        normalized: normalizeComparisonValue(row.values[doc.key]),
-      }));
-      return resolveComparisonStatus(values) === "mismatch";
-    }).length;
-
     stateNode.innerHTML = `
-      <div class="comparison-state-card">
+      <div class="comparison-state-card comparison-state__body">
         <div>
-          <div class="comparison-state-card__title">Сверка обновлена</div>
-          <div class="comparison-state-card__text">
+          <div class="comparison-state-card__title comparison-state__title">Сверка обновлена</div>
+          <div class="comparison-state-card__text comparison-state__text">
             ${mismatches > 0
               ? `Найдено ${mismatches} строк(и) с расхождениями. Проверьте их перед отправкой декларации.`
               : "Ключевые реквизиты между доступными документами заполнены без явных конфликтов."}
           </div>
         </div>
-        <span class="comparison-badge comparison-badge--${mismatches > 0 ? "mismatch" : "match"}">${mismatches > 0 ? "Есть расхождения" : "Все стабильно"}</span>
+        <span class="comparison-badge comparison-badge--${mismatches > 0 ? "mismatch" : "match"} comparison-state__status">
+          ${mismatches > 0 ? "Есть расхождения" : "Все стабильно"}
+        </span>
       </div>
     `;
   }
 
-  const rows = buildComparisonRows();
   tbody.innerHTML = rows.map((row) => {
     const values = DOC_CONFIG.map((doc) => {
       const raw = row.values[doc.key];
@@ -479,17 +517,20 @@ function renderComparisonTable() {
         normalized: normalizeComparisonValue(raw),
       };
     });
+
     const status = resolveComparisonStatus(values);
     const cells = values.map((value) => {
       const emptyClass = value.formatted ? "" : " comparison-value--empty";
-      return `<td class="comparison-value${emptyClass}">${value.formatted || "—"}</td>`;
+      return `<td class="comparison-value${emptyClass}" data-status="${status}">${value.formatted ? escapeHtml(value.formatted) : "—"}</td>`;
     }).join("");
 
     return `
       <tr class="comparison-row comparison-row--${status}">
-        <td class="comparison-field">${row.label}</td>
+        <td class="comparison-field">${escapeHtml(row.label)}</td>
         ${cells}
-        <td><span class="comparison-badge comparison-badge--${status}">${comparisonLabel(status)}</span></td>
+        <td data-status="${status}">
+          <span class="comparison-badge comparison-badge--${status}">${escapeHtml(comparisonLabel(status))}</span>
+        </td>
       </tr>
     `;
   }).join("");
@@ -501,7 +542,7 @@ function refreshDashboardUI() {
 }
 
 // ===========================
-// 2) Адреса / страны (эвристики)
+// 3) Адреса / страны (эвристики)
 // ===========================
 function countryToISO2(country) {
   const c = norm(country).toLowerCase();
@@ -545,7 +586,7 @@ function extractRegion(address, iso2 = "") {
   return parts.length >= 2 ? parts[parts.length - 2] : parts[0];
 }
 
-function fillAddressBlock(prefix /* sender|receiver */, party, { force = true } = {}) {
+function fillAddressBlock(prefix, party, { force = true } = {}) {
   if (!party) return;
 
   const country = party.country;
@@ -561,21 +602,26 @@ function fillAddressBlock(prefix /* sender|receiver */, party, { force = true } 
   if (postal) setField(`${prefix}PostalCode`, postal, { force });
   if (region) setField(`${prefix}Region`, region, { force });
 
-  // Идентификаторы — мягко
   setField(`${prefix}INN`, party.inn || party.vat_or_tax_id || party.vat_or_reg_number, { force: false });
   setField(`${prefix}OKPO`, party.okpo, { force: false });
 }
 
 // ===========================
-// 3) Нотификации (одна версия)
+// 4) Нотификации
 // ===========================
-function showNotification(message) {
+function showNotification(message, type = "info") {
   const container = $("notifications-container") || (() => {
     const c = document.createElement("div");
     c.id = "notifications-container";
     c.style.cssText = `
-      position: fixed; top: 20px; right: 20px; z-index: 10000;
-      display: flex; flex-direction: column; align-items: flex-end;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
     `;
     document.body.appendChild(c);
 
@@ -591,12 +637,23 @@ function showNotification(message) {
     return c;
   })();
 
+  const bg =
+    type === "success" ? "#1f7a47" :
+    type === "error" ? "#8d2f3a" :
+    "#234b87";
+
   const n = document.createElement("div");
   n.style.cssText = `
-    background: #0056b3; color: white; padding: 12px 20px; border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 10px;
-    font-size: 13px; animation: slideIn 0.3s ease;
-    width: 320px; max-width: calc(100vw - 40px); box-sizing: border-box;
+    background: ${bg};
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 13px;
+    animation: slideIn 0.3s ease;
+    width: 320px;
+    max-width: calc(100vw - 40px);
+    box-sizing: border-box;
   `;
   n.innerHTML = message;
   container.appendChild(n);
@@ -608,63 +665,78 @@ function showNotification(message) {
 }
 
 // ===========================
-// 4) Upload UI
+// 5) Upload UI
 // ===========================
-const fileInput = DOM.fileInput;
-const uploadArea = DOM.uploadArea;
-const fileList = DOM.fileList;
+function bindUploadUi() {
+  const fileInput = DOM.fileInput;
+  const uploadArea = DOM.uploadArea;
 
-uploadArea?.addEventListener("click", () => {
-  if (!fileInput) return;
-  fileInput.value = "";
-  fileInput.click();
-});
+  if (!fileInput || !uploadArea) return;
 
-DOM.uploadTrigger?.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  if (!fileInput) return;
-  fileInput.value = "";
-  fileInput.click();
-});
+  fileInput.style.display = "none";
 
-uploadArea?.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  uploadArea.classList.add("is-dragover");
-});
-uploadArea?.addEventListener("dragleave", (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove("is-dragover");
-});
-uploadArea?.addEventListener("drop", (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove("is-dragover");
-  handleFiles(e.dataTransfer.files);
-});
+  DOM.uploadTrigger?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    fileInput.value = "";
+    fileInput.click();
+  });
 
-fileInput?.addEventListener("change", (e) => {
-  const files = Array.from(e.target.files || []);
-  handleFiles(files);
-  e.target.value = "";
-});
+  uploadArea.addEventListener("click", (e) => {
+    if (e.target.closest(".upload-cta")) return;
+    if (e.target.closest("input[type='file']")) return;
+    fileInput.value = "";
+    fileInput.click();
+  });
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.classList.add("is-dragover");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.classList.remove("is-dragover");
+    });
+  });
+
+  uploadArea.addEventListener("drop", (e) => {
+    const files = Array.from(e.dataTransfer?.files || []);
+    handleFiles(files);
+  });
+
+  fileInput.addEventListener("change", (e) => {
+    const files = Array.from(e.target.files || []);
+    handleFiles(files);
+    e.target.value = "";
+  });
+}
 
 function getFileIcon(filename) {
-  const ext = filename.split(".").pop().toLowerCase();
+  const ext = (filename || "").split(".").pop().toLowerCase();
   return ext === "pdf" ? "PDF" : "FILE";
 }
 
 function addFileToList(file) {
+  const fileList = DOM.fileList;
+  if (!fileList) return null;
+
   const fileItem = document.createElement("div");
   fileItem.className = "file-item aid-upload-item";
   fileItem.dataset.status = "processing";
 
   const fileSize = file.size ? (file.size / 1024 / 1024).toFixed(2) : "—";
   fileItem.innerHTML = `
-    <div class="file-icon">${getFileIcon(file.name || "DEMO")}</div>
-    <div class="file-name aid-upload-item__name" title="${file.name || "DEMO"}">${file.name || "DEMO"}</div>
-    <div class="file-status processing aid-upload-item__meta">${fileSize} MB</div>
+    <div class="file-icon">${escapeHtml(getFileIcon(file.name || "DEMO"))}</div>
+    <div class="file-name aid-upload-item__name" title="${escapeHtml(file.name || "DEMO")}">${escapeHtml(file.name || "DEMO")}</div>
+    <div class="file-status processing aid-upload-item__meta">${escapeHtml(fileSize)} MB</div>
   `;
-  fileList?.appendChild(fileItem);
+  fileList.appendChild(fileItem);
   refreshDashboardUI();
   return fileItem;
 }
@@ -685,7 +757,7 @@ function detectDocType(filename) {
     name.includes("packing") ||
     name.includes("pack_list") ||
     name.includes("packing_list") ||
-    name.includes("upl") ||          // если у тебя так бывает
+    name.includes("upl") ||
     name.includes("pl_") ||
     name.includes("_pl.");
 
@@ -714,7 +786,7 @@ function detectDocType(filename) {
 function handleFiles(files) {
   const list = Array.from(files || []).filter((file) => file && /\.pdf$/i.test(file.name || ""));
   if (!list.length) {
-    showNotification("❌ Не удалось получить PDF-файлы для загрузки");
+    showNotification("❌ Не удалось получить PDF-файлы для загрузки", "error");
     return;
   }
 
@@ -729,16 +801,16 @@ function handleFiles(files) {
     else if (type === "invoice") processInvoice(file, item);
     else if (type === "packing_list") processPackingList(file, item);
     else if (type === "cmr") processCmr(file, item);
-    else processAuto(file, item); // <— важное: фолбэк
+    else processAuto(file, item);
   }
 }
 
 async function processAuto(file, fileItem) {
   const tries = [
-    { label: "Инвойс",      request: "/invoice/request",       result: "/invoice/result",       accept: acceptInvoice },
-    { label: "Упаковочный", request: "/packing_list/request", result: "/packing_list/result",  accept: acceptPackingList },
-    { label: "CMR",         request: "/cmr/request",          result: "/cmr/result",          accept: acceptCmr },
-    { label: "Договор",     request: "/agreement/request",    result: "/agreement/result",     accept: acceptAgreement },
+    { label: "Инвойс", request: "/invoice/request", result: "/invoice/result", accept: acceptInvoice },
+    { label: "Упаковочный", request: "/packing_list/request", result: "/packing_list/result", accept: acceptPackingList },
+    { label: "CMR", request: "/cmr/request", result: "/cmr/result", accept: acceptCmr },
+    { label: "Договор", request: "/agreement/request", result: "/agreement/result", accept: acceptAgreement },
   ];
 
   for (const t of tries) {
@@ -748,7 +820,7 @@ async function processAuto(file, fileItem) {
 
       pollResult(id, t.result, (json) => {
         t.accept(json);
-        showNotification(`✅ Документ распознан как: ${t.label}`);
+        showNotification(`✅ Документ распознан как: ${t.label}`, "success");
       }, fileItem);
 
       return;
@@ -758,7 +830,7 @@ async function processAuto(file, fileItem) {
   }
 
   updateFileStatus(fileItem, "✕", "error");
-  showNotification("❌ Не удалось определить тип документа. Переименуй файл (invoice/pl/cmr/contract) или добавь ручной выбор типа.");
+  showNotification("❌ Не удалось определить тип документа. Переименуй файл (invoice/pl/cmr/contract) или добавь ручной выбор типа.", "error");
 }
 
 // ===========================
@@ -786,7 +858,6 @@ async function uploadPDF(file, url) {
 }
 
 function isDoneStatus(status) {
-  // поддержка demo: status === true
   if (status === true) return true;
 
   const s = String(status || "").toLowerCase();
@@ -812,39 +883,33 @@ function pollResult(taskId, urlBase, onDone, fileItem) {
       if (isErrorStatus(st)) {
         clearInterval(t);
         updateFileStatus(fileItem, "✕", "error");
-        showNotification(`❌ Ошибка: ${data?.detail || "Задача завершилась с ошибкой"}`);
+        showNotification(`❌ Ошибка: ${data?.detail || "Задача завершилась с ошибкой"}`, "error");
         endBatch();
         return;
       }
 
-      if (!isDoneStatus(st)) return; // ждём дальше
+      if (!isDoneStatus(st)) return;
 
       clearInterval(t);
 
       let payload = data.result;
       if (typeof payload === "string") {
-        try { payload = JSON.parse(payload); } catch {}
+        try { payload = JSON.parse(payload); } catch (_) {}
       }
 
       updateFileStatus(fileItem, "✓", "success");
       onDone(payload);
-
-      // ✅ НЕ вызываем autofillAll() здесь
       endBatch();
     } catch (e) {
       clearInterval(t);
       updateFileStatus(fileItem, "✕", "error");
-      showNotification(`❌ Ошибка: ${e.message}`);
+      showNotification(`❌ Ошибка: ${e.message}`, "error");
       endBatch();
     }
   }, 900);
 }
 
-// DEMO helper:
-// 1) пробуем /demo/request/{type} → вернёт {id} → poll /demo/result/{id}
-// 2) если нет — пробуем /demo/{type} → сразу json
 async function demoLoadDoc(type) {
-  // task style
   try {
     const r1 = await fetch(appUrl(`/demo/request/${type}`), { method: "GET" });
     if (r1.ok) {
@@ -862,7 +927,7 @@ async function demoLoadDoc(type) {
 
               let payload = dd.result;
               if (typeof payload === "string") {
-                try { payload = JSON.parse(payload); } catch { /* */ }
+                try { payload = JSON.parse(payload); } catch (_) {}
               }
               resolve(payload);
             } catch (e) {
@@ -873,16 +938,15 @@ async function demoLoadDoc(type) {
         });
       }
     }
-  } catch { /* ignore */ }
+  } catch (_) {}
 
-  // direct json
   const r2 = await fetch(appUrl(`/demo/${type}`), { method: "GET" });
   if (!r2.ok) throw new Error(await extractErrorMessage(r2));
   return await r2.json();
 }
 
 // ===========================
-// 7) Acceptors: кладём JSON в CTX + 44 документы
+// 7) Acceptors
 // ===========================
 function acceptAgreement(json) {
   CTX.agreement = (json && !json.error) ? json : null;
@@ -930,6 +994,7 @@ function acceptCmr(json) {
       if (s) addDoc44(s);
     });
   }
+
   refreshDashboardUI();
 }
 
@@ -942,11 +1007,11 @@ async function processAgreement(file, fileItem) {
     const id = await uploadPDF(file, "/agreement/request");
     pollResult(id, "/agreement/result", (json) => {
       acceptAgreement(json);
-      showNotification("✅ Договор распознан");
+      showNotification("✅ Договор распознан", "success");
     }, fileItem);
   } catch (e) {
     updateFileStatus(fileItem, "✕", "error");
-    showNotification(`❌ Договор: ${e.message}`);
+    showNotification(`❌ Договор: ${e.message}`, "error");
   }
 }
 
@@ -956,11 +1021,11 @@ async function processInvoice(file, fileItem) {
     const id = await uploadPDF(file, "/invoice/request");
     pollResult(id, "/invoice/result", (json) => {
       acceptInvoice(json);
-      showNotification("✅ Инвойс распознан");
+      showNotification("✅ Инвойс распознан", "success");
     }, fileItem);
   } catch (e) {
     updateFileStatus(fileItem, "✕", "error");
-    showNotification(`❌ Инвойс: ${e.message}`);
+    showNotification(`❌ Инвойс: ${e.message}`, "error");
   }
 }
 
@@ -970,11 +1035,11 @@ async function processPackingList(file, fileItem) {
     const id = await uploadPDF(file, "/packing_list/request");
     pollResult(id, "/packing_list/result", (json) => {
       acceptPackingList(json);
-      showNotification("✅ Упаковочный лист распознан");
+      showNotification("✅ Упаковочный лист распознан", "success");
     }, fileItem);
   } catch (e) {
     updateFileStatus(fileItem, "✕", "error");
-    showNotification(`❌ Упаковочный лист: ${e.message}`);
+    showNotification(`❌ Упаковочный лист: ${e.message}`, "error");
   }
 }
 
@@ -984,23 +1049,24 @@ async function processCmr(file, fileItem) {
     const id = await uploadPDF(file, "/cmr/request");
     pollResult(id, "/cmr/result", (json) => {
       acceptCmr(json);
-      showNotification("✅ CMR распознан");
+      showNotification("✅ CMR распознан", "success");
     }, fileItem);
   } catch (e) {
     updateFileStatus(fileItem, "✕", "error");
-    showNotification(`❌ CMR: ${e.message}`);
+    showNotification(`❌ CMR: ${e.message}`, "error");
   }
 }
 
 // ===========================
-// 9) DEMO: кнопка “Загрузить демонстрационные документы”
+// 9) DEMO
 // ===========================
 async function startDemoLoading() {
-const btn = document.getElementById("start-demo-button");
-  if (btn) btn.remove();
+  const startBtn = document.getElementById("start-demo-button");
+  if (startBtn) startBtn.remove();
+
   refreshDashboardUI();
+
   try {
-    // добавим “виртуальные файлы” в список
     const demoPL = addFileToList({ name: "ДЕМО Упаковочный лист", size: 1 * 1024 * 1024 });
     const demoINV = addFileToList({ name: "ДЕМО Инвойс", size: 1 * 1024 * 1024 });
     const demoCMR = addFileToList({ name: "ДЕМО CMR", size: 1 * 1024 * 1024 });
@@ -1015,54 +1081,40 @@ const btn = document.getElementById("start-demo-button");
       demoLoadDoc("pl"),
       demoLoadDoc("invoice"),
       demoLoadDoc("cmr"),
-      demoLoadDoc("contract"), // если у тебя demo договора называется contract
+      demoLoadDoc("contract"),
     ]);
 
-    acceptPackingList(pl); updateFileStatus(demoPL, "✓", "success");
-    acceptInvoice(inv);    updateFileStatus(demoINV, "✓", "success");
-    acceptCmr(cmr);        updateFileStatus(demoCMR, "✓", "success");
-    acceptAgreement(agr);  updateFileStatus(demoAGR, "✓", "success");
+    acceptPackingList(pl);
+    updateFileStatus(demoPL, "✓", "success");
+
+    acceptInvoice(inv);
+    updateFileStatus(demoINV, "✓", "success");
+
+    acceptCmr(cmr);
+    updateFileStatus(demoCMR, "✓", "success");
+
+    acceptAgreement(agr);
+    updateFileStatus(demoAGR, "✓", "success");
 
     autofillAll();
     refreshDashboardUI();
-    showNotification("✅ Демо-данные загружены и применены");
-
-    const btn = $("start-demo-button");
-    btn?.remove();
+    showNotification("✅ Демо-данные загружены и применены", "success");
   } catch (e) {
     refreshDashboardUI();
-    showNotification(`❌ DEMO: ${e.message}`);
+    showNotification(`❌ DEMO: ${e.message}`, "error");
   }
 }
-window.startDemoLoading = startDemoLoading; // чтобы onclick="startDemoLoading()" работал
+
+window.startDemoLoading = startDemoLoading;
 
 // ===========================
-// 10) ЕДИНАЯ точка автозаполнения “ВСЕ ПОЛЯ”
+// 10) Autofill helpers
 // ===========================
 function pick(...vals) {
   for (const v of vals) {
     if (!isEmpty(v)) return v;
   }
   return "";
-}
-
-function firstItem(doc) {
-  return (doc && Array.isArray(doc.items) && doc.items.length) ? doc.items[0] : null;
-}
-
-// ===========================
-// Графа 31 (как у ALTA): 1- 2- 2.1- 3-
-// ===========================
-function pickMainItemFromCtx(CTX) {
-  const p = CTX.packingList || {};
-  const i = CTX.invoice || {};
-  const c = CTX.cmr || {};
-
-  const itemP = Array.isArray(p.items) ? p.items[0] : null;
-  const itemI = Array.isArray(i.items) ? i.items[0] : null;
-  const itemC = Array.isArray(c.items) ? c.items[0] : null;
-
-  return itemP || itemI || itemC || null;
 }
 
 function parsePackagesString(s) {
@@ -1086,10 +1138,15 @@ function parsePackagesString(s) {
 
     let hit = null;
     for (const it of map) {
-      if (it.re.test(part)) { hit = it; break; }
+      if (it.re.test(part)) {
+        hit = it;
+        break;
+      }
     }
+
     if (qty && hit) out.push({ qty, code: hit.code });
   }
+
   return out;
 }
 
@@ -1097,9 +1154,9 @@ function sumPackages(list) {
   return list.reduce((acc, x) => acc + (Number(x.qty) || 0), 0);
 }
 
-function getPackagingFromCtx(CTX) {
-  const p = CTX.packingList || {};
-  const c = CTX.cmr || {};
+function getPackagingFromCtx(ctx) {
+  const p = ctx.packingList || {};
+  const c = ctx.cmr || {};
 
   const totalPlaces =
     p.cargo_summary?.total_packages ??
@@ -1122,21 +1179,28 @@ function getPackagingFromCtx(CTX) {
   return { totalPlaces, kind, marks };
 }
 
-function buildGraph31Text(CTX) {
-  const a = CTX.agreement || {};
-  const i = CTX.invoice || {};
-  const c = CTX.cmr || {};
-  const item = pickMainItemFromCtx(CTX);
+function pickMainItemFromCtx(ctx) {
+  const p = ctx.packingList || {};
+  const i = ctx.invoice || {};
+  const c = ctx.cmr || {};
 
-  // 1- описание товара
+  const itemP = Array.isArray(p.items) ? p.items[0] : null;
+  const itemI = Array.isArray(i.items) ? i.items[0] : null;
+  const itemC = Array.isArray(c.items) ? c.items[0] : null;
+
+  return itemP || itemI || itemC || null;
+}
+
+function buildGraph31Text(ctx) {
+  const a = ctx.agreement || {};
+  const i = ctx.invoice || {};
+  const c = ctx.cmr || {};
+  const item = pickMainItemFromCtx(ctx);
+
   const desc = (item?.description || item?.name || "").trim();
   const brand = (item?.brand || item?.trademark || "").trim();
   const model = (item?.model || item?.part_number || item?.article || "").trim();
-
-  const manufacturer =
-    (item?.manufacturer || i.seller?.name || a.seller?.name || "").trim();
-
-  // ✅ subject из agreement.json
+  const manufacturer = (item?.manufacturer || i.seller?.name || a.seller?.name || "").trim();
   const subject = (a.subject || "").trim();
 
   const line1Parts = [
@@ -1149,11 +1213,10 @@ function buildGraph31Text(CTX) {
 
   const line1 = line1Parts.length ? `1- ${line1Parts.join("; ")}` : "";
 
-  // 2- грузовые места / упаковка
-  const { totalPlaces, kind, marks } = getPackagingFromCtx(CTX);
+  const { totalPlaces, kind, marks } = getPackagingFromCtx(ctx);
   const parsed = parsePackagesString(kind);
   const placesFromParsed = parsed.length ? sumPackages(parsed) : null;
-  const places = (totalPlaces != null) ? totalPlaces : placesFromParsed;
+  const places = totalPlaces != null ? totalPlaces : placesFromParsed;
 
   const packCodes = parsed.length
     ? parsed.map(x => `${x.code}-${x.qty}`).join(", ")
@@ -1163,10 +1226,8 @@ function buildGraph31Text(CTX) {
     ? `2- ${[places != null ? String(places) : "", packCodes].filter(Boolean).join(", ")}`
     : "";
 
-  // 2.1- маркировка
   const line21 = marks ? `2.1- Маркировка: ${marks}` : "";
 
-  // 3- транспорт
   const veh = c.transport || c.vehicle || {};
   const tractor = (veh.tractor_plate || veh.truck || c.truck || "").trim();
   const trailer = (veh.trailer_plate || veh.trailer || c.trailer || "").trim();
@@ -1176,167 +1237,71 @@ function buildGraph31Text(CTX) {
   return [line1, line2, line21, line3].filter(Boolean).join("\n");
 }
 
-function fillGraph31FromCtx(CTX, { force = true } = {}) {
-  const text = buildGraph31Text(CTX);
+function fillGraph31FromCtx(ctx, { force = true } = {}) {
+  const text = buildGraph31Text(ctx);
   if (!text) return;
-  // goodsDescription = contenteditable div
   setEditable("goodsDescription", text, { force });
 }
 
+// ===========================
+// 11) Единая точка автозаполнения
+// ===========================
 function autofillAll() {
   const a = CTX.agreement || {};
   const i = CTX.invoice || {};
   const p = CTX.packingList || {};
   const c = CTX.cmr || {};
 
-  // ---------- стороны (2 / 8) ----------
-  // Приоритет по факту отгрузки: PL > CMR > Agreement > Invoice
   const sender = p.shipper || c.consignor || a.seller || i.seller || {};
   const receiver = p.consignee || c.consignee || a.buyer || i.buyer || {};
 
   fillAddressBlock("sender", sender, { force: true });
   fillAddressBlock("receiver", receiver, { force: true });
 
-  // ---------- 54 договор ----------
   const contractNumber = pick(a.contract_number, i.contract_reference?.number);
   const contractDate = pick(a.contract_date, i.contract_reference?.date);
   if (contractNumber) {
-    setField("clientContract", contractDate ? `${contractNumber} от ${contractDate}` : contractNumber, { force: true });
-  }
+  setField(
+    "clientContract",
+    contractDate ? `${contractNumber} от ${contractDate}` : contractNumber,
+    { force: true }
+  );
+}
 
-  // ---------- 22 валюта и сумма ----------
   const curCode = pick(i.currency?.code, a.currency?.code, i.currency, a.currency);
   const totalAmount = (i.total_amount != null) ? i.total_amount : a.total_amount;
+
   if (curCode || totalAmount != null) {
     setField("currencyTotal", `${norm(curCode)} ${norm(totalAmount)}`.trim(), { force: true });
   }
 
-  // ---------- 12 общая таможенная ----------
-  if (totalAmount != null) setField("totalCustomsValue", String(totalAmount), { force: true });
+  if (totalAmount != null) {
+    setField("totalCustomsValue", String(totalAmount), { force: true });
+  }
 
-  // ---------- 13 Incoterms ----------
   const inc = i.incoterms || a.incoterms;
   if (inc) {
     const incStr =
-      (typeof inc === "string")
+      typeof inc === "string"
         ? inc
         : [inc.rule, inc.place].filter(Boolean).join(" ") + (inc.version ? `, ${inc.version}` : "");
     if (norm(incStr)) setField("field13", incStr, { force: true });
   }
 
-  // ---------- 48 условия платежа ----------
   setField("paymentDeferral", pick(i.payment_terms, a.payment_terms), { force: true });
 
-  // ---------- товары (центральный блок) ----------
   const itemP = firstItem(p);
   const itemI = firstItem(i);
-  const itemC = firstItem(c);
 
-  // 31 описание (contenteditable!)
   fillGraph31FromCtx(CTX, { force: true });
 
-  // 32 товар № — если 1 позиция, ставим 1
-  function parsePackagesString(s) {
-  const raw = (s || "").toLowerCase();
-  if (!raw) return [];
+  setField("productNumber", "1", { force: false });
 
-  const map = [
-    { re: /(carton|cartons|короб|коробк)/, code: "CT", label: "короб" },
-    { re: /(pallet|pallets|поддон|паллет)/, code: "PX", label: "поддон" },
-    { re: /(box|boxes|ящик|ящики)/, code: "BX", label: "ящик" },
-    { re: /(bag|bags|мешок|мешки)/, code: "BG", label: "мешок" },
-    { re: /(case|cases)/, code: "CS", label: "ящик/кейс" },
-  ];
-
-  // режем по запятым: "10 cartons, 2 pallets"
-  const parts = raw.split(/[,;]/).map(x => x.trim()).filter(Boolean);
-  const out = [];
-
-  for (const p of parts) {
-    const mQty = p.match(/\b(\d+)\b/);
-    const qty = mQty ? parseInt(mQty[1], 10) : null;
-
-    let hit = null;
-    for (const it of map) {
-      if (it.re.test(p)) { hit = it; break; }
-    }
-
-    if (qty && hit) out.push({ qty, code: hit.code, label: hit.label });
-  }
-
-  return out;
-}
-
-function sumPackages(list) {
-  return list.reduce((acc, x) => acc + (Number(x.qty) || 0), 0);
-}
-
-// из разных возможных мест берем инфу по упаковке
-function getPackagingFromCtx(CTX) {
-  const p = CTX.packingList || {};
-  const c = CTX.cmr || {};
-
-  // 1) число мест
-  const totalPlaces =
-    p.cargo_summary?.total_packages ??
-    p.packages_summary?.number_of_packages ??
-    p.packages?.total_packages ??
-    c.packages_summary?.number_of_packages ??
-    null;
-
-  // 2) строка с типами упаковки
-  const kind =
-    p.cargo_summary?.kind_of_packages ??
-    p.packages_summary?.kind_of_packages ??
-    p.packages?.package_type ??
-    "";
-
-  // 3) маркировка/номера мест
-  const marks =
-    p.packages?.marks_and_numbers ??
-    p.packages_summary?.marks_and_numbers ??
-    "";
-
-  return { totalPlaces, kind, marks };
-}
-
-function pickMainItemFromCtx(CTX) {
-  const p = CTX.packingList || {};
-  const i = CTX.invoice || {};
-  const c = CTX.cmr || {};
-
-  const itemP = Array.isArray(p.items) ? p.items[0] : null;
-  const itemI = Array.isArray(i.items) ? i.items[0] : null;
-  const itemC = Array.isArray(c.items) ? c.items[0] : null;
-
-  return itemP || itemI || itemC || null;
-}
-
-// Вызов заполнения графы 31
-function fillGraph31FromCtx(CTX, { force = true } = {}) {
-  const text = buildGraph31Text(CTX);
-  if (!text) return;
-
-  // goodsDescription — это contenteditable div, поэтому используем setEditable
-  // (если у тебя нет setEditable — добавь или замени на el.textContent = text)
-  if (typeof setEditable === "function") {
-    setEditable("goodsDescription", text, { force });
-  } else {
-    const el = document.getElementById("goodsDescription");
-    if (!el) return;
-    if (!force && (el.textContent || "").trim()) return;
-    el.textContent = text;
-  }
-}
-  // 33 ТН ВЭД / HS
   const hs = pick(itemP?.hs_code, itemI?.hs_code, itemP?.tnved, itemI?.tnved);
-  if (hs) setField("tnVedCode", hs, { force: false }); // не перетираем вручную выбранный код
+  if (hs) setField("tnVedCode", hs, { force: false });
 
-  // 34 страна происхождения
   const originCountry = pick(itemP?.origin_country, itemI?.origin_country, a.origin_and_manufacturer, sender.country);
-  // a.origin_and_manufacturer может быть строкой — если так, не пихаем “Германия. Производитель...”
   if (originCountry) {
-    // если это длинная строка — пробуем вытащить страну из нее
     let oc = originCountry;
     if (oc.length > 30) {
       const m = oc.match(/(Германия|Россия|Китай|Польша|Беларусь|Germany|Russia|China|Poland|Belarus)/i);
@@ -1345,24 +1310,19 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
     setField("originCountry", oc, { force: true });
   }
 
-  // количество + uom (41/кол-во)
   const qty = (itemP?.quantity != null) ? itemP.quantity : itemI?.quantity;
   if (qty != null) setField("quantity", String(qty), { force: true });
 
   const uom = pick(itemP?.unit, itemP?.uom, itemI?.uom);
   if (uom) setField("uom", uom, { force: true });
 
-  // 42 цена товара
   if (itemI?.unit_price != null) setField("productPrice", String(itemI.unit_price), { force: true });
 
-  // 35 брутто
   if (c.gross_weight_total_kg != null) setField("grossWeight", String(c.gross_weight_total_kg), { force: true });
   else if (itemP?.gross_weight_kg != null) setField("grossWeight", String(itemP.gross_weight_kg), { force: true });
 
-  // 38 нетто по позиции
   if (itemP?.net_weight_kg != null) setField("netWeightProduct", String(itemP.net_weight_kg), { force: true });
 
-  // ---------- 5 всего товаров/мест ----------
   const totalGoods =
     (p.cargo_summary?.total_packages != null) ? p.cargo_summary.total_packages :
     (c.packages_summary?.number_of_packages != null) ? c.packages_summary.number_of_packages :
@@ -1370,7 +1330,6 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
 
   if (totalGoods != null) setField("totalGoods", String(totalGoods), { force: true });
 
-  // ---------- 6 вес нетто общий ----------
   const netTotal =
     (p.cargo_summary?.total_net_weight_kg != null) ? p.cargo_summary.total_net_weight_kg :
     (c.net_weight_total_kg != null) ? c.net_weight_total_kg :
@@ -1378,7 +1337,6 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
 
   if (netTotal != null) setField("netWeight", String(netTotal), { force: true });
 
-  // ---------- 11 / 15-16-17 страны ----------
   const exportISO =
     (Array.isArray(c.route_countries) && c.route_countries[0]) ? c.route_countries[0] :
     countryToISO2(sender.country);
@@ -1394,12 +1352,10 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
     setField("countries", `${exportISO || "?"} / ${originISO || "?"} / ${destISO || "?"}`, { force: true });
   }
 
-  // ---------- 18 / 21 транспорт ----------
   if (CTX.cmr) {
     setField("transportDeparture", "Автомобильный", { force: true });
   }
 
-  // В 21 — либо “Автомобильный”, либо номера ТС если есть
   const veh = c.vehicle || c.transport || {};
   const truck = pick(veh.truck, c.truck);
   const trailer = pick(veh.trailer, c.trailer);
@@ -1408,8 +1364,6 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
   if (vehStr) setField("transportBorder", vehStr, { force: true });
   else if (CTX.cmr) setField("transportBorder", "Автомобильный", { force: true });
 
-  // ---------- 44 документы (contenteditable) ----------
-  // наполняем docs44 из accept* + гарантируем ключевые строки
   if (i.invoice_number) addDoc44(`Инвойс ${i.invoice_number}${i.invoice_date ? ` от ${i.invoice_date}` : ""}`);
   if (p.packing_list_number) addDoc44(`Упаковочный лист ${p.packing_list_number}${p.packing_list_date ? ` от ${p.packing_list_date}` : ""}`);
   if (a.contract_number) addDoc44(`Договор ${a.contract_number}${a.contract_date ? ` от ${a.contract_date}` : ""}`);
@@ -1417,7 +1371,6 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
 
   flushDoc44();
 
-  // ---------- 45 / 46 (MVP: если нет, продублируем total) ----------
   if (totalAmount != null) {
     setField("customsValue", String(totalAmount), { force: false });
     setField("statisticalValue", String(totalAmount), { force: false });
@@ -1425,35 +1378,46 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
 
   refreshUnfilledHighlights();
   refreshDashboardUI();
-  showNotification("✅ Поля формы обновлены по распознанным документам");
+  showNotification("✅ Поля формы обновлены по распознанным документам", "success");
 }
 
 // ===========================
-// 11) Кнопки формы
+// 12) Кнопки формы
 // ===========================
 $("clearForm")?.addEventListener("click", () => {
   if (!confirm("Очистить все поля формы?")) return;
 
-  document.querySelectorAll(".field-input").forEach(input => {
+  document.querySelectorAll(".field-input").forEach((input) => {
     if (isInputEl(input)) input.value = "";
   });
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.textContent = "");
+
+  document.querySelectorAll('[contenteditable="true"]').forEach((el) => {
+    el.textContent = "";
+  });
 
   CTX.agreement = null;
   CTX.invoice = null;
   CTX.packingList = null;
   CTX.cmr = null;
   CTX.docs44 = new Set();
-  if (fileList) fileList.innerHTML = "";
+
+  if (DOM.fileList) DOM.fileList.innerHTML = "";
+
   clearUnfilledHighlights();
   refreshDashboardUI();
-
-  showNotification("Форма очищена");
+  showNotification("Форма очищена", "info");
 });
 
-$("saveDraft")?.addEventListener("click", () => showNotification("ℹ️ Черновик: пока не реализовано"));
-$("submitDeclaration")?.addEventListener("click", () => showNotification("ℹ️ Отправка: пока не реализовано"));
-$("exportPDF")?.addEventListener("click", () => showNotification("ℹ️ Экспорт PDF: пока не реализовано"));
+$("saveDraft")?.addEventListener("click", () => showNotification("ℹ️ Черновик: пока не реализовано", "info"));
+$("submitDeclaration")?.addEventListener("click", () => showNotification("ℹ️ Отправка: пока не реализовано", "info"));
+$("exportPDF")?.addEventListener("click", () => showNotification("ℹ️ Экспорт PDF: пока не реализовано", "info"));
 
-initUnfilledTracking();
-refreshDashboardUI();
+// ===========================
+// 13) Init
+// ===========================
+document.addEventListener("DOMContentLoaded", () => {
+  bindUploadUi();
+  initUnfilledTracking();
+  refreshUnfilledHighlights();
+  refreshDashboardUI();
+});
