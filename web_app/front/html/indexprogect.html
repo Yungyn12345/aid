@@ -31,9 +31,14 @@
             </p>
         </div>
         <div class="page-hero__steps">
-            <span class="hero-step hero-step--active">1. Загрузка документов</span>
-            <span class="hero-step">2. Сверка данных</span>
-            <span class="hero-step">3. Декларация</span>
+            <div class="hero-highlight">
+                <span class="hero-highlight__label">Новый сценарий</span>
+                <strong class="hero-highlight__value">3 независимых рабочих блока</strong>
+            </div>
+            <div class="hero-highlight">
+                <span class="hero-highlight__label">Результат</span>
+                <strong class="hero-highlight__value">Кросс-проверка + заполненная ДТ</strong>
+            </div>
         </div>
     </header>
 
@@ -48,6 +53,21 @@
                 Добавьте PDF договоров, инвойсов, упаковочных листов и CMR. После загрузки сервис
                 автоматически распознает документы и заполнит форму декларации.
             </p>
+            <aside class="step-indicator" aria-label="Шаги сервиса">
+                <div class="step-indicator__line"></div>
+                <div class="step-indicator__item step-indicator__item--active">
+                    <span class="step-indicator__index">1</span>
+                    <span class="step-indicator__text">Загрузка</span>
+                </div>
+                <div class="step-indicator__item">
+                    <span class="step-indicator__index">2</span>
+                    <span class="step-indicator__text">Сверка</span>
+                </div>
+                <div class="step-indicator__item">
+                    <span class="step-indicator__index">3</span>
+                    <span class="step-indicator__text">Декларация</span>
+                </div>
+            </aside>
 
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">
@@ -122,11 +142,28 @@
                                 подсвечена и останется видимой до финальной проверки.
                             </p>
                         </div>
-                        <div class="comparison-legend">
-                            <span class="legend-chip legend-chip--match">Совпадает</span>
-                            <span class="legend-chip legend-chip--partial">Частично</span>
-                            <span class="legend-chip legend-chip--mismatch">Расхождение</span>
-                            <span class="legend-chip legend-chip--pending">Нет данных</span>
+                        <div class="section-head__side">
+                            <div class="comparison-legend">
+                                <span class="legend-chip legend-chip--match">Совпадает</span>
+                                <span class="legend-chip legend-chip--partial">Частично</span>
+                                <span class="legend-chip legend-chip--mismatch">Расхождение</span>
+                                <span class="legend-chip legend-chip--pending">Нет данных</span>
+                            </div>
+                            <aside class="step-indicator step-indicator--section" aria-label="Шаги сервиса">
+                                <div class="step-indicator__line"></div>
+                                <div class="step-indicator__item">
+                                    <span class="step-indicator__index">1</span>
+                                    <span class="step-indicator__text">Загрузка</span>
+                                </div>
+                                <div class="step-indicator__item step-indicator__item--active">
+                                    <span class="step-indicator__index">2</span>
+                                    <span class="step-indicator__text">Сверка</span>
+                                </div>
+                                <div class="step-indicator__item">
+                                    <span class="step-indicator__index">3</span>
+                                    <span class="step-indicator__text">Декларация</span>
+                                </div>
+                            </aside>
                         </div>
                     </div>
                     <div class="comparison-state" id="comparisonState"></div>
@@ -157,6 +194,21 @@
                                 остаются доступны для ручного редактирования и финальной проверки.
                             </p>
                         </div>
+                        <aside class="step-indicator step-indicator--section" aria-label="Шаги сервиса">
+                            <div class="step-indicator__line"></div>
+                            <div class="step-indicator__item">
+                                <span class="step-indicator__index">1</span>
+                                <span class="step-indicator__text">Загрузка</span>
+                            </div>
+                            <div class="step-indicator__item">
+                                <span class="step-indicator__index">2</span>
+                                <span class="step-indicator__text">Сверка</span>
+                            </div>
+                            <div class="step-indicator__item step-indicator__item--active">
+                                <span class="step-indicator__index">3</span>
+                                <span class="step-indicator__text">Декларация</span>
+                            </div>
+                        </aside>
                     </div>
 
                 <div class="layout">
