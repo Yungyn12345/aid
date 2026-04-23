@@ -20,10 +20,12 @@ const LOAD = {
 
 function beginBatch() {
   LOAD.pending++;
+  refreshDashboardUI();
 }
 
 function endBatch() {
   LOAD.pending = Math.max(0, LOAD.pending - 1);
+  refreshDashboardUI();
 
   // когда всё закончится — один раз применим autofillAll
   if (LOAD.pending === 0 && !LOAD.scheduled) {
@@ -31,6 +33,7 @@ function endBatch() {
     setTimeout(() => {
       LOAD.scheduled = false;
       autofillAll();
+      refreshDashboardUI();
       showNotification("✅ Все документы обработаны — поля заполнены");
     }, 0);
   }
@@ -171,6 +174,315 @@ function flushDoc44() {
   const lines = Array.from(CTX.docs44);
   if (!lines.length) return;
   setEditable("additionalInfo", lines.join("\n"), { force: true });
+}
+
+// ===========================
+// 2a) Derived UI: upload dashboard + comparison table
+// ===========================
+const DOC_CONFIG = [
+  { key: "agreement", label: "Договор" },
+  { key: "invoice", label: "Инвойс" },
+  { key: "packingList", label: "Packing List" },
+  { key: "cmr", label: "CMR" },
+];
+
+function getDocStatus(key) {
+  if (CTX[key]) return "ready";
+  if (LOAD.pending > 0) return "processing";
+  return "pending";
+}
+
+function getUploadMetrics() {
+  const items = Array.from(document.querySelectorAll("#fileList .file-item"));
+  return items.reduce((acc, item) => {
+    acc.total++;
+    const status = item.dataset.status || "processing";
+    if (status === "success") acc.success++;
+    else if (status === "error") acc.error++;
+    else acc.processing++;
+    return acc;
+  }, { total: 0, success: 0, error: 0, processing: 0 });
+}
+
+function formatComparisonValue(value) {
+  if (value === undefined || value === null) return "";
+  if (Array.isArray(value)) return value.map(formatComparisonValue).filter(Boolean).join(", ");
+  if (typeof value === "object") {
+    return [
+      value.name,
+      value.address,
+      value.number,
+      value.date,
+      value.code,
+      value.place,
+    ].map(norm).filter(Boolean).join(" / ");
+  }
+  return norm(value);
+}
+
+function normalizeComparisonValue(value) {
+  return formatComparisonValue(value).toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function resolveComparisonStatus(values) {
+  const populated = values.filter((entry) => entry.normalized);
+  if (!populated.length) return "pending";
+
+  const unique = new Set(populated.map((entry) => entry.normalized));
+  if (unique.size === 1 && populated.length === values.length) return "match";
+  if (unique.size === 1) return "partial";
+  return "mismatch";
+}
+
+function comparisonLabel(status) {
+  if (status === "match") return "Совпадает";
+  if (status === "partial") return "Частично";
+  if (status === "mismatch") return "Расхождение";
+  return LOAD.pending > 0 ? "Обработка" : "Нет данных";
+}
+
+function buildComparisonRows() {
+  const a = CTX.agreement || {};
+  const i = CTX.invoice || {};
+  const p = CTX.packingList || {};
+  const c = CTX.cmr || {};
+  const itemI = firstItem(i) || {};
+  const itemP = firstItem(p) || {};
+  const itemC = firstItem(c) || {};
+
+  return [
+    {
+      label: "Продавец / отправитель",
+      values: {
+        agreement: a.seller?.name,
+        invoice: i.seller?.name,
+        packingList: p.shipper?.name,
+        cmr: c.consignor?.name,
+      },
+    },
+    {
+      label: "Покупатель / получатель",
+      values: {
+        agreement: a.buyer?.name,
+        invoice: i.buyer?.name,
+        packingList: p.consignee?.name,
+        cmr: c.consignee?.name,
+      },
+    },
+    {
+      label: "Номер договора / ссылки",
+      values: {
+        agreement: a.contract_number,
+        invoice: i.contract_reference?.number,
+        packingList: p.invoice_ref,
+        cmr: c.related_documents?.invoice_number || c.related_documents?.contract_number,
+      },
+    },
+    {
+      label: "Номер документа",
+      values: {
+        agreement: a.contract_number,
+        invoice: i.invoice_number,
+        packingList: p.packing_list_number || p.pl_number,
+        cmr: c.cmr_number,
+      },
+    },
+    {
+      label: "Incoterms",
+      values: {
+        agreement: formatComparisonValue(a.incoterms),
+        invoice: formatComparisonValue(i.incoterms),
+        packingList: p.incoterms,
+        cmr: c.incoterms,
+      },
+    },
+    {
+      label: "Валюта",
+      values: {
+        agreement: a.currency?.code || a.currency,
+        invoice: i.currency?.code || i.currency,
+        packingList: p.currency?.code || p.currency,
+        cmr: c.currency?.code || c.currency,
+      },
+    },
+    {
+      label: "Сумма / стоимость",
+      values: {
+        agreement: a.total_amount,
+        invoice: i.total_amount,
+        packingList: p.total_amount,
+        cmr: c.total_amount,
+      },
+    },
+    {
+      label: "Количество мест",
+      values: {
+        agreement: a.total_packages,
+        invoice: i.total_packages,
+        packingList: p.packages?.total_packages || p.packages_summary?.number_of_packages,
+        cmr: c.packages_summary?.number_of_packages,
+      },
+    },
+    {
+      label: "Вес брутто",
+      values: {
+        agreement: a.gross_weight_total_kg,
+        invoice: i.gross_weight_total_kg,
+        packingList: p.gross_weight_total || p.cargo_summary?.total_gross_weight_kg,
+        cmr: c.gross_weight_total_kg,
+      },
+    },
+    {
+      label: "Вес нетто",
+      values: {
+        agreement: a.net_weight_total_kg,
+        invoice: i.net_weight_total_kg,
+        packingList: p.net_weight_total || p.cargo_summary?.total_net_weight_kg,
+        cmr: c.net_weight_total_kg,
+      },
+    },
+    {
+      label: "Страна происхождения",
+      values: {
+        agreement: a.origin_and_manufacturer,
+        invoice: itemI.origin_country,
+        packingList: itemP.origin_country,
+        cmr: itemC.origin_country,
+      },
+    },
+    {
+      label: "Описание товара",
+      values: {
+        agreement: a.subject,
+        invoice: itemI.description,
+        packingList: itemP.description,
+        cmr: itemC.description,
+      },
+    },
+    {
+      label: "Маршрут / место доставки",
+      values: {
+        agreement: a.delivery_terms?.place || a.incoterms?.place,
+        invoice: i.delivery_address || i.incoterms?.place,
+        packingList: p.delivery_place,
+        cmr: c.place_of_delivery,
+      },
+    },
+  ];
+}
+
+function renderUploadSummary() {
+  const summary = $("uploadSummary");
+  const badges = $("documentBadges");
+  if (!summary || !badges) return;
+
+  const metrics = getUploadMetrics();
+
+  summary.innerHTML = `
+    <div class="upload-summary-card">
+      <span class="upload-summary-card__label">Файлов в работе</span>
+      <span class="upload-summary-card__value">${metrics.total}</span>
+    </div>
+    <div class="upload-summary-card">
+      <span class="upload-summary-card__label">Успешно обработано</span>
+      <span class="upload-summary-card__value">${metrics.success}</span>
+    </div>
+  `;
+
+  badges.innerHTML = DOC_CONFIG.map((doc) => {
+    const status = getDocStatus(doc.key);
+    const label = status === "ready" ? "готов" : status === "processing" ? "в обработке" : "нет данных";
+    return `<span class="document-badge document-badge--${status}">${doc.label}: ${label}</span>`;
+  }).join("");
+}
+
+function renderComparisonTable() {
+  const stateNode = $("comparisonState");
+  const tbody = $("comparisonTableBody");
+  if (!stateNode || !tbody) return;
+
+  const docsLoaded = DOC_CONFIG.some((doc) => !!CTX[doc.key]);
+  if (!docsLoaded && LOAD.pending === 0) {
+    stateNode.innerHTML = `
+      <div class="comparison-state-card">
+        <div>
+          <div class="comparison-state-card__title">Нет данных для сверки</div>
+          <div class="comparison-state-card__text">
+            Загрузите хотя бы один документ, чтобы таблица показала извлечённые реквизиты и отметила совпадения.
+          </div>
+        </div>
+        <span class="comparison-badge comparison-badge--pending">Ожидание</span>
+      </div>
+    `;
+    tbody.innerHTML = "";
+    return;
+  }
+
+  if (LOAD.pending > 0) {
+    stateNode.innerHTML = `
+      <div class="comparison-state-card">
+        <div>
+          <div class="comparison-state-card__title">Документы обрабатываются</div>
+          <div class="comparison-state-card__text">
+            Как только ответы от сервиса будут получены, строки сверки обновятся автоматически.
+          </div>
+        </div>
+        <span class="comparison-badge comparison-badge--partial">В обработке</span>
+      </div>
+    `;
+  } else {
+    const rows = buildComparisonRows();
+    const mismatches = rows.filter((row) => {
+      const values = DOC_CONFIG.map((doc) => ({
+        normalized: normalizeComparisonValue(row.values[doc.key]),
+      }));
+      return resolveComparisonStatus(values) === "mismatch";
+    }).length;
+
+    stateNode.innerHTML = `
+      <div class="comparison-state-card">
+        <div>
+          <div class="comparison-state-card__title">Сверка обновлена</div>
+          <div class="comparison-state-card__text">
+            ${mismatches > 0
+              ? `Найдено ${mismatches} строк(и) с расхождениями. Проверьте их перед отправкой декларации.`
+              : "Ключевые реквизиты между доступными документами заполнены без явных конфликтов."}
+          </div>
+        </div>
+        <span class="comparison-badge comparison-badge--${mismatches > 0 ? "mismatch" : "match"}">${mismatches > 0 ? "Есть расхождения" : "Все стабильно"}</span>
+      </div>
+    `;
+  }
+
+  const rows = buildComparisonRows();
+  tbody.innerHTML = rows.map((row) => {
+    const values = DOC_CONFIG.map((doc) => {
+      const raw = row.values[doc.key];
+      return {
+        key: doc.key,
+        formatted: formatComparisonValue(raw),
+        normalized: normalizeComparisonValue(raw),
+      };
+    });
+    const status = resolveComparisonStatus(values);
+    const cells = values.map((value) => {
+      const emptyClass = value.formatted ? "" : " comparison-value--empty";
+      return `<td class="comparison-value${emptyClass}">${value.formatted || "—"}</td>`;
+    }).join("");
+
+    return `
+      <tr class="comparison-row comparison-row--${status}">
+        <td class="comparison-field">${row.label}</td>
+        ${cells}
+        <td><span class="comparison-badge comparison-badge--${status}">${comparisonLabel(status)}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function refreshDashboardUI() {
+  renderUploadSummary();
+  renderComparisonTable();
 }
 
 // ===========================
@@ -349,6 +661,7 @@ function getFileIcon(filename) {
 function addFileToList(file) {
   const fileItem = document.createElement("div");
   fileItem.className = "file-item";
+  fileItem.dataset.status = "processing";
 
   const fileSize = file.size ? (file.size / 1024 / 1024).toFixed(2) : "—";
   fileItem.innerHTML = `
@@ -357,6 +670,7 @@ function addFileToList(file) {
     <div class="file-status processing">Ожидание...</div>
   `;
   fileList?.appendChild(fileItem);
+  refreshDashboardUI();
   return fileItem;
 }
 
@@ -365,6 +679,8 @@ function updateFileStatus(fileItem, text, statusClass) {
   if (!el) return;
   el.textContent = text;
   el.className = `file-status ${statusClass}`;
+  if (fileItem) fileItem.dataset.status = statusClass;
+  refreshDashboardUI();
 }
 
 function detectDocType(filename) {
@@ -579,6 +895,7 @@ function acceptAgreement(json) {
 
   const a = CTX.agreement;
   if (a.contract_number) addDoc44(`Договор ${a.contract_number}${a.contract_date ? ` от ${a.contract_date}` : ""}`);
+  refreshDashboardUI();
 }
 
 function acceptInvoice(json) {
@@ -590,6 +907,7 @@ function acceptInvoice(json) {
   if (i.contract_reference?.number) {
     addDoc44(`Договор ${i.contract_reference.number}${i.contract_reference.date ? ` от ${i.contract_reference.date}` : ""}`);
   }
+  refreshDashboardUI();
 }
 
 function acceptPackingList(json) {
@@ -598,6 +916,7 @@ function acceptPackingList(json) {
 
   const p = CTX.packingList;
   if (p.packing_list_number) addDoc44(`Упаковочный лист ${p.packing_list_number}${p.packing_list_date ? ` от ${p.packing_list_date}` : ""}`);
+  refreshDashboardUI();
 }
 
 function acceptCmr(json) {
@@ -616,6 +935,7 @@ function acceptCmr(json) {
       if (s) addDoc44(s);
     });
   }
+  refreshDashboardUI();
 }
 
 // ===========================
@@ -683,6 +1003,7 @@ async function processCmr(file, fileItem) {
 async function startDemoLoading() {
 const btn = document.getElementById("start-demo-button");
   if (btn) btn.remove();
+  refreshDashboardUI();
   try {
     // добавим “виртуальные файлы” в список
     const demoPL = addFileToList({ name: "ДЕМО Упаковочный лист", size: 1 * 1024 * 1024 });
@@ -708,11 +1029,13 @@ const btn = document.getElementById("start-demo-button");
     acceptAgreement(agr);  updateFileStatus(demoAGR, "✓", "success");
 
     autofillAll();
+    refreshDashboardUI();
     showNotification("✅ Демо-данные загружены и применены");
 
     const btn = $("start-demo-button");
     btn?.remove();
   } catch (e) {
+    refreshDashboardUI();
     showNotification(`❌ DEMO: ${e.message}`);
   }
 }
@@ -1106,6 +1429,7 @@ function fillGraph31FromCtx(CTX, { force = true } = {}) {
   }
 
   refreshUnfilledHighlights();
+  refreshDashboardUI();
   showNotification("✅ Поля формы обновлены по распознанным документам");
 }
 
@@ -1125,7 +1449,9 @@ $("clearForm")?.addEventListener("click", () => {
   CTX.packingList = null;
   CTX.cmr = null;
   CTX.docs44 = new Set();
+  if (fileList) fileList.innerHTML = "";
   clearUnfilledHighlights();
+  refreshDashboardUI();
 
   showNotification("Форма очищена");
 });
@@ -1135,3 +1461,4 @@ $("submitDeclaration")?.addEventListener("click", () => showNotification("ℹ️
 $("exportPDF")?.addEventListener("click", () => showNotification("ℹ️ Экспорт PDF: пока не реализовано"));
 
 initUnfilledTracking();
+refreshDashboardUI();

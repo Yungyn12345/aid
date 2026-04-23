@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Декларация на товары (ДТ) - Онлайн</title>
+    <title>Декларация на товары (ДТ) - AI Declarant</title>
     <link rel="stylesheet" href="{{ static_prefix }}/styles.css">
     <script>
         window.APP_BASE_PATH = "{{ app_root }}";
@@ -21,41 +21,73 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <header class="page-hero">
+        <div class="page-hero__content">
+            <div class="page-hero__eyebrow">AI DECLARANT</div>
+            <h1 class="page-hero__title">Заполнение декларации по комплекту документов</h1>
+            <p class="page-hero__subtitle">
+                Загрузите комплект PDF, проверьте сверку реквизитов между документами и получите
+                уже заполненную декларацию в одном интерфейсе.
+            </p>
+        </div>
+        <div class="page-hero__steps">
+            <span class="hero-step hero-step--active">1. Загрузка документов</span>
+            <span class="hero-step">2. Сверка данных</span>
+            <span class="hero-step">3. Декларация</span>
+        </div>
+    </header>
+
     <div class="app-container">
         <!-- Боковая панель для загрузки документов -->
         <aside class="sidebar" id="sidebar">
             <div class="mobile-padding-item"></div>
             <button class="close-sidebar" id="closeSidebar">×</button>
-            <div class="sidebar-title">📁 Загрузка документов</div>
+            <div class="panel-kicker">Блок 1</div>
+            <div class="sidebar-title">Загрузка документов</div>
+            <p class="sidebar-description">
+                Добавьте PDF договоров, инвойсов, упаковочных листов и CMR. После загрузки сервис
+                автоматически распознает документы и заполнит форму декларации.
+            </p>
 
             <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📤</div>
+                <div class="upload-icon">
+                    <img src="{{ static_prefix }}/icon-download.svg" alt="Загрузка файлов">
+                </div>
                 <div class="upload-text">Перетащите файлы сюда или</div>
-                <div class="upload-text" style="color: #0056b3; font-weight: bold;">нажмите для выбора</div>
-                <div class="upload-hint">Поддерживаемые форматы: только PDF (поддержка других форматов будет добавлена в следующих версиях)</div>
-                <input type="file" id="fileInput" multiple style="display: none;"
-                    accept=".pdf">
+                <div class="upload-text upload-text--accent">нажмите для выбора</div>
+                <div class="upload-hint">
+                    Поддерживаются PDF. Для полной сверки лучше загрузить весь комплект:
+                    agreement, invoice, packing list и CMR.
+                </div>
+                <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf">
+            </div>
+
+            <div class="upload-summary" id="uploadSummary"></div>
+            <div class="document-badges" id="documentBadges"></div>
+
+            <div class="upload-tips">
+                <div class="upload-tip">
+                    <span class="upload-tip__label">Ожидаемые документы</span>
+                    <span class="upload-tip__value">Agreement, Invoice, Packing List, CMR</span>
+                </div>
+                <div class="upload-tip">
+                    <span class="upload-tip__label">Режим обработки</span>
+                    <span class="upload-tip__value">AI parsing + автозаполнение</span>
+                </div>
             </div>
 
             <div class="uploaded-files">
-                <div class="sidebar-title" style="font-size: 13px;">📋 Загруженные документы</div>
-                <div id="fileList">
-                    <!-- Файлы будут добавляться здесь динамически -->
-                    <!-- <div class="file-item">
-                        <div class="file-icon">📄</div>
-                        <div class="file-name">Пример_инвойса.pdf</div>
-                        <div class="file-status success">✓</div>
-                    </div> -->
-                </div>
+                <div class="subpanel-title">Загруженные документы</div>
+                <div id="fileList"></div>
             </div>
 
             <div>
                 <button id="start-demo-button" class="btn-pulse" type="button" onclick="startDemoLoading()">Загрузить демонстрационные документы</button>
             </div>
 
-            <div style="margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 3px; font-size: 11px;">
-                <strong>ℹ️ Информация:</strong> Нейросеть автоматически проанализирует загруженные документы и заполнит
-                соответствующие поля формы.
+            <div class="sidebar-note">
+                Нейросеть анализирует документы, формирует сверку между источниками и переносит
+                совпавшие данные в поля декларации.
             </div>
         </aside>
 
@@ -63,7 +95,69 @@
         <main class="main-content">
             <div class="mobile-padding-item"></div>
             <div class="page">
-                <div class="page-title">ДЕКЛАРАЦИЯ НА ТОВАРЫ (ДТ) - Онлайн заполнение</div>
+                <header class="page-head">
+                    <div>
+                        <div class="panel-kicker">Сервис</div>
+                        <div class="page-title">Декларация на товары (ДТ)</div>
+                        <p class="page-description">
+                            Интерфейс разделён на три части: загрузка документов, сверка извлечённых
+                            данных и итоговая декларация для финальной проверки.
+                        </p>
+                    </div>
+                    <div class="page-head__meta">
+                        <span class="meta-pill">PDF workflow</span>
+                        <span class="meta-pill">Cross-check</span>
+                        <span class="meta-pill">Auto-fill</span>
+                    </div>
+                </header>
+
+                <section class="comparison-shell">
+                    <div class="section-head">
+                        <div>
+                            <div class="panel-kicker">Блок 2</div>
+                            <h2 class="block-title">Таблица сверки документов</h2>
+                            <p class="block-description">
+                                Сервис сравнивает ключевые реквизиты между договором, инвойсом,
+                                packing list и CMR. Если данные расходятся, строка будет
+                                подсвечена и останется видимой до финальной проверки.
+                            </p>
+                        </div>
+                        <div class="comparison-legend">
+                            <span class="legend-chip legend-chip--match">Совпадает</span>
+                            <span class="legend-chip legend-chip--partial">Частично</span>
+                            <span class="legend-chip legend-chip--mismatch">Расхождение</span>
+                            <span class="legend-chip legend-chip--pending">Нет данных</span>
+                        </div>
+                    </div>
+                    <div class="comparison-state" id="comparisonState"></div>
+                    <div class="comparison-table-wrap">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Параметр</th>
+                                    <th>Договор</th>
+                                    <th>Инвойс</th>
+                                    <th>Packing List</th>
+                                    <th>CMR</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="declaration-shell">
+                    <div class="section-head section-head--declaration">
+                        <div>
+                            <div class="panel-kicker">Блок 3</div>
+                            <h2 class="block-title">Заполненная декларация</h2>
+                            <p class="block-description">
+                                Данные из документов переносятся в форму автоматически, но все поля
+                                остаются доступны для ручного редактирования и финальной проверки.
+                            </p>
+                        </div>
+                    </div>
 
                 <div class="layout">
 
@@ -786,6 +880,7 @@
                     <button class="btn btn-secondary" id="clearForm">Очистить форму</button>
                     <button class="btn btn-secondary" id="exportPDF">Экспорт в PDF</button>
                 </div>
+                </section>
             </div>
         </main>
     </div>
