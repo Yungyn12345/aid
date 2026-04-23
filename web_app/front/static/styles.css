@@ -188,6 +188,23 @@ textarea {
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.22);
 }
 
+.upload-shell {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(340px, 430px) minmax(280px, 340px) 120px;
+    gap: 22px;
+    align-items: start;
+}
+
+.panel-kicker,
+.sidebar-title,
+.sidebar-description,
+.upload-summary,
+.document-badges,
+.upload-tips,
+.sidebar-note {
+    grid-column: 1;
+}
+
 .sidebar::before,
 .page::before {
     content: "";
@@ -227,16 +244,18 @@ textarea {
 }
 
 .sidebar-description {
-    max-width: 228px;
+    max-width: 250px;
 }
 
 .sidebar > .step-indicator {
-    position: absolute;
-    top: 34px;
-    right: 24px;
+    position: static;
+    grid-column: 4;
+    grid-row: 1 / span 5;
 }
 
 .upload-area {
+    grid-column: 2;
+    grid-row: 1 / span 3;
     margin-top: 26px;
     border: 2px dashed #c8d3e6;
     border-radius: 24px;
@@ -411,6 +430,8 @@ textarea {
 }
 
 .uploaded-files {
+    grid-column: 3;
+    grid-row: 1 / span 4;
     margin-top: 18px;
     padding: 18px;
     border-radius: 22px;
@@ -500,13 +521,17 @@ textarea {
 }
 
 .sidebar-note {
-    margin-top: 18px;
+    margin-top: 6px;
     padding: 16px 18px;
     border-radius: 20px;
     background: linear-gradient(135deg, rgba(243, 189, 69, 0.14), rgba(243, 189, 69, 0.04));
     border: 1px solid rgba(243, 189, 69, 0.22);
     color: var(--text-soft);
     line-height: 1.6;
+}
+
+.upload-actions {
+    grid-column: 2;
 }
 
 .main-content {
@@ -1196,6 +1221,15 @@ textarea {
     .page-head__meta {
         justify-content: flex-start;
     }
+
+    .upload-shell {
+        grid-template-columns: minmax(220px, 1fr) minmax(320px, 1fr) 110px;
+    }
+
+    .uploaded-files {
+        grid-column: 1 / span 2;
+        grid-row: auto;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -1218,6 +1252,25 @@ textarea {
         min-height: auto;
     }
 
+    .upload-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-kicker,
+    .sidebar-title,
+    .sidebar-description,
+    .upload-summary,
+    .document-badges,
+    .upload-tips,
+    .sidebar-note,
+    .upload-area,
+    .uploaded-files,
+    .upload-actions,
+    .sidebar > .step-indicator {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
     .sidebar-title,
     .sidebar-description {
         max-width: none;
@@ -1225,7 +1278,7 @@ textarea {
 
     .sidebar > .step-indicator {
         position: static;
-        margin-top: 18px;
+        margin-top: 8px;
     }
 
     .layout {
