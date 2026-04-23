@@ -82,21 +82,6 @@
                                 <input type="file" id="fileInput" multiple accept=".pdf,application/pdf" hidden>
                             </div>
 
-                            <div class="upload-summary" id="uploadSummary"></div>
-
-                            <div class="document-badges" id="documentBadges"></div>
-
-                            <div class="upload-tips">
-                                <div class="upload-tip">
-                                    <span class="upload-tip__label">Ожидаемые документы</span>
-                                    <span class="upload-tip__value">Agreement, Invoice, Packing List, CMR</span>
-                                </div>
-                                <div class="upload-tip">
-                                    <span class="upload-tip__label">Режим обработки</span>
-                                    <span class="upload-tip__value">AI parsing + автозаполнение</span>
-                                </div>
-                            </div>
-
                             <div class="uploaded-files">
                                 <div class="subpanel-title">ЗАГРУЖЕННЫЕ ДОКУМЕНТЫ</div>
                                 <div id="fileList"></div>
@@ -106,11 +91,6 @@
                                 <button id="start-demo-button" class="btn-pulse" type="button">
                                     Загрузить демонстрационные документы
                                 </button>
-                            </div>
-
-                            <div class="sidebar-note">
-                                Нейросеть анализирует документы, формирует сверку между источниками
-                                и переносит совпавшие данные в поля декларации.
                             </div>
                         </div>
                     </div>
@@ -145,22 +125,21 @@
                     <div class="comparison-shell">
                         <div class="comparison-state" id="comparisonState"></div>
 
-                        <div class="comparison-table-wrap">
-                            <table class="comparison-table">
-                                <thead>
-                                    <tr>
-                                        <th>Параметр</th>
-                                        <th>Договор</th>
-                                        <th>Инвойс</th>
-                                        <th>Packing List</th>
-                                        <th>CMR</th>
-                                        <th>Статус</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="comparisonTableBody"></tbody>
-                            </table>
+                        <div class="comparison-header">
+                            <h2 class="block-title">КРОСС ПРОВЕРКА ДОКУМЕНТОВ</h2>
+                            <p class="block-description">
+                                После загрузки сервис сравнивает ключевые реквизиты между договором,
+                                инвойсом, упаковочным листом и CMR, показывая совпадения,
+                                расхождения и отсутствующие данные.
+                            </p>
+
+                            <div class="comparison-legend">
+                                <span class="legend-chip legend-chip--match">Совпадает</span>
+                                <span class="legend-chip legend-chip--partial">Частично</span>
+                                <span class="legend-chip legend-chip--mismatch">Расхождение</span>
+                                <span class="legend-chip legend-chip--pending">Нет данных</span>
+                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </section>

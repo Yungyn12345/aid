@@ -1190,4 +1190,52 @@ select {
         min-height: 120px;
         padding: 20px;
     }
+    /* ===== PATCH 2026-04-24: cleanup + center align ===== */
+
+.comparison-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.block-title,
+.block-description {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.comparison-legend {
+    justify-content: center !important;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.legend-chip--pending,
+.comparison-badge--pending {
+    color: #000000;
+}
+
+.btn,
+.btn-primary,
+.btn-secondary,
+.upload-cta,
+.btn-pulse,
+#saveDraft,
+#submitDeclaration,
+#clearForm,
+#exportPDF,
+#start-demo-button {
+    color: #000000 !important;
+}
+
+.btn span,
+.btn-primary span,
+.btn-secondary span,
+.upload-cta span,
+.btn-pulse span {
+    color: #000000 !important;
+}
 }
