@@ -18,6 +18,8 @@ const LOAD = {
   scheduled: false,
 };
 
+let tnvedPollInterval = null;
+
 function beginBatch() {
   LOAD.pending++;
   refreshDashboardUI();
@@ -39,7 +41,7 @@ function endBatch() {
 }
 
 // ===========================
-// 1) Утилиты (DOM + normalize)
+// 1) DOM + helpers
 // ===========================
 function $(id) {
   return document.getElementById(id);
@@ -55,6 +57,9 @@ function getDomRefs() {
     comparisonState: $("comparisonState"),
     comparisonTableBody: $("comparisonTableBody"),
     uploadTrigger: $("uploadTrigger") || document.querySelector(".upload-cta"),
+    floatingStepper: $("floatingStepper"),
+    tnvedBtn: $("getTnvedBtn"),
+    tnvedResult: $("tnvedResult"),
   };
 }
 
@@ -91,6 +96,15 @@ function isEmpty(v) {
   return !norm(v);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function isInputEl(el) {
   if (!el) return false;
   const t = el.tagName;
@@ -108,7 +122,6 @@ function getFieldContent(el) {
 
 function setUnfilledState(el, isUnfilled) {
   if (!el) return;
-
   el.classList.toggle("unfilled-field", isUnfilled);
 
   const fieldBox = el.closest(".field");
@@ -205,17 +218,8 @@ function flushDoc44() {
   setEditable("additionalInfo", lines.join("\n"), { force: true });
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
 // ===========================
-// 2) Derived UI: upload + comparison
+// 2) Upload + Comparison UI
 // ===========================
 const DOC_CONFIG = [
   { key: "agreement", label: "Договор" },
@@ -542,7 +546,7 @@ function refreshDashboardUI() {
 }
 
 // ===========================
-// 3) Адреса / страны (эвристики)
+// 3) Countries / address helpers
 // ===========================
 function countryToISO2(country) {
   const c = norm(country).toLowerCase();
@@ -567,18 +571,18 @@ function extractRegion(address, iso2 = "") {
   const a = norm(address);
   if (!a) return "";
 
-  const parts = a.split(",").map(x => x.trim()).filter(Boolean);
+  const parts = a.split(",").map((x) => x.trim()).filter(Boolean);
   if (!parts.length) return "";
 
   if (iso2 === "RU") {
-    const cityPart = parts.find(p => /(^г\.?\s)|город|москва|санкт|екатеринбург|новосибирск/i.test(p));
+    const cityPart = parts.find((p) => /(^г\.?\s)|город|москва|санкт|екатеринбург|новосибирск/i.test(p));
     if (cityPart) return cityPart.replace(/^г\.?\s*/i, "");
     return parts[2] ? parts[2].replace(/^г\.?\s*/i, "") : (parts[1] || "");
   }
 
   if (iso2 === "DE") {
     const pc = extractPostalCode(a);
-    const pcCity = parts.find(p => pc && p.includes(pc));
+    const pcCity = parts.find((p) => pc && p.includes(pc));
     if (pcCity) return pcCity.replace(pc, "").trim();
     return parts.length >= 2 ? parts[parts.length - 2] : parts[0];
   }
@@ -607,7 +611,7 @@ function fillAddressBlock(prefix, party, { force = true } = {}) {
 }
 
 // ===========================
-// 4) Нотификации
+// 4) Notifications
 // ===========================
 function showNotification(message, type = "info") {
   const container = $("notifications-container") || (() => {
@@ -665,7 +669,67 @@ function showNotification(message, type = "info") {
 }
 
 // ===========================
-// 5) Upload UI
+// 5) Floating stepper
+// ===========================
+function initFloatingStepper() {
+  const stepper = DOM.floatingStepper;
+  if (!stepper) return;
+
+  const items = Array.from(stepper.querySelectorAll(".floating-stepper__item"));
+  if (!items.length) return;
+
+  const sections = [
+    $("uploadSection"),
+    $("comparisonSection"),
+    $("declarationSection"),
+  ].filter(Boolean);
+
+  function setActiveStep(step) {
+    items.forEach((item) => {
+      item.classList.toggle("floating-stepper__item--active", item.dataset.step === String(step));
+    });
+  }
+
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
+      const targetId = item.dataset.target;
+      const target = $(targetId);
+      if (!target) return;
+
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  });
+
+  if (!sections.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+      if (!visible.length) return;
+
+      const sectionId = visible[0].target.id;
+
+      if (sectionId === "uploadSection") setActiveStep(1);
+      else if (sectionId === "comparisonSection") setActiveStep(2);
+      else if (sectionId === "declarationSection") setActiveStep(3);
+    },
+    {
+      threshold: [0.25, 0.4, 0.6],
+      rootMargin: "-15% 0px -35% 0px",
+    }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+}
+
+// ===========================
+// 6) Upload UI
 // ===========================
 function bindUploadUi() {
   const fileInput = DOM.fileInput;
@@ -673,7 +737,7 @@ function bindUploadUi() {
 
   if (!fileInput || !uploadArea) return;
 
-  fileInput.style.display = "none";
+  fileInput.hidden = true;
 
   DOM.uploadTrigger?.addEventListener("click", (e) => {
     e.preventDefault();
@@ -715,6 +779,8 @@ function bindUploadUi() {
     handleFiles(files);
     e.target.value = "";
   });
+
+  $("start-demo-button")?.addEventListener("click", startDemoLoading);
 }
 
 function getFileIcon(filename) {
@@ -744,6 +810,7 @@ function addFileToList(file) {
 function updateFileStatus(fileItem, text, statusClass) {
   const el = fileItem?.querySelector(".file-status");
   if (!el) return;
+
   el.textContent = text;
   el.className = `file-status ${statusClass}`;
   if (fileItem) fileItem.dataset.status = statusClass;
@@ -790,8 +857,7 @@ function handleFiles(files) {
     return;
   }
 
-  for (let i = 0; i < list.length; i++) {
-    const file = list[i];
+  for (const file of list) {
     const item = addFileToList(file);
     updateFileStatus(item, "Анализ...", "processing");
 
@@ -834,7 +900,7 @@ async function processAuto(file, fileItem) {
 }
 
 // ===========================
-// 6) API: upload + poll (real + demo)
+// 7) API: upload + poll + demo
 // ===========================
 async function extractErrorMessage(response) {
   try {
@@ -894,7 +960,9 @@ function pollResult(taskId, urlBase, onDone, fileItem) {
 
       let payload = data.result;
       if (typeof payload === "string") {
-        try { payload = JSON.parse(payload); } catch (_) {}
+        try {
+          payload = JSON.parse(payload);
+        } catch (_) {}
       }
 
       updateFileStatus(fileItem, "✓", "success");
@@ -927,7 +995,9 @@ async function demoLoadDoc(type) {
 
               let payload = dd.result;
               if (typeof payload === "string") {
-                try { payload = JSON.parse(payload); } catch (_) {}
+                try {
+                  payload = JSON.parse(payload);
+                } catch (_) {}
               }
               resolve(payload);
             } catch (e) {
@@ -946,10 +1016,10 @@ async function demoLoadDoc(type) {
 }
 
 // ===========================
-// 7) Acceptors
+// 8) Acceptors
 // ===========================
 function acceptAgreement(json) {
-  CTX.agreement = (json && !json.error) ? json : null;
+  CTX.agreement = json && !json.error ? json : null;
   if (!CTX.agreement) return;
 
   const a = CTX.agreement;
@@ -958,7 +1028,7 @@ function acceptAgreement(json) {
 }
 
 function acceptInvoice(json) {
-  CTX.invoice = (json && !json.error) ? json : null;
+  CTX.invoice = json && !json.error ? json : null;
   if (!CTX.invoice) return;
 
   const i = CTX.invoice;
@@ -970,7 +1040,7 @@ function acceptInvoice(json) {
 }
 
 function acceptPackingList(json) {
-  CTX.packingList = (json && !json.error) ? json : null;
+  CTX.packingList = json && !json.error ? json : null;
   if (!CTX.packingList) return;
 
   const p = CTX.packingList;
@@ -979,14 +1049,14 @@ function acceptPackingList(json) {
 }
 
 function acceptCmr(json) {
-  CTX.cmr = (json && !json.error) ? json : null;
+  CTX.cmr = json && !json.error ? json : null;
   if (!CTX.cmr) return;
 
   const c = CTX.cmr;
   if (c.cmr_number) addDoc44(`CMR ${c.cmr_number}${c.cmr_date ? ` от ${c.cmr_date}` : ""}`);
 
   if (Array.isArray(c.related_documents)) {
-    c.related_documents.forEach(d => {
+    c.related_documents.forEach((d) => {
       if (!d) return;
       let s = norm(d.type);
       if (d.number) s += ` ${d.number}`;
@@ -999,7 +1069,7 @@ function acceptCmr(json) {
 }
 
 // ===========================
-// 8) Реальные обработчики PDF
+// 9) Real PDF processors
 // ===========================
 async function processAgreement(file, fileItem) {
   try {
@@ -1058,10 +1128,10 @@ async function processCmr(file, fileItem) {
 }
 
 // ===========================
-// 9) DEMO
+// 10) DEMO
 // ===========================
 async function startDemoLoading() {
-  const startBtn = document.getElementById("start-demo-button");
+  const startBtn = $("start-demo-button");
   if (startBtn) startBtn.remove();
 
   refreshDashboardUI();
@@ -1108,7 +1178,7 @@ async function startDemoLoading() {
 window.startDemoLoading = startDemoLoading;
 
 // ===========================
-// 10) Autofill helpers
+// 11) Autofill helpers
 // ===========================
 function pick(...vals) {
   for (const v of vals) {
@@ -1129,7 +1199,7 @@ function parsePackagesString(s) {
     { re: /(case|cases|кейс|кейсы)/, code: "CS" },
   ];
 
-  const parts = raw.split(/[,;]/).map(x => x.trim()).filter(Boolean);
+  const parts = raw.split(/[,;]/).map((x) => x.trim()).filter(Boolean);
   const out = [];
 
   for (const part of parts) {
@@ -1219,7 +1289,7 @@ function buildGraph31Text(ctx) {
   const places = totalPlaces != null ? totalPlaces : placesFromParsed;
 
   const packCodes = parsed.length
-    ? parsed.map(x => `${x.code}-${x.qty}`).join(", ")
+    ? parsed.map((x) => `${x.code}-${x.qty}`).join(", ")
     : (kind ? kind : "");
 
   const line2 = (places != null || packCodes)
@@ -1244,7 +1314,7 @@ function fillGraph31FromCtx(ctx, { force = true } = {}) {
 }
 
 // ===========================
-// 11) Единая точка автозаполнения
+// 12) Autofill
 // ===========================
 function autofillAll() {
   const a = CTX.agreement || {};
@@ -1261,12 +1331,12 @@ function autofillAll() {
   const contractNumber = pick(a.contract_number, i.contract_reference?.number);
   const contractDate = pick(a.contract_date, i.contract_reference?.date);
   if (contractNumber) {
-  setField(
-    "clientContract",
-    contractDate ? `${contractNumber} от ${contractDate}` : contractNumber,
-    { force: true }
-  );
-}
+    setField(
+      "clientContract",
+      contractDate ? `${contractNumber} от ${contractDate}` : contractNumber,
+      { force: true }
+    );
+  }
 
   const curCode = pick(i.currency?.code, a.currency?.code, i.currency, a.currency);
   const totalAmount = (i.total_amount != null) ? i.total_amount : a.total_amount;
@@ -1382,42 +1452,330 @@ function autofillAll() {
 }
 
 // ===========================
-// 12) Кнопки формы
+// 13) TNVED
 // ===========================
-$("clearForm")?.addEventListener("click", () => {
-  if (!confirm("Очистить все поля формы?")) return;
+function createLoadingBlock(text = "Анализируем описание товаров...") {
+  return `
+    <div style="color:#666;text-align:center;padding:40px;">
+      <div style="font-size:48px;margin-bottom:20px;animation:pulse 1.5s infinite;">🔍</div>
+      <p style="font-size:16px;margin-bottom:10px;">${escapeHtml(text)}</p>
+      <div style="font-size:14px;color:#999;">
+        ИИ анализирует описание и подбирает подходящие коды ТН ВЭД
+      </div>
+    </div>
+    <style>
+      @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+      }
+    </style>
+  `;
+}
 
-  document.querySelectorAll(".field-input").forEach((input) => {
-    if (isInputEl(input)) input.value = "";
+function createErrorBlock(message) {
+  return `
+    <div style="color:#721c24;background:#f8d7da;border:1px solid #f5c6cb;border-radius:8px;padding:20px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:15px;">❌</div>
+      <p style="font-size:16px;margin:0;">${escapeHtml(message)}</p>
+    </div>
+  `;
+}
+
+function clearTnvedResults() {
+  if (DOM.tnvedResult) DOM.tnvedResult.innerHTML = "";
+  if (tnvedPollInterval) {
+    clearInterval(tnvedPollInterval);
+    tnvedPollInterval = null;
+  }
+}
+
+function applyTnvedCode(code) {
+  const tnVedCodeField = $("tnVedCode");
+  if (tnVedCodeField) {
+    tnVedCodeField.value = code;
+    tnVedCodeField.classList.add("auto-filled");
+    setTimeout(() => tnVedCodeField.classList.remove("auto-filled"), 1200);
+    showNotification(`✅ Код <strong>${escapeHtml(code)}</strong> применен в поле "33 ТН ВЭД"`, "success");
+  }
+}
+
+window.applyTnvedCode = applyTnvedCode;
+window.clearTnvedResults = clearTnvedResults;
+window.clearResults = clearTnvedResults;
+
+function displayFullTnvedResult(data) {
+  const resultDiv = DOM.tnvedResult;
+  if (!resultDiv) return;
+
+  if (!data || !data.eaeu_hs_code) {
+    resultDiv.innerHTML = createErrorBlock("Не удалось определить код ТНВЭД");
+    return;
+  }
+
+  const formattedCode = data.eaeu_hs_code.replace(/(\d{4})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4");
+
+  let html = `
+    <div style="max-width:800px;margin:0 auto;">
+      <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:8px;margin-bottom:20px;text-align:center;">
+        <div style="font-size:14px;opacity:.9;margin-bottom:5px;">РЕКОМЕНДОВАННЫЙ КОД ТН ВЭД ЕАЭС</div>
+        <div style="font-size:36px;font-weight:bold;font-family:'Courier New',monospace;margin:10px 0;">
+          ${escapeHtml(formattedCode)}
+        </div>
+        <div style="font-size:14px;opacity:.9;">
+          Уверенность: <strong>${((data.confidence || 0) * 100).toFixed(1)}%</strong>
+        </div>
+        <button onclick="applyTnvedCode('${escapeHtml(data.eaeu_hs_code)}')"
+                style="margin-top:15px;background:white;color:#667eea;border:none;padding:10px 25px;border-radius:25px;font-weight:bold;cursor:pointer;font-size:16px;">
+          ✅ Применить этот код
+        </button>
+      </div>
+  `;
+
+  if (Array.isArray(data.explanations) && data.explanations.length) {
+    html += `
+      <div style="background:white;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="color:#2c3e50;margin-top:0;border-bottom:2px solid #f8f9fa;padding-bottom:10px;">
+          📋 Обоснование классификации
+        </h3>
+        <ol style="padding-left:20px;">
+          ${data.explanations.map((exp) => `<li style="margin-bottom:10px;line-height:1.5;">${escapeHtml(exp)}</li>`).join("")}
+        </ol>
+      </div>
+    `;
+  }
+
+  if (Array.isArray(data.candidate_codes) && data.candidate_codes.length) {
+    html += `
+      <div style="background:white;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="color:#2c3e50;margin-top:0;border-bottom:2px solid #f8f9fa;padding-bottom:10px;">
+          ⚠️ Рассмотренные альтернативные коды
+        </h3>
+        ${data.candidate_codes.map((candidate) => `
+          <div style="margin-bottom:15px;padding:15px;background:#f8f9fa;border-radius:6px;border-left:4px solid #ffc107;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <strong style="font-family:'Courier New',monospace;color:#dc3545;">${escapeHtml(candidate.code || "")}</strong>
+              <span style="font-size:12px;color:#6c757d;">не подходит</span>
+            </div>
+            <div style="font-size:14px;color:#495057;">${escapeHtml(candidate.why_not || "")}</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  if ((Array.isArray(data.evidence_urls) && data.evidence_urls.length) || data.notes) {
+    html += `<div style="display:grid;gap:20px;margin-bottom:20px;">`;
+
+    if (Array.isArray(data.evidence_urls) && data.evidence_urls.length) {
+      html += `
+        <div style="background:white;border-radius:8px;padding:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+          <h3 style="color:#2c3e50;margin-top:0;font-size:16px;">🔗 Источники информации</h3>
+          <div style="font-size:13px;">
+            ${data.evidence_urls.map((url) => {
+              const displayUrl = String(url).replace("https://", "").replace("www.", "").split("/")[0];
+              return `
+                <a href="${escapeHtml(url)}" target="_blank" style="display:block;padding:8px;margin-bottom:5px;background:#f8f9fa;border-radius:4px;color:#007bff;text-decoration:none;">
+                  ${escapeHtml(displayUrl)}
+                </a>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    if (data.notes) {
+      html += `
+        <div style="background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px;padding:20px;">
+          <h3 style="color:#856404;margin-top:0;font-size:16px;">📝 Примечания</h3>
+          <p style="color:#856404;font-size:14px;line-height:1.5;">${escapeHtml(data.notes)}</p>
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+  }
+
+  html += `
+      <div class="tnved-action-buttons">
+        <button onclick="applyTnvedCode('${escapeHtml(data.eaeu_hs_code)}')" class="tnved-apply-main-btn">
+          ✅ Применить код ${escapeHtml(data.eaeu_hs_code)}
+        </button>
+        <button onclick="clearTnvedResults()" class="tnved-clear-btn">
+          🗑️ Очистить результаты
+        </button>
+      </div>
+    </div>
+  `;
+
+  resultDiv.innerHTML = html;
+}
+
+function startTnvedPolling(taskId) {
+  const resultDiv = DOM.tnvedResult;
+  if (!resultDiv) return;
+
+  if (tnvedPollInterval) {
+    clearInterval(tnvedPollInterval);
+    tnvedPollInterval = null;
+  }
+
+  resultDiv.innerHTML = createLoadingBlock();
+
+  let attempt = 0;
+  tnvedPollInterval = setInterval(async () => {
+    attempt++;
+
+    try {
+      const response = await fetch(appUrl(`/tnvedcode/result/${taskId}`));
+      if (!response.ok) {
+        throw new Error(`Ошибка получения статуса: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === true || String(data.status).toLowerCase() === "done" || String(data.status).toLowerCase() === "success") {
+        clearInterval(tnvedPollInterval);
+        tnvedPollInterval = null;
+
+        let resultData = data.result;
+        if (typeof resultData === "string") {
+          try {
+            resultData = JSON.parse(resultData);
+          } catch (_) {}
+        }
+
+        displayFullTnvedResult(resultData);
+      } else if (data.status === false || String(data.status).toLowerCase() === "processing" || String(data.status).toLowerCase() === "pending") {
+        if (attempt % 5 === 0) {
+          const dots = ".".repeat((attempt % 3) + 1);
+          resultDiv.innerHTML = createLoadingBlock(`Анализируем описание товаров${dots} (${attempt} сек)`);
+        }
+      } else if (String(data.status).toLowerCase() === "error" || String(data.status).toLowerCase() === "failed") {
+        clearInterval(tnvedPollInterval);
+        tnvedPollInterval = null;
+        resultDiv.innerHTML = createErrorBlock(data.detail || "Ошибка анализа ТН ВЭД");
+      }
+    } catch (error) {
+      clearInterval(tnvedPollInterval);
+      tnvedPollInterval = null;
+      resultDiv.innerHTML = createErrorBlock(`Ошибка опроса: ${error.message}`);
+    }
+  }, 1000);
+}
+
+async function getTnvedRecommendations() {
+  const resultDiv = DOM.tnvedResult;
+  if (!resultDiv) return;
+
+  if (tnvedPollInterval) {
+    clearInterval(tnvedPollInterval);
+    tnvedPollInterval = null;
+  }
+
+  const goodsDescription = norm($("goodsDescription")?.textContent || "");
+  if (!goodsDescription) {
+    resultDiv.innerHTML = createErrorBlock("Сначала заполните описание товара в графе 31");
+    return;
+  }
+
+  resultDiv.innerHTML = `
+    <div style="color:#666;text-align:center;padding:20px;">
+      <div style="font-size:24px;margin-bottom:10px;">⏳</div>
+      <p>Отправляем запрос на анализ...</p>
+    </div>
+  `;
+
+  try {
+    const response = await fetch(appUrl("/tnvedcode/request"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        goodsDescription,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ошибка сервера: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const taskId = data.id;
+
+    if (!taskId) {
+      throw new Error("Не получен ID задачи");
+    }
+
+    startTnvedPolling(taskId);
+  } catch (error) {
+    resultDiv.innerHTML = createErrorBlock(`Ошибка: ${error.message}`);
+  }
+}
+
+window.getTnvedRecommendations = getTnvedRecommendations;
+
+// ===========================
+// 14) Form buttons
+// ===========================
+function bindFormButtons() {
+  $("clearForm")?.addEventListener("click", () => {
+    if (!confirm("Очистить все поля формы?")) return;
+
+    document.querySelectorAll(".field-input").forEach((input) => {
+      if (isInputEl(input)) input.value = "";
+    });
+
+    document.querySelectorAll('[contenteditable="true"]').forEach((el) => {
+      el.textContent = "";
+    });
+
+    CTX.agreement = null;
+    CTX.invoice = null;
+    CTX.packingList = null;
+    CTX.cmr = null;
+    CTX.docs44 = new Set();
+
+    if (DOM.fileList) DOM.fileList.innerHTML = "";
+
+    clearUnfilledHighlights();
+    clearTnvedResults();
+    refreshDashboardUI();
+    showNotification("Форма очищена", "info");
   });
 
-  document.querySelectorAll('[contenteditable="true"]').forEach((el) => {
-    el.textContent = "";
+  $("saveDraft")?.addEventListener("click", () => {
+    showNotification("ℹ️ Черновик: пока не реализовано", "info");
   });
 
-  CTX.agreement = null;
-  CTX.invoice = null;
-  CTX.packingList = null;
-  CTX.cmr = null;
-  CTX.docs44 = new Set();
+  $("submitDeclaration")?.addEventListener("click", () => {
+    showNotification("ℹ️ Отправка: пока не реализовано", "info");
+  });
 
-  if (DOM.fileList) DOM.fileList.innerHTML = "";
+  $("exportPDF")?.addEventListener("click", () => {
+    showNotification("ℹ️ Экспорт PDF: пока не реализовано", "info");
+  });
 
-  clearUnfilledHighlights();
-  refreshDashboardUI();
-  showNotification("Форма очищена", "info");
-});
-
-$("saveDraft")?.addEventListener("click", () => showNotification("ℹ️ Черновик: пока не реализовано", "info"));
-$("submitDeclaration")?.addEventListener("click", () => showNotification("ℹ️ Отправка: пока не реализовано", "info"));
-$("exportPDF")?.addEventListener("click", () => showNotification("ℹ️ Экспорт PDF: пока не реализовано", "info"));
+  DOM.tnvedBtn?.addEventListener("click", getTnvedRecommendations);
+}
 
 // ===========================
-// 13) Init
+// 15) Init
 // ===========================
 document.addEventListener("DOMContentLoaded", () => {
   bindUploadUi();
+  bindFormButtons();
+  initFloatingStepper();
   initUnfilledTracking();
   refreshUnfilledHighlights();
   refreshDashboardUI();
+});
+
+window.addEventListener("beforeunload", () => {
+  if (tnvedPollInterval) {
+    clearInterval(tnvedPollInterval);
+    tnvedPollInterval = null;
+  }
 });

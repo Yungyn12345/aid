@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Декларация на товары (ДТ) - AI Declarant</title>
 
-    <link rel="stylesheet" href="{{ static_prefix }}/styles.css?v=20260424-5">
+    <link rel="stylesheet" href="{{ static_prefix }}/styles.css?v=20260424-6">
 
     <script>
         window.APP_BASE_PATH = "{{ app_root }}";
@@ -18,9 +18,9 @@
     </script>
 </head>
 
-<body>
-    <div class="aid-page">
-        <header class="aid-topbar">
+<body class="aid-page">
+    <header class="aid-topbar">
+        <div class="aid-topbar__inner">
             <div class="aid-logo" aria-label="AI Declarant">
                 <span class="aid-logo__mark">Ai</span>
             </div>
@@ -30,48 +30,63 @@
                 <button type="button" class="aid-chip">О НАС</button>
                 <button type="button" class="aid-chip">СВЯЗАТЬСЯ</button>
             </nav>
-        </header>
+        </div>
+    </header>
 
-        <main class="aid-main">
-            <section class="aid-section aid-section--upload" id="upload-section">
-                <div class="aid-section__inner">
-                    <div class="aid-section__content aid-hero">
-                        <div class="aid-hero__head">
-                            <div class="aid-eyebrow">AI DECLARANT</div>
-                            <h1 class="aid-title">ДЕКЛАРАЦИЯ ЗА ПАРУ МИНУТ</h1>
-                            <p class="aid-subtitle">
-                                ЗАГРУЗИТЕ ВСЕ ДОКУМЕНТЫ В ОДНО ОКНО — МЫ САМИ РАСПРЕДЕЛИМ ИХ ПО КАТЕГОРИЯМ,
-                                СВЕРИМ РЕКВИЗИТЫ И ПОДГОТОВИМ ДАННЫЕ ДЛЯ ДЕКЛАРАЦИИ.
-                            </p>
-                        </div>
+    <div class="floating-stepper" id="floatingStepper" aria-label="Навигация по шагам">
+        <button class="floating-stepper__item floating-stepper__item--active" type="button" data-step="1" data-target="uploadSection">1</button>
+        <button class="floating-stepper__item" type="button" data-step="2" data-target="comparisonSection">2</button>
+        <button class="floating-stepper__item" type="button" data-step="3" data-target="declarationSection">3</button>
+    </div>
 
-                        <div class="aid-upload-card">
-                            <p class="aid-upload-card__format">ФОРМАТ ФАЙЛОВ: PDF</p>
+    <main class="aid-main main-content">
+        <!-- ========================= -->
+        <!-- 1. UPLOAD SECTION        -->
+        <!-- ========================= -->
+        <section class="aid-section aid-section--upload" id="uploadSection">
+            <div class="aid-section__inner">
+                <div class="aid-section__content">
+                    <div class="aid-hero">
+                        <div class="aid-kicker">AI DECLARANT</div>
 
-                            <div class="aid-dropzone upload-area" id="uploadArea">
-                                <input type="file" id="fileInput" class="aid-hidden-input" multiple accept=".pdf,application/pdf">
-                                <div class="aid-dropzone__content">
-                                    <div class="aid-dropzone__icon">
-                                        <img src="{{ static_prefix }}/icon-download.svg" alt="Загрузка файлов">
-                                    </div>
-                                    <div class="aid-dropzone__text">
-                                        <h2>Перетащите файлы сюда или нажмите на выбор</h2>
-                                        <p>
-                                            Нейросеть автоматически проанализирует загруженные документы,
-                                            проведет кросс-проверку и заполнит поля декларации.
-                                        </p>
-                                    </div>
-                                    <button class="aid-btn aid-btn--primary upload-cta" id="uploadTrigger" type="button">ЗАГРУЗИТЬ ВХОДНЫЕ ДОКУМЕНТЫ</button>
-                                    <p class="aid-dropzone__note">
-                                        Лучше загружать полный комплект: Agreement, Invoice, Packing List и CMR.
-                                    </p>
+                        <h1 class="aid-title">ДЕКЛАРАЦИЯ ЗА ПАРУ МИНУТ</h1>
+
+                        <p class="aid-subtitle">
+                            Загрузите все документы в одно окно — мы сами распределим их по категориям,
+                            сверим реквизиты и подготовим данные для декларации.
+                        </p>
+
+                        <div class="upload-shell">
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-format">ФОРМАТ ФАЙЛОВ: PDF</div>
+
+                                <div class="upload-icon">
+                                    <img src="{{ static_prefix }}/icon-download.svg" alt="Загрузка файлов">
                                 </div>
+
+                                <div class="upload-text">Перетащите файлы сюда или нажмите на выбор</div>
+
+                                <div class="upload-hint">
+                                    Нейросеть автоматически проанализирует загруженные документы,
+                                    проведёт кросс-проверку и заполнит поля декларации.
+                                </div>
+
+                                <button class="upload-cta" type="button" id="uploadTrigger">
+                                    ЗАГРУЗИТЬ ВХОДНЫЕ ДОКУМЕНТЫ
+                                </button>
+
+                                <div class="upload-secondary-note">
+                                    Лучше загружать полный комплект: Agreement, Invoice, Packing List и CMR.
+                                </div>
+
+                                <input type="file" id="fileInput" multiple accept=".pdf,application/pdf" hidden>
                             </div>
 
-                            <div class="upload-summary aid-upload-summary" id="uploadSummary"></div>
+                            <div class="upload-summary" id="uploadSummary"></div>
+
                             <div class="document-badges" id="documentBadges"></div>
 
-                            <div class="upload-tips aid-upload-tips">
+                            <div class="upload-tips">
                                 <div class="upload-tip">
                                     <span class="upload-tip__label">Ожидаемые документы</span>
                                     <span class="upload-tip__value">Agreement, Invoice, Packing List, CMR</span>
@@ -84,51 +99,60 @@
 
                             <div class="uploaded-files">
                                 <div class="subpanel-title">ЗАГРУЖЕННЫЕ ДОКУМЕНТЫ</div>
-                                <div id="fileList" class="aid-file-list"></div>
+                                <div id="fileList"></div>
                             </div>
 
-                            <div class="aid-upload-actions">
-                                <button id="start-demo-button" class="aid-btn aid-btn--ghost" type="button" onclick="startDemoLoading()">ЗАГРУЗИТЬ ДЕМОНСТРАЦИОННЫЕ ДОКУМЕНТЫ</button>
+                            <div class="upload-actions">
+                                <button id="start-demo-button" class="btn-pulse" type="button">
+                                    Загрузить демонстрационные документы
+                                </button>
+                            </div>
+
+                            <div class="sidebar-note">
+                                Нейросеть анализирует документы, формирует сверку между источниками
+                                и переносит совпавшие данные в поля декларации.
                             </div>
                         </div>
                     </div>
-
-                    <aside class="aid-steps" aria-label="Шаги сервиса">
-                        <span class="aid-step aid-step--active">1</span>
-                        <span class="aid-step">2</span>
-                        <span class="aid-step">3</span>
-                    </aside>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="aid-section aid-section--crosscheck" id="crosscheck-section">
-                <div class="aid-section__inner">
-                    <div class="aid-section__content">
-                        <div class="aid-section-heading">
-                            <h2 class="aid-title aid-title--md">КРОСС ПРОВЕРКА ДОКУМЕНТОВ</h2>
-                            <p class="aid-subtitle">
-                                СВЕРЯЕМ КЛЮЧЕВЫЕ РЕКВИЗИТЫ ИЗ ДОГОВОРА, ИНВОЙСА, УПАКОВОЧНОГО ЛИСТА И CMR,
-                                ЧТОБЫ ДО ОТПРАВКИ УВИДЕТЬ РАСХОЖДЕНИЯ И ПУСТЫЕ ПОЛЯ.
+        <!-- ========================= -->
+        <!-- 2. COMPARISON SECTION    -->
+        <!-- ========================= -->
+        <section class="aid-section aid-section--comparison" id="comparisonSection">
+            <div class="aid-section__inner">
+                <div class="aid-section__content">
+                    <div class="section-head section-head--center">
+                        <div>
+                            <h2 class="block-title">КРОСС ПРОВЕРКА ДОКУМЕНТОВ</h2>
+                            <p class="block-description">
+                                После загрузки сервис сравнивает ключевые реквизиты между договором,
+                                инвойсом, упаковочным листом и CMR, показывая совпадения,
+                                расхождения и отсутствующие данные.
                             </p>
                         </div>
 
-                        <div class="aid-legend">
+                        <div class="comparison-legend">
                             <span class="legend-chip legend-chip--match">Совпадает</span>
                             <span class="legend-chip legend-chip--partial">Частично</span>
                             <span class="legend-chip legend-chip--mismatch">Расхождение</span>
                             <span class="legend-chip legend-chip--pending">Нет данных</span>
                         </div>
+                    </div>
 
+                    <div class="comparison-shell">
                         <div class="comparison-state" id="comparisonState"></div>
 
-                        <div class="aid-table-wrap comparison-table-wrap">
-                            <table class="aid-table comparison-table">
+                        <div class="comparison-table-wrap">
+                            <table class="comparison-table">
                                 <thead>
                                     <tr>
-                                        <th>Атрибут сравнения</th>
-                                        <th>Контракт</th>
+                                        <th>Параметр</th>
+                                        <th>Договор</th>
                                         <th>Инвойс</th>
-                                        <th>Упаковочный лист</th>
+                                        <th>Packing List</th>
                                         <th>CMR</th>
                                         <th>Статус</th>
                                     </tr>
@@ -137,29 +161,29 @@
                             </table>
                         </div>
                     </div>
-
-                    <aside class="aid-steps" aria-label="Шаги сервиса">
-                        <span class="aid-step">1</span>
-                        <span class="aid-step aid-step--active">2</span>
-                        <span class="aid-step">3</span>
-                    </aside>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="aid-section aid-section--declaration" id="declaration-section">
-                <div class="aid-section__inner">
-                    <div class="aid-section__content">
-                        <div class="aid-section-heading aid-section-heading--left">
-                            <h2 class="aid-title aid-title--md">ДЕКЛАРАЦИЯ НА ТОВАРЫ (ДТ)<br>ОНЛАЙН ЗАПОЛНЕНИЕ</h2>
-                            <p class="aid-subtitle aid-subtitle--left">
-                                ИТОГОВАЯ ФОРМА ДЕКЛАРАЦИИ ЗАПОЛНЯЕТСЯ ПО ДАННЫМ ИЗ ДОКУМЕНТОВ,
-                                НО ОСТАЕТСЯ ПОЛНОСТЬЮ ДОСТУПНОЙ ДЛЯ РУЧНОЙ ПРОВЕРКИ И КОРРЕКТИРОВКИ.
+        <!-- ========================= -->
+        <!-- 3. DECLARATION SECTION   -->
+        <!-- ========================= -->
+        <section class="aid-section aid-section--declaration" id="declarationSection">
+            <div class="aid-section__inner">
+                <div class="aid-section__content">
+                    <div class="section-head section-head--declaration">
+                        <div>
+                            <h2 class="block-title">ДЕКЛАРАЦИЯ НА ТОВАРЫ (ДТ)<br>ОНЛАЙН ЗАПОЛНЕНИЕ</h2>
+                            <p class="block-description">
+                                Итоговая форма декларации заполняется на основе загруженных
+                                документов и остаётся доступной для ручной проверки.
                             </p>
                         </div>
+                    </div>
 
-                        <div class="aid-paper">
-<div class="layout">
-                            <!-- ЛЕВАЯ КОЛОНКА: ОТПРАВИТЕЛЬ -->
+                    <div class="declaration-shell">
+                        <div class="layout">
+                            <!-- ОТПРАВИТЕЛЬ -->
                             <section class="section sender-section">
                                 <div class="section-number">2</div>
                                 <div class="section-title">Отправитель</div>
@@ -167,26 +191,22 @@
                                 <div class="grid-row">
                                     <div class="field span-3">
                                         <div class="field-label">Страна</div>
-                                        <input type="text" class="field-input" id="senderCountry"
-                                            placeholder="Введите страну">
+                                        <input type="text" class="field-input" id="senderCountry" placeholder="Введите страну">
                                     </div>
                                     <div class="field span-3">
                                         <div class="field-label">Почтовый код</div>
-                                        <input type="text" class="field-input" id="senderPostalCode"
-                                            placeholder="Почтовый индекс">
+                                        <input type="text" class="field-input" id="senderPostalCode" placeholder="Почтовый индекс">
                                     </div>
                                     <div class="field span-6">
                                         <div class="field-label">Область, район, населённый пункт</div>
-                                        <input type="text" class="field-input" id="senderRegion"
-                                            placeholder="Населённый пункт">
+                                        <input type="text" class="field-input" id="senderRegion" placeholder="Населённый пункт">
                                     </div>
                                 </div>
 
                                 <div class="grid-row">
                                     <div class="field span-8">
                                         <div class="field-label">Адрес</div>
-                                        <input type="text" class="field-input" id="senderAddress"
-                                            placeholder="Полный адрес">
+                                        <input type="text" class="field-input" id="senderAddress" placeholder="Полный адрес">
                                     </div>
                                     <div class="field span-2">
                                         <div class="field-label">ИНН/КПП</div>
@@ -207,26 +227,22 @@
                                 <div class="grid-row">
                                     <div class="field span-3">
                                         <div class="field-label">Страна</div>
-                                        <input type="text" class="field-input" id="receiverCountry"
-                                            placeholder="Введите страну">
+                                        <input type="text" class="field-input" id="receiverCountry" placeholder="Введите страну">
                                     </div>
                                     <div class="field span-3">
                                         <div class="field-label">Почтовый код</div>
-                                        <input type="text" class="field-input" id="receiverPostalCode"
-                                            placeholder="Почтовый индекс">
+                                        <input type="text" class="field-input" id="receiverPostalCode" placeholder="Почтовый индекс">
                                     </div>
                                     <div class="field span-6">
                                         <div class="field-label">Область, район, населённый пункт</div>
-                                        <input type="text" class="field-input" id="receiverRegion"
-                                            placeholder="Населённый пункт">
+                                        <input type="text" class="field-input" id="receiverRegion" placeholder="Населённый пункт">
                                     </div>
                                 </div>
 
                                 <div class="grid-row">
                                     <div class="field span-8">
                                         <div class="field-label">Адрес</div>
-                                        <input type="text" class="field-input" id="receiverAddress"
-                                            placeholder="Полный адрес">
+                                        <input type="text" class="field-input" id="receiverAddress" placeholder="Полный адрес">
                                     </div>
                                     <div class="field span-2">
                                         <div class="field-label">ИНН/КПП</div>
@@ -247,14 +263,12 @@
                                     <div class="field span-6">
                                         <div class="field-label">1 Декларация</div>
                                         <div class="field-number">1</div>
-                                        <input type="text" class="field-input" id="declarationNumber"
-                                            placeholder="Номер декларации">
+                                        <input type="text" class="field-input" id="declarationNumber" placeholder="Номер декларации">
                                     </div>
                                     <div class="field span-6">
                                         <div class="field-label">A Внутренний номер</div>
                                         <div class="field-number">A</div>
-                                        <input type="text" class="field-input" id="internalNumber"
-                                            placeholder="Внутренний номер">
+                                        <input type="text" class="field-input" id="internalNumber" placeholder="Внутренний номер">
                                     </div>
                                 </div>
 
@@ -262,20 +276,17 @@
                                     <div class="field span-4">
                                         <div class="field-label">3 Форма</div>
                                         <div class="field-number">3</div>
-                                        <input type="text" class="field-input" id="declarationForm"
-                                            placeholder="Форма ДТ">
+                                        <input type="text" class="field-input" id="declarationForm" placeholder="Форма ДТ">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">4 Спец. процедура</div>
                                         <div class="field-number">4</div>
-                                        <input type="text" class="field-input" id="specialProcedure"
-                                            placeholder="Спец. процедура">
+                                        <input type="text" class="field-input" id="specialProcedure" placeholder="Спец. процедура">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">B Регистрационный номер</div>
                                         <div class="field-number">B</div>
-                                        <input type="text" class="field-input" id="registrationNumber"
-                                            placeholder="Рег. номер">
+                                        <input type="text" class="field-input" id="registrationNumber" placeholder="Рег. номер">
                                     </div>
                                 </div>
 
@@ -293,8 +304,7 @@
                                     <div class="field span-4">
                                         <div class="field-label">7 Особенности декларирования</div>
                                         <div class="field-number">7</div>
-                                        <input type="text" class="field-input" id="declarationFeatures"
-                                            placeholder="Особенности">
+                                        <input type="text" class="field-input" id="declarationFeatures" placeholder="Особенности">
                                     </div>
                                 </div>
 
@@ -302,8 +312,7 @@
                                     <div class="field span-12">
                                         <div class="field-label">9 Лицо, от имени которого подаётся декларация</div>
                                         <div class="field-number">9</div>
-                                        <input type="text" class="field-input" id="declarantPerson"
-                                            placeholder="ФИО и должность">
+                                        <input type="text" class="field-input" id="declarantPerson" placeholder="ФИО и должность">
                                     </div>
                                 </div>
 
@@ -313,14 +322,12 @@
                                     <div class="field span-4">
                                         <div class="field-label">11 Торговая страна</div>
                                         <div class="field-number">11</div>
-                                        <input type="text" class="field-input" id="tradeCountry"
-                                            placeholder="Код страны">
+                                        <input type="text" class="field-input" id="tradeCountry" placeholder="Код страны">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">12 Общая таможенная стоимость</div>
                                         <div class="field-number">12</div>
-                                        <input type="text" class="field-input" id="totalCustomsValue"
-                                            placeholder="Сумма">
+                                        <input type="text" class="field-input" id="totalCustomsValue" placeholder="Сумма">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">13</div>
@@ -338,20 +345,17 @@
                                     <div class="field span-4">
                                         <div class="field-label">18 Вид транспорта при отправлении</div>
                                         <div class="field-number">18</div>
-                                        <input type="text" class="field-input" id="transportDeparture"
-                                            placeholder="Тип транспорта">
+                                        <input type="text" class="field-input" id="transportDeparture" placeholder="Тип транспорта">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">21 Вид транспорта на границе</div>
                                         <div class="field-number">21</div>
-                                        <input type="text" class="field-input" id="transportBorder"
-                                            placeholder="Тип транспорта">
+                                        <input type="text" class="field-input" id="transportBorder" placeholder="Тип транспорта">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">22 Валюта и общая сумма</div>
                                         <div class="field-number">22</div>
-                                        <input type="text" class="field-input" id="currencyTotal"
-                                            placeholder="Валюта, сумма">
+                                        <input type="text" class="field-input" id="currencyTotal" placeholder="Валюта, сумма">
                                     </div>
                                 </div>
 
@@ -364,14 +368,12 @@
                                     <div class="field span-4">
                                         <div class="field-label">24 Характер сделки</div>
                                         <div class="field-number">24</div>
-                                        <input type="text" class="field-input" id="transactionNature"
-                                            placeholder="Характер сделки">
+                                        <input type="text" class="field-input" id="transactionNature" placeholder="Характер сделки">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">29 Таможня на границе</div>
                                         <div class="field-number">29</div>
-                                        <input type="text" class="field-input" id="borderCustoms"
-                                            placeholder="Таможня">
+                                        <input type="text" class="field-input" id="borderCustoms" placeholder="Таможня">
                                     </div>
                                 </div>
 
@@ -379,15 +381,11 @@
                                     <div class="field span-6">
                                         <div class="field-label">30 Местонахождение товаров</div>
                                         <div class="field-number">30</div>
-                                        <input type="text" class="field-input" id="goodsLocation"
-                                            placeholder="Местонахождение">
+                                        <input type="text" class="field-input" id="goodsLocation" placeholder="Местонахождение">
                                     </div>
                                     <div class="field span-6">
-                                        <div class="field-label">
-                                            15 Страна отправления / 16 Страна происхождения / 17 Страна назначения
-                                        </div>
-                                        <input type="text" class="field-input" id="countries"
-                                            placeholder="Коды стран">
+                                        <div class="field-label">15 Страна отправления / 16 Страна происхождения / 17 Страна назначения</div>
+                                        <input type="text" class="field-input" id="countries" placeholder="Коды стран">
                                     </div>
                                 </div>
                             </section>
@@ -398,192 +396,18 @@
 
                                 <div class="subsection-title">31 Грузовые места и описание товаров</div>
                                 <div class="goods-table" contenteditable="true" id="goodsDescription">
-                                    Здесь можно ввести описание товаров. Нейросеть может автоматически заполнить это
-                                    поле на основе загруженных документов.
+                                    Здесь можно ввести описание товаров. Нейросеть может автоматически заполнить это поле на основе загруженных документов.
                                 </div>
 
-                                <!-- БЛОК ТНВЭД -->
-                                                        <div class="tnved-toolbar">
-                            <button class="aid-btn aid-btn--dark tnved-request-btn" type="button" onclick="getTnvedRecommendations()">
-                                ПОЛУЧИТЬ РЕКОМЕНДАЦИИ ПО КОДУ ТН ВЭД
-                            </button>
-                        </div>
-                        <div id="tnvedResult" class="tnved-result"></div>
+                                <div class="tnved-block">
+                                    <button class="tnved-request-btn" type="button" id="getTnvedBtn">
+                                        Получить рекомендации по коду ТН ВЭД
+                                    </button>
 
-                        <script>
-                            let pollInterval = null;
+                                    <div id="tnvedResult" class="tnved-result"></div>
+                                </div>
 
-                            async function getTnvedRecommendations() {
-                                if (pollInterval) {
-                                    clearInterval(pollInterval);
-                                    pollInterval = null;
-                                }
-
-                                const goodsDescription = document.getElementById('goodsDescription').textContent;
-                                const resultDiv = document.getElementById('tnvedResult');
-
-                                resultDiv.innerHTML = createLoadingBlock('Отправляем запрос на анализ...');
-
-                                try {
-                                    const response = await fetch(window.appUrl('/tnvedcode/request'), {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ goodsDescription })
-                                    });
-
-                                    if (!response.ok) {
-                                        throw new Error('Ошибка сервера: ' + response.status);
-                                    }
-
-                                    const data = await response.json();
-                                    const taskId = data.id;
-
-                                    if (!taskId) {
-                                        throw new Error('Не получен ID задачи');
-                                    }
-
-                                    startPolling(taskId);
-                                } catch (error) {
-                                    console.error('Ошибка:', error);
-                                    resultDiv.innerHTML = createErrorBlock('Ошибка: ' + error.message);
-                                }
-                            }
-
-                            function startPolling(taskId) {
-                                const resultDiv = document.getElementById('tnvedResult');
-                                resultDiv.innerHTML = createLoadingBlock();
-
-                                let attempt = 0;
-                                pollInterval = setInterval(async () => {
-                                    attempt++;
-
-                                    try {
-                                        const response = await fetch(window.appUrl('/tnvedcode/result/' + taskId));
-
-                                        if (!response.ok) {
-                                            throw new Error('Ошибка получения статуса: ' + response.status);
-                                        }
-
-                                        const data = await response.json();
-
-                                        if (data.status === true) {
-                                            clearInterval(pollInterval);
-                                            pollInterval = null;
-                                            const resultData = JSON.parse(data.result);
-                                            displayFullTnvedResult(resultData);
-                                        } else if (data.status === false) {
-                                            if (attempt % 5 === 0) {
-                                                const dots = '.'.repeat((attempt % 3) + 1);
-                                                resultDiv.innerHTML = createLoadingBlock('Анализируем описание товаров' + dots + ' (' + attempt + ' сек)');
-                                            }
-                                        } else {
-                                            throw new Error('Неизвестный статус задачи');
-                                        }
-                                    } catch (error) {
-                                        clearInterval(pollInterval);
-                                        pollInterval = null;
-                                        resultDiv.innerHTML = createErrorBlock('Ошибка опроса: ' + error.message);
-                                    }
-                                }, 1000);
-                            }
-
-                            function displayFullTnvedResult(data) {
-                                const resultDiv = document.getElementById('tnvedResult');
-
-                                if (!data || !data.eaeu_hs_code) {
-                                    resultDiv.innerHTML = createErrorBlock('Не удалось определить код ТН ВЭД');
-                                    return;
-                                }
-
-                                const formattedCode = data.eaeu_hs_code.replace(/(\d{4})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
-                                let html = '';
-                                html += '<div class="tnved-result-layout">';
-                                html += '<div class="tnved-hero-card">';
-                                html += '<div class="tnved-hero-card__eyebrow">РЕКОМЕНДОВАННЫЙ КОД ТН ВЭД ЕАЭС</div>';
-                                html += '<div class="tnved-hero-card__code">' + formattedCode + '</div>';
-                                html += '<div class="tnved-hero-card__meta">Уверенность: <strong>' + (data.confidence * 100).toFixed(1) + '%</strong></div>';
-                                html += '<button type="button" onclick="applyTnvedCode(\'' + data.eaeu_hs_code + '\')" class="tnved-inline-apply">Применить этот код</button>';
-                                html += '</div>';
-                                html += '<div class="tnved-card"><h3 class="tnved-card__title">Обоснование классификации</h3><ol class="tnved-list">';
-                                data.explanations.forEach((exp) => {
-                                    html += '<li class="tnved-list__item">' + exp + '</li>';
-                                });
-                                html += '</ol></div>';
-                                html += '<div class="tnved-card"><h3 class="tnved-card__title">Рассмотренные альтернативные коды</h3>';
-                                data.candidate_codes.forEach((candidate) => {
-                                    html += '<div class="tnved-candidate">';
-                                    html += '<div class="tnved-candidate__head"><strong>' + candidate.code + '</strong><span>не подходит</span></div>';
-                                    html += '<div class="tnved-candidate__text">' + candidate.why_not + '</div>';
-                                    html += '</div>';
-                                });
-                                html += '</div>';
-                                html += '<div class="tnved-meta-grid">';
-                                html += '<div class="tnved-card"><h3 class="tnved-card__title">Источники информации</h3><div class="tnved-sources">';
-                                data.evidence_urls.forEach((url) => {
-                                    const displayUrl = url.replace('https://', '').replace('www.', '').split('/')[0];
-                                    html += '<a href="' + url + '" target="_blank" class="tnved-source-link">' + displayUrl + '</a>';
-                                });
-                                html += '</div></div>';
-                                html += '<div class="tnved-note-card"><h3 class="tnved-card__title">Примечания</h3><p>' + data.notes + '</p></div>';
-                                html += '</div>';
-                                html += '<div class="tnved-action-buttons">';
-                                html += '<button type="button" onclick="applyTnvedCode(\'' + data.eaeu_hs_code + '\')" class="tnved-apply-main-btn">Применить код ' + data.eaeu_hs_code + '</button>';
-                                html += '<button type="button" onclick="clearResults()" class="tnved-clear-btn">Очистить результаты</button>';
-                                html += '</div></div>';
-                                resultDiv.innerHTML = html;
-                            }
-
-                            function applyTnvedCode(code) {
-                                const tnVedCodeField = document.getElementById('tnVedCode');
-                                if (tnVedCodeField) {
-                                    tnVedCodeField.value = code;
-                                    showTnvedNotification('Код <strong>' + code + '</strong> применен в поле "33 ТН ВЭД"', 'success');
-                                }
-                            }
-
-                            function clearResults() {
-                                document.getElementById('tnvedResult').innerHTML = '';
-                                if (pollInterval) {
-                                    clearInterval(pollInterval);
-                                    pollInterval = null;
-                                }
-                            }
-
-                            function createLoadingBlock(text = 'Анализируем описание товаров...') {
-                                return '<div class="tnved-loading"><div class="tnved-loading__icon">⌛</div><p class="tnved-loading__title">' + text + '</p><div class="tnved-loading__text">ИИ анализирует описание и подбирает подходящие коды ТН ВЭД</div></div>';
-                            }
-
-                            function createErrorBlock(message) {
-                                return '<div class="tnved-error"><div class="tnved-error__icon">❌</div><p>' + message + '</p></div>';
-                            }
-
-                            function showTnvedNotification(message, type = 'info') {
-                                if (typeof window.showNotification === 'function') {
-                                    window.showNotification(message, type === 'success' ? 'success' : 'error');
-                                    return;
-                                }
-
-                                const notification = document.createElement('div');
-                                notification.className = 'tnved-floating-notice tnved-floating-notice--' + type;
-                                notification.innerHTML = message;
-                                document.body.appendChild(notification);
-
-                                setTimeout(() => {
-                                    notification.classList.add('is-hiding');
-                                    setTimeout(() => notification.remove(), 300);
-                                }, 5000);
-                            }
-
-                            window.addEventListener('beforeunload', function () {
-                                if (pollInterval) {
-                                    clearInterval(pollInterval);
-                                }
-                            });
-                        </script>
-                        <!-- КОНЕЦ БЛОКА ЗАПРОСА КОДА ТНВЭД -->
-<div class="grid-row grid-row--tight-top">
+                                <div class="grid-row" style="margin-top: 6px;">
                                     <div class="field span-2">
                                         <div class="field-label">32 Товар №</div>
                                         <div class="field-number">32</div>
@@ -592,14 +416,12 @@
                                     <div class="field span-3">
                                         <div class="field-label">33 ТН ВЭД</div>
                                         <div class="field-number">33</div>
-                                        <input type="text" class="field-input" id="tnVedCode"
-                                            placeholder="Код ТН ВЭД">
+                                        <input type="text" class="field-input" id="tnVedCode" placeholder="Код ТН ВЭД">
                                     </div>
                                     <div class="field span-2">
                                         <div class="field-label">34 Страна происх.</div>
                                         <div class="field-number">34</div>
-                                        <input type="text" class="field-input" id="originCountry"
-                                            placeholder="Код страны">
+                                        <input type="text" class="field-input" id="originCountry" placeholder="Код страны">
                                     </div>
                                     <div class="field span-2">
                                         <div class="field-label">35 Вес брутто</div>
@@ -609,8 +431,7 @@
                                     <div class="field span-3">
                                         <div class="field-label">38 Вес нетто</div>
                                         <div class="field-number">38</div>
-                                        <input type="text" class="field-input" id="netWeightProduct"
-                                            placeholder="кг">
+                                        <input type="text" class="field-input" id="netWeightProduct" placeholder="кг">
                                     </div>
                                 </div>
 
@@ -621,8 +442,7 @@
                                     </div>
                                     <div class="field span-3">
                                         <div class="field-label">Ед. изм.</div>
-                                        <input type="text" class="field-input" id="uom"
-                                            placeholder="pcs / kg / etc">
+                                        <input type="text" class="field-input" id="uom" placeholder="pcs / kg / etc">
                                     </div>
                                 </div>
 
@@ -635,20 +455,17 @@
                                     <div class="field span-3">
                                         <div class="field-label">40 Предшествующий документ</div>
                                         <div class="field-number">40</div>
-                                        <input type="text" class="field-input" id="previousDocument"
-                                            placeholder="№ документа">
+                                        <input type="text" class="field-input" id="previousDocument" placeholder="№ документа">
                                     </div>
                                     <div class="field span-3">
                                         <div class="field-label">41 Доп. единица измерения</div>
                                         <div class="field-number">41</div>
-                                        <input type="text" class="field-input" id="additionalUnit"
-                                            placeholder="Ед. измерения">
+                                        <input type="text" class="field-input" id="additionalUnit" placeholder="Ед. измерения">
                                     </div>
                                     <div class="field span-3">
                                         <div class="field-label">42 Цена товара</div>
                                         <div class="field-number">42</div>
-                                        <input type="text" class="field-input" id="productPrice"
-                                            placeholder="Цена">
+                                        <input type="text" class="field-input" id="productPrice" placeholder="Цена">
                                     </div>
                                 </div>
 
@@ -666,14 +483,12 @@
                                     <div class="field span-6">
                                         <div class="field-label">47 Исчисление платежей</div>
                                         <div class="field-number">47</div>
-                                        <input type="text" class="field-input" id="paymentCalculation"
-                                            placeholder="Расчёт платежей">
+                                        <input type="text" class="field-input" id="paymentCalculation" placeholder="Расчёт платежей">
                                     </div>
                                     <div class="field span-6">
                                         <div class="field-label">48 Отсрочка платежей</div>
                                         <div class="field-number">48</div>
-                                        <input type="text" class="field-input" id="paymentDeferral"
-                                            placeholder="Условия отсрочки">
+                                        <input type="text" class="field-input" id="paymentDeferral" placeholder="Условия отсрочки">
                                     </div>
                                 </div>
 
@@ -681,14 +496,12 @@
                                     <div class="field span-6">
                                         <div class="field-label">45 Таможенная стоимость</div>
                                         <div class="field-number">45</div>
-                                        <input type="text" class="field-input" id="customsValue"
-                                            placeholder="Стоимость">
+                                        <input type="text" class="field-input" id="customsValue" placeholder="Стоимость">
                                     </div>
                                     <div class="field span-6">
                                         <div class="field-label">46 Статистическая стоимость</div>
                                         <div class="field-number">46</div>
-                                        <input type="text" class="field-input" id="statisticalValue"
-                                            placeholder="Стат. стоимость">
+                                        <input type="text" class="field-input" id="statisticalValue" placeholder="Стат. стоимость">
                                     </div>
                                 </div>
 
@@ -700,37 +513,31 @@
 
                             <!-- ПРЕДСТАВИТЕЛЬ -->
                             <section class="section representative-section">
-                                <div class="section-title">54 Сведения о таможенном представителе / Отметки таможни
-                                </div>
+                                <div class="section-title">54 Сведения о таможенном представителе / Отметки таможни</div>
 
                                 <div class="grid-row">
                                     <div class="field span-6">
                                         <div class="field-label">Таможенный представитель</div>
-                                        <input type="text" class="field-input" id="customsRepresentative"
-                                            placeholder="Наименование">
+                                        <input type="text" class="field-input" id="customsRepresentative" placeholder="Наименование">
                                     </div>
                                     <div class="field span-6">
                                         <div class="field-label">Договор с клиентом</div>
-                                        <input type="text" class="field-input" id="clientContract"
-                                            placeholder="№ договора">
+                                        <input type="text" class="field-input" id="clientContract" placeholder="№ договора">
                                     </div>
                                 </div>
 
                                 <div class="grid-row">
                                     <div class="field span-4">
                                         <div class="field-label">Декларант</div>
-                                        <input type="text" class="field-input" id="declarant"
-                                            placeholder="ФИО декларанта">
+                                        <input type="text" class="field-input" id="declarant" placeholder="ФИО декларанта">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">Документ, удостоверяющий личность</div>
-                                        <input type="text" class="field-input" id="identityDocument"
-                                            placeholder="Паспортные данные">
+                                        <input type="text" class="field-input" id="identityDocument" placeholder="Паспортные данные">
                                     </div>
                                     <div class="field span-4">
                                         <div class="field-label">Документ, подтверждающий полномочия</div>
-                                        <input type="text" class="field-input" id="authorityDocument"
-                                            placeholder="Доверенность">
+                                        <input type="text" class="field-input" id="authorityDocument" placeholder="Доверенность">
                                     </div>
                                 </div>
 
@@ -746,36 +553,27 @@
                             </section>
                         </div>
 
-                        
-
-                            <div class="action-buttons aid-bottom-actions">
-                                <button class="btn btn-primary" id="saveDraft">СОХРАНИТЬ ЧЕРНОВИК</button>
-                                <button class="btn btn-primary" id="submitDeclaration">ОТПРАВИТЬ ДЕКЛАРАЦИЮ</button>
-                                <button class="btn btn-secondary" id="clearForm">ОЧИСТИТЬ ФОРМУ</button>
-                                <button class="btn btn-secondary" id="exportPDF">ЭКСПОРТ В PDF</button>
-                            </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="saveDraft">Сохранить черновик</button>
+                            <button class="btn btn-primary" id="submitDeclaration">Отправить декларацию</button>
+                            <button class="btn btn-secondary" id="clearForm">Очистить форму</button>
+                            <button class="btn btn-secondary" id="exportPDF">Экспорт в PDF</button>
                         </div>
-
-                        <footer class="aid-footer">
-                            <div class="aid-footer__content">
-                                <p>ПО СОТРУДНИЧЕСТВУ:</p>
-                                <p>TELEGRAM: @YUNGYUNG0_0</p>
-                                <p>ПОЧТА: CHZHEN.YG@DVFU.RU</p>
-                            </div>
-                        </footer>
                     </div>
 
-                    <aside class="aid-steps" aria-label="Шаги сервиса">
-                        <span class="aid-step">1</span>
-                        <span class="aid-step">2</span>
-                        <span class="aid-step aid-step--active">3</span>
-                    </aside>
+                    <footer class="aid-footer">
+                        <div class="aid-footer__content">
+                            <p>По сотрудничеству:</p>
+                            <p>TELEGRAM: @YUNGYUNG0_0</p>
+                            <p>ПОЧТА: CHZHEN.YG@DVFU.RU</p>
+                        </div>
+                    </footer>
                 </div>
-            </section>
-        </main>
-    </div>
+            </div>
+        </section>
+    </main>
 
-    <script src="{{ static_prefix }}/script.js?v=20260424-5"></script>
+    <script src="{{ static_prefix }}/script.js?v=20260424-6"></script>
 </body>
 
 </html>
