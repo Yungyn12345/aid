@@ -44,6 +44,21 @@ function endBatch() {
 // ===========================
 function $(id) { return document.getElementById(id); }
 
+function getDomRefs() {
+  return {
+    fileInput: $("fileInput"),
+    uploadArea: $("uploadArea"),
+    fileList: $("fileList"),
+    uploadSummary: $("uploadSummary"),
+    documentBadges: $("documentBadges"),
+    comparisonState: $("comparisonState"),
+    comparisonTableBody: $("comparisonTableBody"),
+    uploadTrigger: document.querySelector(".upload-cta"),
+  };
+}
+
+const DOM = getDomRefs();
+
 const APP_BASE_PATH = (() => {
   if (typeof window.APP_BASE_PATH === "string") {
     return window.APP_BASE_PATH.replace(/\/$/, "");
@@ -372,8 +387,8 @@ function buildComparisonRows() {
 }
 
 function renderUploadSummary() {
-  const summary = $("uploadSummary");
-  const badges = $("documentBadges");
+  const summary = DOM.uploadSummary;
+  const badges = DOM.documentBadges;
   if (!summary || !badges) return;
 
   const metrics = getUploadMetrics();
@@ -397,8 +412,8 @@ function renderUploadSummary() {
 }
 
 function renderComparisonTable() {
-  const stateNode = $("comparisonState");
-  const tbody = $("comparisonTableBody");
+  const stateNode = DOM.comparisonState;
+  const tbody = DOM.comparisonTableBody;
   if (!stateNode || !tbody) return;
 
   const docsLoaded = DOC_CONFIG.some((doc) => !!CTX[doc.key]);
@@ -620,11 +635,19 @@ function showNotification(message) {
 // ===========================
 // 5) Загрузка файлов UI
 // ===========================
-const fileInput = $("fileInput");
-const uploadArea = $("uploadArea");
-const fileList = $("fileList");
+const fileInput = DOM.fileInput;
+const uploadArea = DOM.uploadArea;
+const fileList = DOM.fileList;
 
 uploadArea?.addEventListener("click", () => {
+  if (!fileInput) return;
+  fileInput.value = "";
+  fileInput.click();
+});
+
+DOM.uploadTrigger?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
   if (!fileInput) return;
   fileInput.value = "";
   fileInput.click();
@@ -655,19 +678,19 @@ fileInput?.addEventListener("change", (e) => {
 
 function getFileIcon(filename) {
   const ext = filename.split(".").pop().toLowerCase();
-  return ext === "pdf" ? "📕" : "📄";
+  return ext === "pdf" ? "PDF" : "FILE";
 }
 
 function addFileToList(file) {
   const fileItem = document.createElement("div");
-  fileItem.className = "file-item";
+  fileItem.className = "file-item aid-upload-item";
   fileItem.dataset.status = "processing";
 
   const fileSize = file.size ? (file.size / 1024 / 1024).toFixed(2) : "—";
   fileItem.innerHTML = `
     <div class="file-icon">${getFileIcon(file.name || "DEMO")}</div>
-    <div class="file-name" title="${file.name || "DEMO"}">${file.name || "DEMO"} (${fileSize} MB)</div>
-    <div class="file-status processing">Ожидание...</div>
+    <div class="file-name aid-upload-item__name" title="${file.name || "DEMO"}">${file.name || "DEMO"}</div>
+    <div class="file-status processing aid-upload-item__meta">${fileSize} MB</div>
   `;
   fileList?.appendChild(fileItem);
   refreshDashboardUI();
