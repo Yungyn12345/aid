@@ -53,7 +53,7 @@ function getDomRefs() {
     documentBadges: $("documentBadges"),
     comparisonState: $("comparisonState"),
     comparisonTableBody: $("comparisonTableBody"),
-    uploadTrigger: document.querySelector(".upload-cta"),
+    uploadTrigger: $("uploadTrigger") || document.querySelector(".upload-cta"),
   };
 }
 
@@ -608,32 +608,7 @@ function showNotification(message) {
 }
 
 // ===========================
-// 4) Мобильное меню
-// ===========================
-(function initMobileMenu() {
-  const mobileMenuToggle = $("mobileMenuToggle");
-  const closeSidebar = $("closeSidebar");
-  const sidebarOverlay = $("sidebarOverlay");
-  const sidebar = $("sidebar");
-
-  mobileMenuToggle?.addEventListener("click", () => {
-    sidebar?.classList.add("active");
-    sidebarOverlay?.classList.add("active");
-  });
-
-  closeSidebar?.addEventListener("click", () => {
-    sidebar?.classList.remove("active");
-    sidebarOverlay?.classList.remove("active");
-  });
-
-  sidebarOverlay?.addEventListener("click", () => {
-    sidebar?.classList.remove("active");
-    sidebarOverlay?.classList.remove("active");
-  });
-})();
-
-// ===========================
-// 5) Загрузка файлов UI
+// 4) Upload UI
 // ===========================
 const fileInput = DOM.fileInput;
 const uploadArea = DOM.uploadArea;
@@ -655,18 +630,15 @@ DOM.uploadTrigger?.addEventListener("click", (e) => {
 
 uploadArea?.addEventListener("dragover", (e) => {
   e.preventDefault();
-  uploadArea.style.borderColor = "#0056b3";
-  uploadArea.style.backgroundColor = "#f0f7ff";
+  uploadArea.classList.add("is-dragover");
 });
 uploadArea?.addEventListener("dragleave", (e) => {
   e.preventDefault();
-  uploadArea.style.borderColor = "#ccc";
-  uploadArea.style.backgroundColor = "white";
+  uploadArea.classList.remove("is-dragover");
 });
 uploadArea?.addEventListener("drop", (e) => {
   e.preventDefault();
-  uploadArea.style.borderColor = "#ccc";
-  uploadArea.style.backgroundColor = "white";
+  uploadArea.classList.remove("is-dragover");
   handleFiles(e.dataTransfer.files);
 });
 
