@@ -2,11 +2,14 @@ FROM oven/bun:1.3.14-alpine AS build
 
 WORKDIR /app
 
+RUN apk add --no-cache nodejs npm
+
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
 COPY . .
-RUN bun run build
+
+RUN node ./node_modules/nuxt/bin/nuxt.mjs build
 
 
 FROM node:22-alpine AS runner
