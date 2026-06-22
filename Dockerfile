@@ -2,14 +2,19 @@ FROM oven/bun:1.3.14-alpine AS build
 
 WORKDIR /app
 
-RUN apk add --no-cache nodejs npm
-
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
 COPY . .
 
-RUN node ./node_modules/nuxt/bin/nuxt.mjs build
+RUN timeout -s TERM 600s bun run build; \
+    code="$?"; \
+    if [ "$code" = "0" ]; then exit 0; fi; \
+    if { [ "$code" = "124" ] || [ "$code" = "143" ]; } && [ -f ".output/server/index.mjs" ]; then \
+    echo "Nuxt build finished, but bun process did not exit. Continuing."; \
+    exit 0; \
+    fi; \
+    exit "$code"
 
 
 FROM node:22-alpine AS runner
