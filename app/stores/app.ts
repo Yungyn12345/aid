@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia'
+
 export const useAppStore = defineStore('app', () => {
   const counter = ref(0)
 
