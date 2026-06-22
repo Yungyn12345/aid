@@ -1,0 +1,44 @@
+FROM oven/bun:1.3.14-alpine AS build
+
+WORKDIR /app
+
+COPY package.json bun.lock* ./
+RUN bun install --frozen-lockfile
+
+COPY . .
+RUN bun run build
+
+
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
+ARG TYPST_VERSION=0.14.0
+
+RUN apk add --no-cache ca-certificates curl tar xz \
+    && ARCH="$(uname -m)" \
+    && if [ "$ARCH" = "x86_64" ]; then TYPST_ARCH="x86_64-unknown-linux-musl"; \
+    elif [ "$ARCH" = "aarch64" ]; then TYPST_ARCH="aarch64-unknown-linux-musl"; \
+    else echo "Unsupported arch: $ARCH" && exit 1; fi \
+    && curl -L -o /tmp/typst.tar.xz "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-${TYPST_ARCH}.tar.xz" \
+    && mkdir -p /tmp/typst \
+    && tar -xf /tmp/typst.tar.xz -C /tmp/typst --strip-components=1 \
+    && mv /tmp/typst/typst /usr/local/bin/typst \
+    && chmod +x /usr/local/bin/typst \
+    && typst --version \
+    && rm -rf /tmp/typst /tmp/typst.tar.xz
+
+COPY --from=build /app/.output ./.output
+COPY --from=build /app/public ./public
+COPY --from=build /app/server/templates ./server/templates
+COPY --from=build /app/certs ./certs
+
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=3000
+ENV TYPST_BIN=/usr/local/bin/typst
+ENV GIGACHAT_CA_BUNDLE_FILE=/app/certs/russian_trusted_root_ca_pem.crt
+
+EXPOSE 3000
+
+CMD ["node", ".output/server/index.mjs"]

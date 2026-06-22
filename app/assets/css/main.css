@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@config "../../../tailwind.config.js";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  font-family: Inter, system-ui, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}

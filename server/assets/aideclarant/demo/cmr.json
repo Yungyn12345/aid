@@ -1,0 +1,124 @@
+{
+  "consignor": {
+    "name": "Gerhardt Maschinen GmbH",
+    "address": "Komturstraße 10, 12099 Berlin",
+    "country": "Germany",
+    "vat_or_tax_id": "DE123456789",
+    "contacts": ""
+  },
+  "consignee": {
+    "name": "ООО «ТехИмпорт Рус»",
+    "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+    "country": "Russia",
+    "vat_or_tax_id": "7705123456",
+    "contacts": ""
+  },
+  "place_and_date_taking_over": {
+    "place": "Berlin, Germany",
+    "date": "2025-10-11"
+  },
+  "place_of_delivery": {
+    "place": "Москва",
+    "country": "Russia",
+    "address": ""
+  },
+  "packages_summary": {
+    "number_of_packages": 12,
+    "kind_of_packages": "10 cartons, 2 pallets",
+    "marks_and_numbers": "GM/TIR/10-2025/384/1-12"
+  },
+  "gross_weight_total_kg": 1240.0,
+  "net_weight_total_kg": 1060.0,
+  "transport": {
+    "mode": "road",
+    "mode_code_border": "30",
+    "mode_code_inland": "30",
+    "tractor_plate": "DE-AB 1234",
+    "trailer_plate": "DE-TR 5678",
+    "plate_country_code": "DE",
+    "volume_m3": 5.6,
+    "seals": []
+  },
+  "carrier": {
+    "name": "LLC «TransAuto Logistics»",
+    "address": "143900, Россия, г. Балашиха, ш. Энтузиастов, д. 1",
+    "vat_or_tax_id": "5024012345",
+    "contacts": "+7 495 123-45-67"
+  },
+  "route_countries": [
+    "DE",
+    "PL",
+    "BY",
+    "RU"
+  ],
+  "cmr_number": "",
+  "cmr_series": "",
+  "cmr_date": "2025-10-11",
+  "related_documents": [
+    {
+      "type": "Invoice",
+      "number": "GM-INV-2025/384",
+      "date": "2025-10-11"
+    },
+    {
+      "type": "Packing List",
+      "number": "PL-2025/384",
+      "date": "2025-10-11"
+    },
+    {
+      "type": "Contract",
+      "number": "TI-GM/2025-012",
+      "date": "2025-10-11"
+    }
+  ],
+  "items": [
+    {
+      "line_no": "1-8",
+      "description": "Spare parts GM-SP-A100…A145",
+      "quantity": 250,
+      "uom": "pcs",
+      "kind_of_packages": "carton",
+      "marks_and_numbers": "GM/TIR/10-2025/384/1-8",
+      "gross_weight_kg": 600.0,
+      "net_weight_kg": 520.0
+    },
+    {
+      "line_no": "9-10",
+      "description": "Pneumatic unit GM-PN-U20",
+      "quantity": 10,
+      "uom": "pcs",
+      "kind_of_packages": "carton",
+      "marks_and_numbers": "GM/TIR/10-2025/384/9-10",
+      "gross_weight_kg": 150.0,
+      "net_weight_kg": 120.0
+    },
+    {
+      "line_no": "11",
+      "description": "Control panel GM-CP-450",
+      "quantity": 1,
+      "uom": "pc",
+      "kind_of_packages": "pallet",
+      "marks_and_numbers": "GM/TIR/10-2025/384/11",
+      "gross_weight_kg": 240.0,
+      "net_weight_kg": 200.0
+    },
+    {
+      "line_no": "12",
+      "description": "Control panel GM-CP-450",
+      "quantity": 1,
+      "uom": "pc",
+      "kind_of_packages": "pallet",
+      "marks_and_numbers": "GM/TIR/10-2025/384/12",
+      "gross_weight_kg": 250.0,
+      "net_weight_kg": 220.0
+    }
+  ],
+  "driver": {
+    "name": "",
+    "contacts": "",
+    "passport_or_id": ""
+  },
+  "special_instructions": "Incoterms 2020: FCA Berlin, Germany",
+  "transshipment": "Нет",
+  "notes": "Экспорт DE / Импорт RU, выпуск для внутреннего потребления"
+}

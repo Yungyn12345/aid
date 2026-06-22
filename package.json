@@ -1,0 +1,32 @@
+{
+  "name": "aidoc",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "0.11.3",
+    "@tailwindcss/vite": "^4.3.1",
+    "nuxt": "^4.4.8",
+    "pinia": "^3.0.4",
+    "tailwindcss": "^4.3.1",
+    "vue": "^3.5.35",
+    "vue-router": "^5.1.0",
+    "pdf-parse": "^1.1.1",
+    "mammoth": "^1.11.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.15",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.5",
+    "@types/node": "^24.13.2"
+  }
+}
