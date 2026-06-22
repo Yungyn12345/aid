@@ -946,17 +946,6 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
             key="comparison"
             class="comparison-stage"
           >
-            <div
-              class="comparison-ai-state"
-              :class="{ 'comparison-ai-state--error': aiSource === 'local-fallback' || aiError }"
-            >
-              <div>
-                <p>{{ aiSummary || 'ИИ-кросс-проверка готова к запуску.' }}</p>
-                <span v-if="isAiProcessing">ИИ обрабатывает данные...</span>
-                <span v-if="aiError">{{ aiError }}</span>
-              </div>
-            </div>
-
             <div class="comparison-table-wrap">
               <table class="comparison-table">
                 <thead>

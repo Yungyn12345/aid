@@ -37,6 +37,7 @@ RUN apk add --no-cache ca-certificates curl tar xz \
     && rm -rf /tmp/typst /tmp/typst.tar.xz
 
 COPY --from=build /app/.output ./.output
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/public ./public
 COPY --from=build /app/server/templates ./server/templates
 COPY --from=build /app/certs ./certs
@@ -44,6 +45,7 @@ COPY --from=build /app/certs ./certs
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
+ENV NODE_PATH=/app/node_modules
 ENV TYPST_BIN=/usr/local/bin/typst
 ENV GIGACHAT_CA_BUNDLE_FILE=/app/certs/russian_trusted_root_ca_pem.crt
 
