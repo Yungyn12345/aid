@@ -11,8 +11,8 @@ export const documentLabels: Record<DocumentType, string> = {
 
 export type ExtractedDocuments = Partial<Record<DocumentType, Record<string, unknown>>>
 
-export type ComparisonCellStatus = 'ok' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
-export type ComparisonRowStatus = 'ok' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
+export type ComparisonCellStatus = 'ok' | 'similar' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
+export type ComparisonRowStatus = 'ok' | 'similar' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
 
 export type ComparisonRow = {
   attribute: string

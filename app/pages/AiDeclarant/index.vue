@@ -19,8 +19,9 @@ type UploadedFileItem = {
   file?: File
 }
 
-type ComparisonCellStatus = 'ok' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
-type ComparisonRowStatus = 'ok' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
+type ComparisonCellStatus = 'ok' | 'similar' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
+type ComparisonRowStatus = 'ok' | 'similar' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
+type ComparisonDocumentType = 'agreement' | 'invoice' | 'packingList' | 'cmr'
 
 type ComparisonRow = {
   attribute: string
@@ -137,6 +138,36 @@ const comparisonColumns = [
   'Упаковочный лист',
   'CMR',
 ]
+
+const comparisonColumnDocumentTypes: ComparisonDocumentType[] = ['agreement', 'invoice', 'packingList', 'cmr']
+
+const allowedEmptyComparisonAttributes: Record<ComparisonDocumentType, Set<string>> = {
+  agreement: new Set([
+    'Дата отгрузки / принятия груза перевозчиком',
+    'Общее количество мест',
+    'Общий вес брутто, кг',
+    'Общий объём, м³',
+    'Номер договора / инвойса в маркировке',
+  ]),
+  invoice: new Set([
+    'Дата отгрузки / принятия груза перевозчиком',
+    'Общее количество мест',
+    'Общий вес брутто, кг',
+    'Общий объём, м³',
+    'Номер договора / инвойса в маркировке',
+    'Маршрут',
+  ]),
+  packingList: new Set([
+    'Маршрут',
+    'Условия поставки (Incoterms)',
+    'Валюта',
+  ]),
+  cmr: new Set([
+    'Номер договора',
+    'Номер инвойса',
+    'Валюта',
+  ]),
+}
 
 const comparisonRows = ref<ComparisonRow[]>([
   {
@@ -636,17 +667,33 @@ const runUploadedDocumentsAiAnalysis = async () => {
   }
 }
 
-const isIgnoredComparisonValue = (value: string) => {
+const isEmptyComparisonValue = (value: string) => {
   const normalized = value.trim()
   return !normalized || normalized === '—'
 }
 
-const getComparisonCellStatus = (row: ComparisonRow, columnIndex: number): ComparisonCellStatus => {
-  if (isIgnoredComparisonValue(row.values[columnIndex] ?? '')) {
-    return 'ignored'
+const isAllowedEmptyComparisonCell = (attribute: string, columnIndex: number) => {
+  const documentType = comparisonColumnDocumentTypes[columnIndex]
+
+  if (!documentType) {
+    return false
   }
 
-  return row.cellStatuses?.[columnIndex] || 'unchecked'
+  return allowedEmptyComparisonAttributes[documentType].has(attribute)
+}
+
+const getComparisonCellStatus = (row: ComparisonRow, columnIndex: number): ComparisonCellStatus => {
+  const storedStatus = row.cellStatuses?.[columnIndex]
+
+  if (storedStatus && storedStatus !== 'unchecked') {
+    return storedStatus
+  }
+
+  if (isEmptyComparisonValue(row.values[columnIndex] ?? '')) {
+    return isAllowedEmptyComparisonCell(row.attribute, columnIndex) ? 'ignored' : 'empty'
+  }
+
+  return storedStatus || 'unchecked'
 }
 
 const uploadInputDocuments = () => {
@@ -1667,6 +1714,7 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
   background: #ffe8e8;
 }
 
+.comparison-table__cell--similar,
 .comparison-table__cell--unchecked {
   background: #fff8db;
 }
