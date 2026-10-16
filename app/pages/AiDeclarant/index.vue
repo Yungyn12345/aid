@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { buildDeclarationXml } from '#shared/aideclarant/xml'
 import { localCrossCheckRows, buildComparisonRowsFromDocuments, applyComparisonEdit, isAllowedEmptyComparisonCell } from '#shared/aideclarant/comparison'
 import { createEmptyDraft, canonicalDraft, draftValue, updateDraftValue, buildDeclarationDraftFromDocuments, mergeGeneratedDraft, applyComparisonValueToDraft } from '#shared/aideclarant/declaration'
 import type { ComparisonCellStatus, ComparisonRow, CrossCheckResult, AnalyzeResult, DeclarationDraft, ExtractedDocuments, AiConnectionState, AiProviderSource, TnvedSuggestion, TnvedSuggestionResult } from '#shared/aideclarant/types'
@@ -52,7 +53,7 @@ const tnvedConnection = ref<AiConnectionState | null>(null)
 const tnvedError = ref('')
 const isTnvedProcessing = ref(false)
 const isPdfExportProcessing = ref(false)
-const pdfExportError = ref('')
+const exportError = ref('')
 
 const comparisonColumns = [
   'Контракт',
@@ -425,9 +426,26 @@ const applyTnvedSuggestion = (suggestion: TnvedSuggestion) => {
 
 const collectDeclarationDraftFromForm = (): DeclarationDraft => canonicalDraft(declarationDraft.value || emptyDraft)
 
+const exportDeclarationXml = () => {
+  exportError.value = ''
+  try {
+    const blob = new Blob([buildDeclarationXml(collectDeclarationDraftFromForm())], { type: 'application/xml;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'ESADout_CU.xml'
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  } catch (error) {
+    exportError.value = error instanceof Error ? error.message : 'Не удалось экспортировать декларацию в XML'
+  }
+}
+
 const exportDeclarationPdf = async () => {
   isPdfExportProcessing.value = true
-  pdfExportError.value = ''
+  exportError.value = ''
 
   try {
     const draft = collectDeclarationDraftFromForm()
@@ -459,7 +477,7 @@ const exportDeclarationPdf = async () => {
     link.remove()
     URL.revokeObjectURL(url)
   } catch (error) {
-    pdfExportError.value = error instanceof Error ? error.message : 'Не удалось экспортировать декларацию в PDF'
+    exportError.value = error instanceof Error ? error.message : 'Не удалось экспортировать декларацию в PDF'
   } finally {
     isPdfExportProcessing.value = false
   }
@@ -623,73 +641,79 @@ const formatTnvedConfidence = (value: number) => {
             key="document"
             class="document-stage"
           >
-            <DtDeclarationForm :model-value="declarationDraft || emptyDraft" @update:model-value="declarationDraft = $event" />
-              <section class="tnved-panel">
-                <div class="tnved-panel__head">
-                  <div>
-                    <h3>Рекомендации по коду ТН ВЭД</h3>
-                    <label>Товар <select v-model.number="selectedGoodsIndex"><option v-for="n in Number(declarationDraft?.goodsCount || 1)" :key="n" :value="n - 1">{{ n }}</option></select></label>
-                    <p>
-                      Отдельное поле с предварительными вариантами. Финальный код должен проверить специалист.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    class="yellow-button tnved-panel__button"
-                    :disabled="isTnvedProcessing"
-                    @click="requestTnvedSuggestions"
-                  >
-                    {{ isTnvedProcessing ? 'ПОДБИРАЕМ КОДЫ...' : isDemo ? 'ПОКАЗАТЬ РЕКОМЕНДАЦИИ ДЕМО' : 'ПРЕДЛОЖИТЬ КОДЫ ТНВЭД' }}
-                  </button>
-                </div>
-
-                <p v-if="tnvedSummary" class="tnved-panel__summary">
-                  {{ tnvedSummary }}
-                </p>
-
-                <p v-if="tnvedError" class="tnved-panel__error">
-                  {{ tnvedError }}
-                </p>
-
-                <div v-if="tnvedSuggestions.length" class="tnved-panel__list">
-                  <article
-                    v-for="suggestion in tnvedSuggestions"
-                    :key="`${suggestion.code}-${suggestion.title}`"
-                    class="tnved-card"
-                  >
-                    <div class="tnved-card__code">
-                      {{ suggestion.code }}
-                    </div>
-
-                    <div class="tnved-card__body">
-                      <h4>{{ suggestion.title }}</h4>
-                      <p>{{ suggestion.reason }}</p>
-                      <span>Уверенность: {{ formatTnvedConfidence(suggestion.confidence) }}</span>
+            <DtDeclarationForm :model-value="declarationDraft || emptyDraft" @update:model-value="declarationDraft = $event">
+              <template #tnved>
+                <section class="tnved-panel">
+                  <div class="tnved-panel__head">
+                    <div>
+                      <h3>Рекомендации по коду ТН ВЭД</h3>
+                      <label>Товар <select v-model.number="selectedGoodsIndex"><option v-for="n in Number(declarationDraft?.goodsCount || 1)" :key="n" :value="n - 1">{{ n }}</option></select></label>
+                      <p>
+                        Отдельное поле с предварительными вариантами. Финальный код должен проверить специалист.
+                      </p>
                     </div>
 
                     <button
                       type="button"
-                      class="tnved-card__apply"
-                      @click="applyTnvedSuggestion(suggestion)"
+                      class="yellow-button tnved-panel__button"
+                      :disabled="isTnvedProcessing"
+                      @click="requestTnvedSuggestions"
                     >
-                      Подставить
+                      {{ isTnvedProcessing ? 'ПОДБИРАЕМ КОДЫ...' : isDemo ? 'ПОКАЗАТЬ РЕКОМЕНДАЦИИ ДЕМО' : 'ПРЕДЛОЖИТЬ КОДЫ ТНВЭД' }}
                     </button>
-                  </article>
-                </div>
-              </section>
+                  </div>
 
-            <button
-              type="button"
-              class="yellow-button export-button"
-              :disabled="isPdfExportProcessing"
-              @click="exportDeclarationPdf"
-            >
-              {{ isPdfExportProcessing ? 'СОБИРАЕМ PDF...' : 'ЭКСПОРТ В PDF' }}
-            </button>
+                  <p v-if="tnvedSummary" class="tnved-panel__summary">
+                    {{ tnvedSummary }}
+                  </p>
 
-            <p v-if="pdfExportError" class="export-error">
-              {{ pdfExportError }}
+                  <p v-if="tnvedError" class="tnved-panel__error">
+                    {{ tnvedError }}
+                  </p>
+
+                  <div v-if="tnvedSuggestions.length" class="tnved-panel__list">
+                    <article
+                      v-for="suggestion in tnvedSuggestions"
+                      :key="`${suggestion.code}-${suggestion.title}`"
+                      class="tnved-card"
+                    >
+                      <div class="tnved-card__code">
+                        {{ suggestion.code }}
+                      </div>
+
+                      <div class="tnved-card__body">
+                        <h4>{{ suggestion.title }}</h4>
+                        <p>{{ suggestion.reason }}</p>
+                        <span>Уверенность: {{ formatTnvedConfidence(suggestion.confidence) }}</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        class="tnved-card__apply"
+                        @click="applyTnvedSuggestion(suggestion)"
+                      >
+                        Подставить
+                      </button>
+                    </article>
+                  </div>
+                </section>
+              </template>
+            </DtDeclarationForm>
+
+            <div class="export-actions">
+              <button
+                type="button"
+                class="yellow-button export-button"
+                :disabled="isPdfExportProcessing"
+                @click="exportDeclarationPdf"
+              >
+                {{ isPdfExportProcessing ? 'СОБИРАЕМ PDF...' : 'ЭКСПОРТ В PDF' }}
+              </button>
+              <button type="button" class="yellow-button export-button" @click="exportDeclarationXml">ЭКСПОРТ В XML</button>
+            </div>
+
+            <p v-if="exportError" class="export-error">
+              {{ exportError }}
             </p>
           </section>
         </Transition>
@@ -1148,6 +1172,19 @@ const formatTnvedConfidence = (value: number) => {
   margin-top: 32px;
 }
 
+.export-actions {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.export-actions .export-button {
+  margin-top: 0;
+}
+
 .export-error {
   max-width: 760px;
   margin: 14px auto 0;
@@ -1570,6 +1607,7 @@ const formatTnvedConfidence = (value: number) => {
 
   .tnved-panel__button {
     width: 100%;
+    min-width: 0;
   }
 
   .tnved-card {

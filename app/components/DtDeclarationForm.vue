@@ -354,6 +354,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         <span class="f-top"><span class="f-badge">44</span><span class="f-name">Дополнительная информация / представленные документы</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-53'" aria-label="Правило заполнения: Дополнительная информация / представленные документы">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril8" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
         <textarea placeholder="список документов (код, номер, дата) — заполняется автоматически" :id="inputId('g44-documents', goodsIndex)" data-field="g44-documents" :data-goods-index="goodsIndex" aria-label="Дополнительная информация / представленные документы — список документов (код, номер, дата) — заполняется автоматически" :disabled="isDisabled('g44-documents')" :value="value('g44-documents', goodsIndex)" @input="changeValue('g44-documents', $event, goodsIndex)"></textarea>
       </div>
+<slot v-if="goodsIndex === 0" name="tnved" />
 
       <div class="row">
         <div class="field required" data-field-group="field-54">

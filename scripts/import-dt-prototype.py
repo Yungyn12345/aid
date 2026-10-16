@@ -134,7 +134,10 @@ def render(node,goods=False):
     if node.tag in ParserVoid: return '<'+node.tag+attrtext+'>'
     children=''.join(render(c,goods) for c in node.children)
     if node.tag=='textarea': children=''
-    return '<'+node.tag+attrtext+'>'+children+'</'+node.tag+'>'
+    rendered = '<'+node.tag+attrtext+'>'+children+'</'+node.tag+'>'
+    if goods and node in bynode and bynode[node]['graph'] == '44':
+        rendered += '\n<slot v-if="goodsIndex === 0" name="tnved" />'
+    return rendered
 ParserVoid={'input','br','hr','img','meta','link','source','wbr','area','base','embed','param','col'}
 parts=[]
 for child in board.children:
