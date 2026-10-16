@@ -1,4 +1,9 @@
-FROM oven/bun:1.3.14-alpine AS build
+FROM oven/bun:1.3.14-alpine AS bun
+
+FROM node:22-alpine AS build
+
+# Use Bun for dependency installation and Node for Nuxt's CLI lifecycle.
+COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
 
 WORKDIR /app
 
@@ -7,14 +12,7 @@ RUN bun install --frozen-lockfile
 
 COPY . .
 
-RUN timeout -s TERM 600s bun run build; \
-    code="$?"; \
-    if [ "$code" = "0" ]; then exit 0; fi; \
-    if { [ "$code" = "124" ] || [ "$code" = "143" ]; } && [ -f ".output/server/index.mjs" ]; then \
-    echo "Nuxt build finished, but bun process did not exit. Continuing."; \
-    exit 0; \
-    fi; \
-    exit "$code"
+RUN bun run typecheck && bun run build
 
 
 FROM node:22-alpine AS runner

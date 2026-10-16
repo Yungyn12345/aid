@@ -160,7 +160,7 @@ describe('document consistency and edits', () => {
   })
   test.each([
     ['5.6 m3', '5600 l', 'ok'], ['5.6 м³', '5.6 m³', 'ok'], ['5.6 litres', '5.6 m³', 'mismatch'], ['5.6 boxes', '5.6 m³', 'mismatch'],
-  ])('volume %s and %s', (a, b, expected) => expect(evaluateComparisonRow(row('Объём', ['—', '—', a, b], 'volume')).status).toBe(expected))
+  ] as const)('volume %s and %s', (a, b, expected) => expect(evaluateComparisonRow(row('Объём', ['—', '—', a, b], 'volume')).status).toBe(expected))
   test('reference strings and missing SKU fields normalize without fixing contradictory SKU', async () => {
     const { normalizeDocuments } = await import('../shared/aideclarant/normalize')
     const docs = normalizeDocuments({ invoice: { contract_reference: 'Договор № A-1 от 10.10.2026', items: [{ description: 'Pneumatic unit GM-PN-U20' }] }, cmr: { items: [{ model_or_sku: 'GM-PN-U2010', quantity: 120 }] } })

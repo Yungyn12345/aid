@@ -19,7 +19,7 @@ const child = Bun.spawn([process.env.NODE_BINARY || 'node', resolve('.output/ser
 })
 const upload = async (files: Array<{ name: string; data: Uint8Array }>, status = 200) => {
   const form = new FormData()
-  files.forEach(file => form.append('files', new Blob([file.data]), file.name))
+  files.forEach(file => form.append('files', new Blob([new Uint8Array(file.data)]), file.name))
   const response = await fetch(base + '/api/aideclarant/analyze', { method: 'POST', body: form })
   const body = await response.json()
   assert.equal(response.status, status, JSON.stringify(body).slice(0, 1000))
