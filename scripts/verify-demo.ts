@@ -30,6 +30,7 @@ const post = async (route: string, body: unknown) => {
 }
 const verify = (reply: any) => {
   assert.equal(reply.demoVersion, snapshot.version)
+  assert.equal(reply.rows.length, 13)
   assert.equal(reply.demoChecksum, snapshot.checksum)
   const { demoVersion, demoChecksum: checksum, ...payload } = reply
   assert.equal(demoChecksum(payload), checksum)

@@ -1,5 +1,6 @@
 import { isObject, items, numberValue, text, volumeM3 } from './data'
 import type { ExtractedDocuments } from './types'
+export const parseIncotermsValue = (value: string) => ({ rule: value.match(/^\s*([A-Za-z]{3})\b/)?.[1]?.toUpperCase() || '', place: value.replace(/^\s*[A-Za-z]{3}\s*/, '').replace(/\s*\(?Incoterms[®\s]*\d{4}\)?\s*/i, '').trim(), version: value.match(/Incoterms[®\s]*(\d{4})/i)?.[1] || '' })
 
 // Accept equivalent extraction shapes without guessing missing facts.
 const reference = (value: unknown) => {

@@ -20,7 +20,9 @@ export type ComparisonRow = {
   values: string[]
   kind?: 'text' | 'entity' | 'address' | 'identifier' | 'country' | 'number' | 'weight' | 'volume' | 'currency' | 'date' | 'reference' | 'incoterms' | 'goods' | 'route'
   sku?: string
-  bindings?: Array<{ document: DocumentType; paths: string[]; numeric?: boolean } | null>
+  bindings?: Array<{ document: DocumentType; paths: string[]; numeric?: boolean; format?: 'entity' | 'incoterms' | 'reference' | 'goods'; linePaths?: string[][] } | null>
+  components?: ComparisonRow[]
+  draftEntity?: 'g2' | 'g8'
   draftKeys?: string[]
   applicable?: boolean[]
   preferredColumn?: number

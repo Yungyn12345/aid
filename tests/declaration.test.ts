@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { allDeclarationControls } from '../shared/aideclarant/schema'
 import { applyComparisonValueToDraft, buildDeclarationDraftFromDocuments, calculatePayments, calculateValuation, createEmptyDraft, draftValue, goodsKey, mergeGeneratedDraft, removeGoodsAt, resizeGoods, updateDraftValue } from '../shared/aideclarant/declaration'
 import { buildTypstDeclarationData } from '../server/utils/aideclarant/typstDeclaration'
-import { applyCrossCheckResult, buildComparisonRowsFromDocuments, evaluateComparisonRow } from '../shared/aideclarant/comparison'
+import { applyCrossCheckResult, buildDetailedComparisonRowsFromDocuments as buildComparisonRowsFromDocuments, evaluateComparisonRow } from '../shared/aideclarant/comparison'
 import { demoChecksum, validateDemoSnapshot } from '../server/utils/aideclarant/demoSnapshot'
 import type { ComparisonRow } from '../shared/aideclarant/types'
 

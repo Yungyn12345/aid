@@ -1,6 +1,6 @@
 import { allDeclarationControls, goodsControlKeys } from './schema'
 import { addressCountry, countryCode, countryName, first, formatNumber, get, isObject, items, matchingItems, normalizeText, numberValue, sum, text, weightKg } from './data'
-import { normalizeDocuments } from './normalize'
+import { normalizeDocuments, parseIncotermsValue } from './normalize'
 import type { ComparisonRow, DeclarationDraft, ExtractedDocuments } from './types'
 
 export const goodsKey = (index: number, key: string) => `goods.${index}.${key}`
@@ -169,14 +169,29 @@ export const mergeGeneratedDraft = (current: DeclarationDraft, previous: Declara
   return recalculateDraft(merged)
 }
 export const applyComparisonValueToDraft = (input: DeclarationDraft, row: ComparisonRow, value: string) => {
-  const draft = { ...input }
+  let draft = { ...input }
+  if (row.id === 'goods.description' && row.preferredColumn !== undefined) {
+    for (const component of row.components || []) {
+      const description = component.values[row.preferredColumn]
+      if (description && description !== '—') draft = applyComparisonValueToDraft(draft, component, description)
+    }
+    return recalculateDraft(draft)
+  }
+  if (row.draftEntity) {
+    const [name = '', ...address] = (value === '—' ? '' : value).split('\n')
+    draft[`${row.draftEntity}-name`] = name
+    draft[`${row.draftEntity}-addr`] = address.join('\n')
+    return recalculateDraft(draft)
+  }
   for (let key of row.draftKeys || []) {
     if (key.startsWith('goods.') && input.goodsStructureEdited === 'true') {
       const matches = Array.from({ length: Number(input.goodsCount) || 1 }, (_, index) => index).filter(index => row.sku && matchingItems([{ description: draftValue(input, 'g31-desc', index) }], { model_or_sku: row.sku }).length)
       if (matches.length !== 1) continue
       key = key.replace(/^goods\.\d+\./, `goods.${matches[0]}.`)
     }
-    if ((key.endsWith('-code') || key.endsWith('-origin')) && row.kind === 'country') draft[key] = countryCode(value)
+    if (row.id === 'incoterms' && key === 'g20-code') draft[key] = parseIncotermsValue(value).rule
+    else if (row.id === 'incoterms' && key === 'g20-place') draft[key] = parseIncotermsValue(value).place
+    else if ((key.endsWith('-code') || key.endsWith('-origin')) && row.kind === 'country') draft[key] = countryCode(value)
     else if (key === 'g15-name' || key === 'g17-name' || key === 'g16-origin') draft[key] = countryName(value)
     else if (row.id?.endsWith('.inn') && key.endsWith('-inn')) draft[key] = [value === '—' ? '' : value, input[key]?.split('/')[1]].filter(Boolean).join('/')
     else if (row.id?.endsWith('.kpp') && key.endsWith('-inn')) draft[key] = [input[key]?.split('/')[0], value === '—' ? '' : value].filter(Boolean).join('/')

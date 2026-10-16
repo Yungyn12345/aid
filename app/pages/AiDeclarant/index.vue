@@ -27,6 +27,11 @@ type UploadedFileItem = {
 }
 
 const activeStep = ref<StepNumber>(1)
+watch(activeStep, async () => {
+  if (!import.meta.client) return
+  await nextTick()
+  window.scrollTo({ top: 0, behavior: 'instant' })
+})
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const acceptedExtensions = ['pdf', 'doc', 'docx', 'xlsx']
@@ -195,11 +200,11 @@ onMounted(() => {
     if (!state.draft || !Array.isArray(state.rows)) return
     declarationDraft.value = canonicalDraft(state.draft)
     generatedDraft.value = canonicalDraft(state.generated || state.draft)
-    comparisonRows.value = state.rows
+    comparisonRows.value = state.rows.length === 13 ? state.rows : localCrossCheckRows(buildComparisonRowsFromDocuments(state.documents || {})).rows
     extractedDocuments.value = state.documents || null
     isDemo.value = state.isDemo === true
     demoVersion.value = state.demoVersion || ''
-    aiSummary.value = state.summary || ''
+    aiSummary.value = localCrossCheckRows(comparisonRows.value).summary
     aiSource.value = state.source || ''
     tnvedSuggestions.value = state.suggestions || []
     tnvedSummary.value = state.tnvedSummary || ''
@@ -344,14 +349,20 @@ const applyEditedComparisonValue = (row: ComparisonRow, columnIndex: number) => 
 const updateComparisonCell = (rowIndex: number, columnIndex: number, value: string) => {
   const row = comparisonRows.value[rowIndex]
   if (!row) return
+  let documents: ExtractedDocuments
+  try { documents = applyComparisonEdit(extractedDocuments.value || {}, row, columnIndex, value) } catch (error) {
+    aiError.value = error instanceof Error ? error.message : 'Проверьте формат ячейки'
+    return
+  }
+  aiError.value = ''
   row.values[columnIndex] = value
-  extractedDocuments.value = applyComparisonEdit(extractedDocuments.value || {}, row, columnIndex, value)
+  extractedDocuments.value = documents
   const next = buildDeclarationDraftFromDocuments(extractedDocuments.value)
   declarationDraft.value = mergeGeneratedDraft(declarationDraft.value || generatedDraft.value, generatedDraft.value, next)
   generatedDraft.value = next
-  applyEditedComparisonValue(row, columnIndex)
   const derived = buildComparisonRowsFromDocuments(extractedDocuments.value)
-  comparisonRows.value = comparisonRows.value.map(previous => derived.find(item => item.id === previous.id && item.cellChecks) || previous)
+  comparisonRows.value = derived.map(updated => { const edited = comparisonRows.value.find(previous => previous.id === updated.id); return edited ? { ...updated, values: edited.values, preferredColumn: edited.preferredColumn } : updated })
+  applyEditedComparisonValue(comparisonRows.value.find(updated => updated.id === row.id) || row, columnIndex)
   scheduleAiCrossCheck()
 }
 const applyDeclarationDraft = (draft?: DeclarationDraft | null) => {
@@ -381,6 +392,7 @@ const openDeclarationStep = () => {
 }
 
 const requestTnvedSuggestions = async () => {
+  if (isDemo.value && tnvedSuggestions.value.length) return
   isTnvedProcessing.value = true
   tnvedError.value = ''
   tnvedSummary.value = isDemo.value ? 'Загружаем сохранённые рекомендации исходного демо...' : 'ИИ подбирает предварительные коды ТН ВЭД...'
@@ -460,13 +472,13 @@ const formatTnvedConfidence = (value: number) => {
 </script>
 
 <template>
-  <main class="declarant-page">
-    <NuxtLink to="/" aria-label="AI Doc" class="declarant-logo">
+  <main class="declarant-page" :class="{ 'declarant-page--form': activeStep === 3 }">
+    <NuxtLink v-if="activeStep !== 3" to="/" aria-label="AI Doc" class="declarant-logo">
       <img src="/aidoc/logo.svg" alt="AI Doc">
     </NuxtLink>
 
     <section class="declarant-shell">
-      <div class="declarant-head">
+      <div v-if="activeStep !== 3" class="declarant-head">
         <h1>{{ currentStageTitle }}</h1>
         <p>{{ currentStageSubtitle }}</p>
       </div>
@@ -565,7 +577,6 @@ const formatTnvedConfidence = (value: number) => {
             class="comparison-stage"
           >
             <p class="comparison-guidance">Изменения в таблице автоматически сохраняются в декларации.</p>
-            <p v-if="isDemo" class="comparison-guidance">Демо {{ demoVersion }}: исходная выдача зафиксирована; ваши правки действуют только в этой сессии.</p>
             <div class="comparison-table-wrap">
               <table class="comparison-table">
                 <thead>
@@ -602,7 +613,6 @@ const formatTnvedConfidence = (value: number) => {
             </div>
 
             <p class="comparison-guidance">{{ aiSummary }}</p>
-            <ul class="comparison-issues"><li v-for="row in comparisonRows.filter(row => row.issue && (row.status === 'mismatch' || row.status === 'empty'))" :key="row.id || row.attribute">{{ row.attribute }}: {{ row.issue }}</li></ul>
             <button type="button" class="yellow-button comparison-next" :disabled="isAiProcessing" @click="openDeclarationStep">
               СФОРМИРОВАТЬ ДЕКЛАРАЦИЮ
             </button>
@@ -729,6 +739,13 @@ const formatTnvedConfidence = (value: number) => {
   line-height: 1;
   letter-spacing: 0;
 }
+
+.declarant-page.declarant-page--form{padding:0;background:#E7EAF0;color:#1B2333;font-weight:400;line-height:1.4;}
+.declarant-page--form .declarant-shell{max-width:none;margin:0;}
+.declarant-page--form .document-stage{align-items:stretch;}
+.declarant-page--form .export-error{color:#b42318;}
+.declarant-page--form .export-button{align-self:center;margin-bottom:24px;}
+.declarant-page--form .stage-nav__button--back{background:#fff;color:#12306B;border:1px solid #D9DCE3;}
 
 .declarant-logo {
   display: inline-flex;

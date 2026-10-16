@@ -1,7 +1,7 @@
 import { countryCode, first, formatNumber, get, isObject, items, matchingItems, normalizeText, normalizeUnit, numberValue, setPath, skuKey, sum, text, volumeM3, weightKg } from './data'
 import { documentOrder, type ComparisonCellStatus, type ComparisonRow, type CrossCheckResult, type DocumentType, type ExtractedDocuments } from './types'
 import { goodsKey } from './declaration'
-import { normalizeDocuments } from './normalize'
+import { normalizeDocuments, parseIncotermsValue } from './normalize'
 
 const EMPTY = '—'
 export const isEmptyComparisonValue = (value: string) => !value.trim() || value.trim() === EMPTY
@@ -10,7 +10,7 @@ export const formatComparisonValue = (value: unknown): string => {
   return text(value) || EMPTY
 }
 type Paths = string[][]
-export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): ComparisonRow[] => {
+export const buildDetailedComparisonRowsFromDocuments = (input: ExtractedDocuments): ComparisonRow[] => {
   const documents = normalizeDocuments(input)
   const rows: ComparisonRow[] = []
   const add = (id: string, attribute: string, paths: Paths, kind: ComparisonRow['kind'] = 'text', draftKeys: string[] = [], applicable = paths.map(list => list.length > 0)) => {
@@ -100,7 +100,7 @@ export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): Com
     if (!['contract.number', 'contract.date', 'invoice.number', 'invoice.date', 'packing.number', 'packing.date'].includes(row.id || '')) continue
     const prefix = row.id!.split('.')[0]!
     const ref = related.find(value => isObject(value) && new RegExp(prefix === 'contract' ? 'contract|договор' : prefix === 'invoice' ? 'invoice|инвойс' : 'packing|упаков', 'i').test(text(value.type)))
-    if (isObject(ref)) { row.values[3] = formatComparisonValue(ref[row.kind === 'date' ? 'date' : 'number']); row.applicable![3] = false }
+    if (isObject(ref)) { row.values[3] = formatComparisonValue(ref[row.kind === 'date' ? 'date' : 'number']); row.applicable![3] = false; row.bindings![3] = { document: 'cmr', paths: [`related_documents.${related.indexOf(ref)}.${row.kind === 'date' ? 'date' : 'number'}`] } }
   }
   const consistency = (id: string, attribute: string, values: Array<{ declared: unknown; calculated: number | null } | null>) => {
     const cellChecks = values.map(value => !value ? 'ignored' as const : numberValue(value.declared) === null || value.calculated === null ? 'empty' as const : Math.abs(numberValue(value.declared)! - value.calculated) < 0.01 ? 'ok' as const : 'mismatch' as const)
@@ -127,6 +127,48 @@ export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): Com
   rows.unshift({ id: 'documents.present', attribute: 'Наличие исходного документа', values: documentOrder.map(kind => documents[kind] ? 'Документ загружен' : EMPTY), applicable: [true, true, true, true] })
   for (const row of rows) row.absenceReasons = documentOrder.map((kind, column) => !documents[kind] ? 'missing-document' : !isEmptyComparisonValue(row.values[column] || '') ? null : row.applicable?.[column] === false ? 'not-applicable' : Array.isArray(documents[kind]?.extraction_issues) && (documents[kind]!.extraction_issues as string[]).some(issue => text(issue).includes(row.id || row.attribute) || row.bindings?.[column]?.paths.some(path => text(issue).includes(path))) ? 'unrecognized' : 'missing-value')
   return rows
+}
+// The worksheet defines the visible comparison: exactly these 13 rows, in this order.
+export const excelComparisonAttributes = ['Наименование получателя', 'Наименование отправителя', 'Страна отправления', 'Страна назначения', 'Условия поставки (Инкотермс)', 'Валюта', 'Общая сумма', 'Наименование и описание товара', 'Количество грузовых мест', 'Вес брутто', 'Вес нетто', 'Номер договора', 'Номер инвойса'] as const
+export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): ComparisonRow[] => {
+  const documents = normalizeDocuments(input)
+  const detailed = buildDetailedComparisonRowsFromDocuments(documents)
+  const find = (id: string) => detailed.find(row => row.id === id)!
+  const rows: ComparisonRow[] = []
+  for (const [role, prefix, commercial, transport] of [['receiver', 'g8', 'buyer', 'consignee'], ['sender', 'g2', 'seller', 'consignor']] as const) {
+    const paths = [commercial, commercial, text(get(documents.packingList, `${commercial}.name`)) ? commercial : role === 'receiver' ? 'consignee' : 'shipper', transport]
+    const components = ['name', 'address'].map(part => {
+      const base = find(`${role}.${part}`)
+      return { ...base, values: documentOrder.map((kind, column) => formatComparisonValue(get(documents[kind], `${paths[column]}.${part === 'address' && get(documents[kind], `${paths[column]}.legal_address`) ? 'legal_address' : part}`))) }
+    })
+    rows.push({ id: role, attribute: '', kind: 'address', draftEntity: prefix, values: documentOrder.map((kind, column) => [text(get(documents[kind], `${paths[column]}.name`)), first(get(documents[kind], `${paths[column]}.legal_address`), get(documents[kind], `${paths[column]}.address`))].filter(Boolean).join('\n') || EMPTY), components, applicable: [true, true, false, true], bindings: documentOrder.map((document, column) => ({ document, paths: [paths[column]!], format: 'entity' })) })
+  }
+  rows.push(find('dispatch.country'), find('destination.country'))
+  rows.push({ id: 'incoterms', attribute: '', kind: 'incoterms', values: documentOrder.map(kind => {
+    const terms = get(documents[kind], 'incoterms')
+    return [get(terms, 'rule'), get(terms, 'place'), text(get(terms, 'version')) ? `(Incoterms ${text(get(terms, 'version'))})` : ''].map(text).filter(Boolean).join(' ') || EMPTY
+  }), components: ['rule', 'place', 'version'].map(part => find(`incoterms.${part}`)), applicable: [true, true, false, false], draftKeys: ['g20-code', 'g20-place'], bindings: documentOrder.map(document => ({ document, paths: ['incoterms'], format: 'incoterms' })) })
+  rows.push(find('currency'), find('amount.total'))
+  const goodsBindings = documentOrder.map(document => {
+    const groups = new Map<string, { description: string; paths: string[] }>()
+    items(documents[document]).forEach((item, index) => {
+      const identity = skuKey(item.model_or_sku) || skuKey(item.description) || String(index)
+      const existing = groups.get(identity)
+      if (existing) existing.paths.push(`items.${index}.description`)
+      else groups.set(identity, { description: text(item.description) || text(item.model_or_sku), paths: [`items.${index}.description`] })
+    })
+    return { document, groups: [...groups.values()] }
+  })
+  rows.push({ id: 'goods.description', attribute: '', kind: 'goods', values: goodsBindings.map(({ document, groups }) => groups.map(group => group.description).join('\n') || text(get(documents[document], 'subject')) || EMPTY), components: detailed.filter(row => row.id?.startsWith('goods.') && row.id.endsWith('.description')), applicable: [false, true, true, true], bindings: goodsBindings.map(({ document, groups }) => ({ document, paths: groups.flatMap(group => group.paths), linePaths: groups.map(group => group.paths), format: 'goods' })) })
+  rows.push(find('packages.total'), find('weight.gross'), find('weight.net'))
+  for (const prefix of ['contract', 'invoice']) {
+    const number = find(`${prefix}.number`), date = find(`${prefix}.date`)
+    rows.push({ ...number, values: number.values.map((value, index) => [value === EMPTY ? '' : value, date.values[index] !== EMPTY ? `от ${date.values[index]}` : ''].filter(Boolean).join(' ') || EMPTY), components: [number, date], bindings: documentOrder.map((document, column) => {
+      const numberPath = number.bindings?.[column]?.paths[0], datePath = date.bindings?.[column]?.paths[0]
+      return numberPath ? { document, paths: [numberPath, datePath || ''], format: 'reference' as const } : null
+    }) })
+  }
+  return rows.map((row, index) => ({ ...row, attribute: excelComparisonAttributes[index]! }))
 }
 const inferKind = (row: ComparisonRow): NonNullable<ComparisonRow['kind']> => row.kind || (/инкотермс|incoterms|условия поставки/i.test(row.attribute) ? 'incoterms' : /дата/i.test(row.attribute) ? 'date' : /вес/i.test(row.attribute) ? 'weight' : /объ[её]м/i.test(row.attribute) ? 'volume' : /количество|сумма/i.test(row.attribute) ? 'number' : /описание/i.test(row.attribute) ? 'goods' : /маршрут/i.test(row.attribute) ? 'route' : /продавец|покупатель|получатель/i.test(row.attribute) ? 'entity' : /номер/i.test(row.attribute) ? 'reference' : 'text')
 const dateKey = (value: string) => {
@@ -170,6 +212,11 @@ const descriptionContains = (left: string, right: string) => {
 }
 const rowStatus = (statuses: ComparisonCellStatus[]) => (['mismatch', 'empty', 'similar', 'ok', 'unchecked', 'ignored'] as const).find(status => statuses.includes(status)) || 'ignored'
 export const evaluateComparisonRow = (row: ComparisonRow): ComparisonRow => {
+  if (row.components?.length) {
+    const components = row.components.map(evaluateComparisonRow)
+    const statuses = row.values.map((value, column) => isEmptyComparisonValue(value) ? row.applicable?.[column] === false ? 'ignored' as const : 'empty' as const : rowStatus(components.map(component => component.cellStatuses?.[column] || 'ignored')))
+    return { ...row, components, cellStatuses: statuses, status: rowStatus(statuses), issue: components.find(component => component.issue)?.issue || '', recommendation: components.find(component => component.recommendation)?.recommendation || '' }
+  }
   const notes = { 'missing-document': 'Документ не загружен.', 'not-applicable': 'Поле не обязательно для этого типа документа.', 'missing-value': 'Значение не найдено в извлечённых данных; проверьте оригинал.', unrecognized: 'Распознавание отметило это поле как нечитаемое.' }
   const cellNotes = row.absenceReasons?.map(reason => reason ? notes[reason] : '')
   if (row.cellChecks) {
@@ -214,6 +261,28 @@ export const applyCrossCheckResult = (rows: ComparisonRow[], aiRows: ComparisonR
 export const applyComparisonEdit = (documents: ExtractedDocuments, row: ComparisonRow, column: number, value: string): ExtractedDocuments => {
   const copy = normalizeDocuments(documents)
   const binding = row.bindings?.[column]
+  if (binding?.format) {
+    copy[binding.document] ||= {}
+    const document = copy[binding.document]!
+    const clean = value === EMPTY ? '' : value.trim()
+    if (binding.format === 'entity') {
+      const [name = '', ...address] = clean.split('\n')
+      const path = binding.paths[0]!
+      const previous = get(document, path)
+      setPath(document, path, { ...(isObject(previous) ? previous : {}), name, address: address.join('\n'), legal_address: address.join('\n') })
+    } else if (binding.format === 'incoterms') setPath(document, binding.paths[0]!, parseIncotermsValue(clean))
+    else if (binding.format === 'reference') {
+      const date = clean.match(/\b(?:\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})\b/)?.[0] || ''
+      setPath(document, binding.paths[0]!, clean.replace(/\s+от\s+.*$/iu, ''))
+      if (binding.paths[1]) setPath(document, binding.paths[1], date)
+    } else if (binding.format === 'goods') {
+      if (!binding.linePaths?.length) { setPath(document, 'subject', clean); return copy }
+      const lines = clean.split('\n').filter(Boolean)
+      if (lines.length !== binding.linePaths?.length) throw new Error('В описании товара сохраняйте одну позицию в каждой строке. Количество позиций меняется в форме ДТ.')
+      binding.linePaths.forEach((paths, index) => paths.forEach(path => setPath(document, path, lines[index] || '')))
+    }
+    return copy
+  }
   if (binding && binding.paths.length === 1) {
     copy[binding.document] ||= {}
     setPath(copy[binding.document]!, binding.paths[0]!, binding.numeric ? numberValue(value) ?? value : value === EMPTY ? '' : value)

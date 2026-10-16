@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { declarationFields } from '#shared/aideclarant/schema'
-import { draftValue, updateDraftValue, resizeGoods, removeGoodsAt, declarationChecks } from '#shared/aideclarant/declaration'
+import { draftValue, updateDraftValue, resizeGoods, removeGoodsAt } from '#shared/aideclarant/declaration'
 import type { DeclarationDraft } from '#shared/aideclarant/types'
 const props = defineProps<{ modelValue: DeclarationDraft }>()
 const emit = defineEmits<{ 'update:modelValue': [value: DeclarationDraft] }>()
@@ -8,7 +8,6 @@ const activeInfo = ref('')
 const info = computed(() => declarationFields.find(field => field.id === activeInfo.value))
 const goodsCount = computed(() => Math.max(1, Number(props.modelValue.goodsCount) || 1))
 const goodsIndices = computed(() => Array.from({ length: goodsCount.value }, (_, index) => index))
-const checks = computed(() => declarationChecks(props.modelValue))
 const inputId = (key: string, index = 0) => `dt-${key}-${index}`
 const value = (key: string, index = 0) => draftValue(props.modelValue, key, index)
 const isDisabled = (key: string) => declarationFields.some(field => field.controls.some(control => control.key === key && control.disabled)) || (/^g[28]-(name|addr|ogrn|inn)$/.test(key) && props.modelValue[`${key.slice(0, 2)}-same`] === 'true')
@@ -18,8 +17,7 @@ const addGoods = () => emit('update:modelValue', resizeGoods(props.modelValue, g
 const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(props.modelValue, index))
 </script>
 
-<template><div class="dt-prototype"><div class="form-head"><h2>Декларация на товары</h2><p>ⓘ — правило заполнения графы. Розовая заливка — обязательные поля, серые поля заполняет таможня либо они не применяются.</p></div>
-<div v-if="checks.length" class="validation-list" role="status"><p v-for="check in checks" :key="check.id">{{ check.message }}</p></div>
+<template><div class="dt-prototype"><div class="form-head"><div class="form-head-inner"><h1>Декларация на товары (ДТ)</h1><small>Поля расположены в порядке официального документа · Решение КТС № 257</small></div><p>Значок ⓘ — правило заполнения графы, связь с другими графами и ссылка на страницу с разбором этой графы на alta.ru. Значок ⌘ — ссылка сразу на нужное приложение (классификатор). Розовая заливка — обязательные поля, серые неактивные — графы, которые декларант не заполняет.</p></div>
 <div class="board">
 
   
@@ -511,6 +509,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
 
 <style scoped>
 
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
   .dt-prototype{
     --bg:#E7EAF0;
@@ -556,7 +555,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
   .card-head h2{margin:0;font-size:14.5px;font-weight:700;display:flex;align-items:baseline;gap:9px;}
   .head-num{font-family:var(--mono);font-weight:800;font-size:15px;color:var(--ink);}
   .card-head .graphs{font-size:11px;color:var(--muted);font-family:var(--mono);}
-  .card-.dt-prototype{padding:16px 18px;display:grid;gap:12px;align-content:start;}
+  .card-body{padding:16px 18px;display:grid;gap:12px;align-content:start;}
 
   .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:stretch;}
 
@@ -605,24 +604,28 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
   .sub54{display:grid;grid-template-columns:26px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line);}
   .sub54:first-of-type{border-top:0;padding-top:0;}
   .sub54-num{font-family:var(--mono);font-weight:800;font-size:14px;color:var(--ink);}
-  .sub54-.dt-prototype{display:grid;gap:10px;}
+  .sub54-body{display:grid;gap:10px;}
 
   /* ---------- popover ---------- */
 
   .foot-block{background:#F3F0E8;border-top:1px dashed var(--line);}
 
   /* ---------- XML drawer ---------- */
-.dt-prototype{font-weight:400;line-height:1.4;text-align:left;letter-spacing:normal;border-radius:10px;overflow:hidden;}
-.dt-prototype .board{padding-top:20px;padding-bottom:24px;}
-.form-head{padding:16px 24px;background:var(--accent-ink);color:white;}
-.form-head h2{margin:0;font-size:18px;}
-.form-head p{font-size:12px;margin:8px 0 0;}
+.dt-prototype{font-weight:400;line-height:normal;text-align:left;letter-spacing:normal;border-radius:10px;overflow:hidden;}
+.dt-prototype{width:100%;border-radius:0;overflow:visible;}
+.dt-prototype .field input{line-height:normal;}
+.dt-prototype .board{padding:20px 24px 90px;}
+.form-head{position:sticky;top:0;z-index:40;background:var(--accent-ink);color:white;}
+.form-head::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#2452C8,#5C8DFF);}
+.form-head-inner{max-width:1480px;margin:0 auto;padding:14px 24px;}
+.form-head h1{margin:0;font-size:15px;font-weight:700;line-height:normal;}
+.form-head small{display:block;font-weight:400;font-size:11.5px;color:#AEBBDE;margin-top:2px;}
+.form-head p{max-width:1480px;margin:0 auto;padding:0 24px 14px;font-size:12.5px;color:#AEBBDE;line-height:1.5;}
 .goods-actions{display:flex;gap:8px;padding:10px 18px 0;}
 .goods-actions button{border:1px solid var(--line);background:white;color:var(--accent-ink);padding:7px 12px;border-radius:6px;cursor:pointer;}
 .info-backdrop{position:fixed;inset:0;background:#10203c66;z-index:1000;display:grid;place-items:center;padding:20px;}
 .info-panel{position:relative;max-height:80vh;overflow:auto;max-width:520px;padding:24px;background:white;color:var(--ink);border-radius:10px;font-size:13px;}
 .info-panel h3{margin:0 30px 12px 0;}.info-panel p{line-height:1.6;}.info-panel a{color:var(--accent);}
 .info-close{position:absolute;top:10px;right:12px;border:0;background:none;font-size:22px;cursor:pointer;}
-.validation-list{margin:12px 24px;padding:12px 16px;background:#fff4d8;color:#563e00;border:1px solid #d9bd72;border-radius:7px;font-size:12px;}
 
 </style>
