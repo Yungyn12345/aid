@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { localCrossCheckRows, buildComparisonRowsFromDocuments, applyComparisonEdit, isAllowedEmptyComparisonCell } from '#shared/aideclarant/comparison'
+import { createEmptyDraft, canonicalDraft, draftValue, updateDraftValue, buildDeclarationDraftFromDocuments, mergeGeneratedDraft, applyComparisonValueToDraft } from '#shared/aideclarant/declaration'
+import type { ComparisonCellStatus, ComparisonRow, CrossCheckResult, AnalyzeResult, DeclarationDraft, ExtractedDocuments, AiConnectionState, AiProviderSource, TnvedSuggestion, TnvedSuggestionResult } from '#shared/aideclarant/types'
+type AiCrossCheckResponse = CrossCheckResult
+type AiAnalyzeResponse = AnalyzeResult & { demoFiles?: Array<{ name: string; extension: string; size: number }> }
+type TnvedSuggestionResponse = TnvedSuggestionResult
+
 definePageMeta({
   layout: false,
 })
@@ -19,93 +26,6 @@ type UploadedFileItem = {
   file?: File
 }
 
-type ComparisonCellStatus = 'ok' | 'similar' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
-type ComparisonRowStatus = 'ok' | 'similar' | 'mismatch' | 'empty' | 'unchecked' | 'ignored'
-type ComparisonDocumentType = 'agreement' | 'invoice' | 'packingList' | 'cmr'
-
-type ComparisonRow = {
-  attribute: string
-  values: string[]
-  cellStatuses?: ComparisonCellStatus[]
-  status?: ComparisonRowStatus
-  issue?: string
-  recommendation?: string
-}
-
-type AiConnectionState = {
-  provider: 'gigachat'
-  connected: boolean
-  usedFallback: boolean
-  checkedAt: string
-  durationMs: number
-  stage: 'not-started' | 'oauth' | 'chat' | 'parse' | 'done'
-  model?: string
-  modelsTried?: string[]
-  requestId?: string
-  httpStatus?: number
-  error?: string
-  cause?: string
-  authUrl?: string
-  baseUrl?: string
-  usedCaBundle: boolean
-  caBundleFile?: string
-  verifySsl: boolean
-}
-
-type AiCrossCheckResponse = {
-  rows: ComparisonRow[]
-  summary: string
-  source: 'gigachat' | 'local-fallback'
-  aiConnection?: AiConnectionState
-}
-
-type DeclarationDraft = Record<string, string>
-
-type ExtractedDocuments = Record<string, unknown>
-
-type AiAnalyzeResponse = AiCrossCheckResponse & {
-  documents?: ExtractedDocuments
-  declarationDraft?: DeclarationDraft
-  demoFiles?: Array<Pick<UploadedFileItem, 'name' | 'extension' | 'size'>>
-  errors?: string[]
-  demoMode?: 'ai' | 'fixture' | 'fixture-fallback'
-}
-
-type TnvedSuggestion = {
-  code: string
-  title: string
-  confidence: number
-  reason: string
-  source?: string
-}
-
-type TnvedSuggestionResponse = {
-  suggestions: TnvedSuggestion[]
-  summary: string
-  source: 'gigachat' | 'local-fallback'
-  aiConnection?: AiConnectionState
-}
-
-type AiHealthResponse = {
-  ok: boolean
-  source: 'gigachat' | 'local-fallback'
-  connection: AiConnectionState
-}
-
-type DeclarationField = {
-  label: string
-  value: string
-  placeholder?: string
-  span?: number
-  textarea?: boolean
-}
-
-type DeclarationGroup = {
-  title: string
-  columns: number
-  fields: DeclarationField[]
-}
-
 const activeStep = ref<StepNumber>(1)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
@@ -116,21 +36,18 @@ const uploadedFiles = ref<UploadedFileItem[]>([])
 const isAiProcessing = ref(false)
 const aiError = ref('')
 const aiSummary = ref('')
-const aiSource = ref<'gigachat' | 'local-fallback' | ''>('')
+const aiSource = ref<AiProviderSource | ''>('')
 const aiConnection = ref<AiConnectionState | null>(null)
-const isCheckingAiConnection = ref(false)
-const aiConnectionError = ref('')
 const extractedDocuments = ref<ExtractedDocuments | null>(null)
 const declarationDraft = ref<DeclarationDraft | null>(null)
 const tnvedSuggestions = ref<TnvedSuggestion[]>([])
 const tnvedSummary = ref('')
-const tnvedSource = ref<'gigachat' | 'local-fallback' | ''>('')
+const tnvedSource = ref<AiProviderSource | ''>('')
 const tnvedConnection = ref<AiConnectionState | null>(null)
 const tnvedError = ref('')
 const isTnvedProcessing = ref(false)
 const isPdfExportProcessing = ref(false)
 const pdfExportError = ref('')
-let crossCheckTimer: ReturnType<typeof setTimeout> | null = null
 
 const comparisonColumns = [
   'Контракт',
@@ -139,281 +56,12 @@ const comparisonColumns = [
   'CMR',
 ]
 
-const comparisonColumnDocumentTypes: ComparisonDocumentType[] = ['agreement', 'invoice', 'packingList', 'cmr']
-
-const allowedEmptyComparisonAttributes: Record<ComparisonDocumentType, Set<string>> = {
-  agreement: new Set([
-    'Дата отгрузки / принятия груза перевозчиком',
-    'Общее количество мест',
-    'Общий вес брутто, кг',
-    'Общий объём, м³',
-    'Номер договора / инвойса в маркировке',
-  ]),
-  invoice: new Set([
-    'Дата отгрузки / принятия груза перевозчиком',
-    'Общее количество мест',
-    'Общий вес брутто, кг',
-    'Общий объём, м³',
-    'Номер договора / инвойса в маркировке',
-    'Маршрут',
-  ]),
-  packingList: new Set([
-    'Маршрут',
-    'Условия поставки (Incoterms)',
-    'Валюта',
-  ]),
-  cmr: new Set([
-    'Номер договора',
-    'Номер инвойса',
-    'Валюта',
-  ]),
-}
-
-const comparisonRows = ref<ComparisonRow[]>([
-  {
-    attribute: 'Номер договора',
-    values: [
-      'TI-GM/2025-012 от 15.09.2025',
-      'TI-GM/2025-012 от 15.09.2025',
-      'TI-GM/2025-012 от 15.09.2025',
-      '—',
-    ],
-  },
-  {
-    attribute: 'Номер инвойса',
-    values: [
-      '—',
-      'GM-INV-2025/384',
-      'GM-INV-2025/384 от 10.10.2025',
-      '—',
-    ],
-  },
-  {
-    attribute: 'Продавец (Consignor / Seller)',
-    values: [
-      'Gerhardt Maschinen GmbH, Komturstraße 10, 12099 Berlin, Germany',
-      'Gerhardt Maschinen GmbH, Komturstraße 10, 12099 Berlin, Germany',
-      'Gerhardt Maschinen GmbH, Komturstraße 10, 12099 Berlin, Germany',
-      'Gerhardt Maschinen GmbH, Komturstraße 10, 12099 Berlin, Germany',
-    ],
-  },
-  {
-    attribute: 'Покупатель / Грузополучатель (Consignee)',
-    values: [
-      'ООО «ТехИмпорт Рус», 125047, Москва, ул. Лесная, д. 5, оф. 12',
-      'ООО «ТехИмпорт Рус», 125047, Москва, ул. Лесная, д. 5, оф. 12',
-      'ООО «ТехИмпорт Рус», 125047, Москва, ул. Лесная, д. 5, оф. 12',
-      'ООО «ТехИмпорт Рус», 125047, Москва, ул. Лесная, д. 5, оф. 12',
-    ],
-  },
-  {
-    attribute: 'Условия поставки (Incoterms)',
-    values: [
-      'FCA Berlin, Germany (п. 3.1)',
-      'FCA Berlin, Germany (Incoterms® 2020)',
-      '—',
-      'FCA Berlin, Germany (поле 13)',
-    ],
-  },
-  {
-    attribute: 'Валюта',
-    values: [
-      'EUR (п. 4.1)',
-      'EUR',
-      '—',
-      '—',
-    ],
-  },
-  {
-    attribute: 'Дата отгрузки / принятия груза перевозчиком',
-    values: [
-      '—',
-      '—',
-      'Дата упаковочного листа 10.10.2025',
-      '11.10.2025 (поле 1 и 8: место и дата принятия груза)',
-    ],
-  },
-  {
-    attribute: 'Общее количество мест',
-    values: [
-      '—',
-      '—',
-      '12 мест (10 коробок + 2 паллеты)',
-      '12 мест (поле 9)',
-    ],
-  },
-  {
-    attribute: 'Общий вес брутто, кг',
-    values: [
-      '—',
-      '—',
-      '1,240.0 кг',
-      '1,240.0 (поле 11)',
-    ],
-  },
-  {
-    attribute: 'Общий объём, м³',
-    values: [
-      '—',
-      '—',
-      '≈ 5.6 м³',
-      '5.6 (поле 12)',
-    ],
-  },
-  {
-    attribute: 'Описание товара',
-    values: [
-      'запасные части к упаковочному оборудованию (п. 2.1)',
-      'spare parts, pneumatic units, control panels',
-      'spare parts, pneumatic units, control panels (детально по местам)',
-      'spare parts, pneumatic units, control panels (поле 9)',
-    ],
-  },
-  {
-    attribute: 'Номер договора / инвойса в маркировке',
-    values: [
-      '—',
-      '—',
-      'GM/TIR/10-2025/384/1-12',
-      'GM/TIR/10-2025/384/1-12 (поле 9)',
-    ],
-  },
-  {
-    attribute: 'Маршрут',
-    values: [
-      'страна назначения Россия, происхождение Германия (п. 3.3)',
-      '—',
-      '—',
-      'DE → PL → BY → RU (поле 22)',
-    ],
-  },
-])
-
-const declarationGroups = ref<DeclarationGroup[]>([
-  {
-    title: 'Отправитель',
-    columns: 3,
-    fields: [
-      { label: 'Страна', value: '', placeholder: 'Введите страну' },
-      { label: 'Почтовый код', value: '', placeholder: 'Почтовый индекс' },
-      { label: 'Область, район, населённый пункт', value: '', placeholder: 'Населённый пункт' },
-      { label: 'Адрес', value: '', placeholder: 'Полный адрес', span: 2 },
-      { label: 'ИНН/КПП', value: '', placeholder: 'ИНН' },
-      { label: 'ОКПО', value: '', placeholder: 'ОКПО' },
-    ],
-  },
-  {
-    title: 'Получатель',
-    columns: 3,
-    fields: [
-      { label: 'Страна', value: '', placeholder: 'Введите страну' },
-      { label: 'Почтовый код', value: '', placeholder: 'Почтовый индекс' },
-      { label: 'Область, район, населённый пункт', value: '', placeholder: 'Населённый пункт' },
-      { label: 'Адрес', value: '', placeholder: 'Полный адрес', span: 2 },
-      { label: 'ИНН/КПП', value: '', placeholder: 'ИНН' },
-      { label: 'ОКПО', value: '', placeholder: 'ОКПО' },
-    ],
-  },
-  {
-    title: 'Общие сведения',
-    columns: 3,
-    fields: [
-      { label: '1 Декларация', value: '', placeholder: 'Номер декларации' },
-      { label: 'A Внутренний номер', value: '', placeholder: 'Внутренний номер' },
-      { label: '3 Форма', value: '', placeholder: 'Форма ДТ' },
-      { label: '4 Спец. процедура', value: '', placeholder: 'Спец. процедура' },
-      { label: 'B Регистрационный номер', value: '', placeholder: 'Рег. номер' },
-      { label: '5 Всего товаров', value: '', placeholder: '0' },
-      { label: '6 Вес нетто', value: '', placeholder: 'кг' },
-      { label: '7 Особенности декларирования', value: '', placeholder: 'Особенности' },
-      { label: '9 Лицо, от имени которого подаётся декларация', value: '', placeholder: 'ФИО и должность', span: 3 },
-    ],
-  },
-  {
-    title: 'Транспорт / условия поставки',
-    columns: 3,
-    fields: [
-      { label: '18 Вид транспорта при отправлении', value: '', placeholder: 'Тип транспорта' },
-      { label: '21 Вид транспорта на границе', value: '', placeholder: 'Тип транспорта' },
-      { label: '22 Валюта и общая сумма', value: '', placeholder: 'Валюта, сумма' },
-      { label: '23 Курс валюты', value: '', placeholder: 'Курс' },
-      { label: '24 Характер сделки', value: '', placeholder: 'Характер сделки' },
-      { label: '29 Таможня на границе', value: '', placeholder: 'Таможня' },
-      { label: '30 Местонахождение товаров', value: '', placeholder: 'Местонахождение' },
-      { label: '15 Страна отправления / 16 Страна происхождения / 17 Страна назначения', value: '', placeholder: 'Коды стран' },
-    ],
-  },
-  {
-    title: 'Таможенная стоимость',
-    columns: 3,
-    fields: [
-      { label: '11 Торговая страна', value: '', placeholder: 'Код страны' },
-      { label: '12 Общая таможенная стоимость', value: '', placeholder: 'Сумма' },
-      { label: '13 Условия', value: '', placeholder: 'Условия' },
-    ],
-  },
-  {
-    title: 'Товары',
-    columns: 4,
-    fields: [
-      { label: '31 Грузовые места и описание товаров', value: '', placeholder: 'Здесь можно ввести описание товаров. Нейросеть может автоматически заполнить это поле на основе загруженных документов.', textarea: true, span: 4 },
-      { label: '32 Товар №', value: '', placeholder: '№' },
-      { label: '33 ТН ВЭД', value: '', placeholder: 'Код ТН ВЭД' },
-      { label: '34 Страна происх.', value: '', placeholder: 'Код страны' },
-      { label: '35 Вес брутто', value: '', placeholder: 'кг' },
-      { label: '38 Вес нетто', value: '', placeholder: 'кг' },
-      { label: 'Количество', value: '', placeholder: 'Кол-во' },
-      { label: 'Ед. изм.', value: '', placeholder: 'pcs / kg / etc' },
-      { label: '39 Квота', value: '', placeholder: 'Квота' },
-      { label: '40 Предшествующий документ', value: '', placeholder: '№ документа' },
-      { label: '41 Доп. единица измерения', value: '', placeholder: 'Ед. измерения' },
-      { label: '42 Цена товара', value: '', placeholder: 'Цена' },
-      { label: '44 Дополнительная информация / документы', value: '', placeholder: 'Дополнительная информация, комментарии, примечания...', textarea: true, span: 4 },
-    ],
-  },
-  {
-    title: 'Платежи',
-    columns: 2,
-    fields: [
-      { label: '47 Исчисление платежей', value: '', placeholder: 'Расчёт платежей' },
-      { label: '48 Отсрочка платежей', value: '', placeholder: 'Условия отсрочки' },
-      { label: '45 Таможенная стоимость', value: '', placeholder: 'Стоимость' },
-      { label: '46 Статистическая стоимость', value: '', placeholder: 'Стат. стоимость' },
-    ],
-  },
-  {
-    title: '50 Декларант / доверитель',
-    columns: 1,
-    fields: [
-      { label: 'Информация о декларанте', value: '', placeholder: 'Информация о декларанте...', textarea: true },
-    ],
-  },
-  {
-    title: '54 Сведения о таможенном представителе / Отметки таможни',
-    columns: 3,
-    fields: [
-      { label: 'Таможенный представитель', value: '', placeholder: 'Наименование', span: 2 },
-      { label: 'Договор с клиентом', value: '', placeholder: '№ договора' },
-      { label: 'Декларант', value: '', placeholder: 'ФИО декларанта' },
-      { label: 'Документ, удостоверяющий личность', value: '', placeholder: 'Паспортные данные' },
-      { label: 'Документ, подтверждающий полномочия', value: '', placeholder: 'Доверенность' },
-      { label: 'Отметки таможни', value: '', placeholder: 'Отметки таможенных органов...', textarea: true, span: 3 },
-      { label: 'Решение по ДТ', value: '', placeholder: 'Решение таможенного органа...', textarea: true, span: 3 },
-    ],
-  },
-])
-
-
-const senderGroup = computed<DeclarationGroup>(() => declarationGroups.value[0]!)
-const receiverGroup = computed<DeclarationGroup>(() => declarationGroups.value[1]!)
-const generalGroup = computed<DeclarationGroup>(() => declarationGroups.value[2]!)
-const transportGroup = computed<DeclarationGroup>(() => declarationGroups.value[3]!)
-const customsGroup = computed<DeclarationGroup>(() => declarationGroups.value[4]!)
-const goodsGroup = computed<DeclarationGroup>(() => declarationGroups.value[5]!)
-const paymentsGroup = computed<DeclarationGroup>(() => declarationGroups.value[6]!)
-const declarantGroup = computed<DeclarationGroup>(() => declarationGroups.value[7]!)
-const representativeGroup = computed<DeclarationGroup>(() => declarationGroups.value[8]!)
-
+const comparisonRows = ref<ComparisonRow[]>([])
+const isDemo = ref(false)
+const demoVersion = ref('')
+const selectedGoodsIndex = ref(0)
+const generatedDraft = ref<DeclarationDraft>(createEmptyDraft())
+const emptyDraft = createEmptyDraft()
 const stepItems: StepNumber[] = [1, 2, 3]
 
 const validUploadedFilesCount = computed(() => {
@@ -535,23 +183,40 @@ const selectStep = (step: StepNumber) => {
   activeStep.value = step
 }
 
-const checkAiConnection = async () => {
-  isCheckingAiConnection.value = true
-  aiConnectionError.value = ''
-
-  try {
-    const response = await $fetch<AiHealthResponse>('/api/aideclarant/gigachat/health')
-    aiConnection.value = response.connection
-  } catch (error) {
-    aiConnectionError.value = error instanceof Error ? error.message : 'Не удалось проверить связь с GigaChat'
-  } finally {
-    isCheckingAiConnection.value = false
-  }
-}
-
+// Restore the user's session separately from the immutable server demo.
 onMounted(() => {
-  void checkAiConnection()
+  try {
+    const saved = sessionStorage.getItem('aidoc-workspace-v2')
+    if (!saved) return
+    const state = JSON.parse(saved)
+    if (!state.draft || !Array.isArray(state.rows)) return
+    declarationDraft.value = canonicalDraft(state.draft)
+    generatedDraft.value = canonicalDraft(state.generated || state.draft)
+    comparisonRows.value = state.rows
+    extractedDocuments.value = state.documents || null
+    isDemo.value = state.isDemo === true
+    demoVersion.value = state.demoVersion || ''
+    aiSummary.value = state.summary || ''
+    aiSource.value = state.source || ''
+    tnvedSuggestions.value = state.suggestions || []
+    tnvedSummary.value = state.tnvedSummary || ''
+    uploadedFiles.value = state.files || []
+    activeStep.value = [1, 2, 3].includes(state.step) ? state.step : 1
+  } catch { /* Ignore a malformed or unavailable browser snapshot. */ }
 })
+watch([declarationDraft, generatedDraft, comparisonRows, extractedDocuments, isDemo, demoVersion, activeStep, tnvedSuggestions, tnvedSummary], () => {
+  if (!import.meta.client || !declarationDraft.value) return
+  try {
+    sessionStorage.setItem('aidoc-workspace-v2', JSON.stringify({
+      draft: declarationDraft.value, generated: generatedDraft.value,
+      rows: comparisonRows.value, documents: extractedDocuments.value,
+      isDemo: isDemo.value, demoVersion: demoVersion.value, step: activeStep.value,
+      summary: aiSummary.value, source: aiSource.value,
+      suggestions: tnvedSuggestions.value, tnvedSummary: tnvedSummary.value,
+      files: uploadedFiles.value.map(({ file, ...metadata }) => metadata),
+    }))
+  } catch { /* Storage quota/private mode must not interrupt editing in memory. */ }
+}, { deep: true })
 
 const applyAiCrossCheckResult = (response: AiCrossCheckResponse) => {
   comparisonRows.value = response.rows
@@ -560,47 +225,18 @@ const applyAiCrossCheckResult = (response: AiCrossCheckResponse) => {
   aiConnection.value = response.aiConnection || aiConnection.value
 }
 
-const runAiCrossCheck = async () => {
-  isAiProcessing.value = true
-  aiError.value = ''
-
-  try {
-    const response = await $fetch<AiCrossCheckResponse>('/api/aideclarant/crosscheck', {
-      method: 'POST',
-      body: {
-        rows: comparisonRows.value,
-      },
-    })
-
-    applyAiCrossCheckResult(response)
-  } catch (error) {
-    aiError.value = error instanceof Error ? error.message : 'Не удалось выполнить ИИ-кросс-проверку'
-  } finally {
-    isAiProcessing.value = false
-  }
-}
-
-const scheduleAiCrossCheck = () => {
-  if (crossCheckTimer) {
-    clearTimeout(crossCheckTimer)
-  }
-
-  crossCheckTimer = setTimeout(() => {
-    void runAiCrossCheck()
-  }, 1000)
-}
+const scheduleAiCrossCheck = () => applyAiCrossCheckResult(localCrossCheckRows(comparisonRows.value))
 
 const runDemoAiAnalysis = async () => {
   isAiProcessing.value = true
   aiError.value = ''
-  aiSummary.value = 'Загружаем демо-документы и запускаем ИИ-кросс-проверку...'
+  aiSummary.value = 'Загружаем сохранённую демо-версию...'
 
   try {
     const response = await $fetch<AiAnalyzeResponse>('/api/aideclarant/demo', {
       method: 'POST',
       body: {
-        mode: 'ai',
-        allowFixtureFallback: true,
+        mode: 'fixed',
       },
     })
 
@@ -613,6 +249,8 @@ const runDemoAiAnalysis = async () => {
       statusText: 'демо загружен',
     }))
 
+    isDemo.value = true
+    demoVersion.value = response.demoVersion || ''
     applyAnalyzePayload(response)
 
     if (response.errors?.length) {
@@ -643,6 +281,8 @@ const runUploadedDocumentsAiAnalysis = async () => {
     }
   })
 
+  isDemo.value = false
+  demoVersion.value = ''
   isAiProcessing.value = true
   aiError.value = ''
   aiSummary.value = 'ИИ считывает документы и готовит кросс-проверку...'
@@ -672,16 +312,6 @@ const isEmptyComparisonValue = (value: string) => {
   return !normalized || normalized === '—'
 }
 
-const isAllowedEmptyComparisonCell = (attribute: string, columnIndex: number) => {
-  const documentType = comparisonColumnDocumentTypes[columnIndex]
-
-  if (!documentType) {
-    return false
-  }
-
-  return allowedEmptyComparisonAttributes[documentType].has(attribute)
-}
-
 const getComparisonCellStatus = (row: ComparisonRow, columnIndex: number): ComparisonCellStatus => {
   const storedStatus = row.cellStatuses?.[columnIndex]
 
@@ -690,7 +320,7 @@ const getComparisonCellStatus = (row: ComparisonRow, columnIndex: number): Compa
   }
 
   if (isEmptyComparisonValue(row.values[columnIndex] ?? '')) {
-    return isAllowedEmptyComparisonCell(row.attribute, columnIndex) ? 'ignored' : 'empty'
+    return isAllowedEmptyComparisonCell(row.attribute, columnIndex, row) ? 'ignored' : 'empty'
   }
 
   return storedStatus || 'unchecked'
@@ -704,97 +334,53 @@ const uploadDemoDocuments = () => {
   void runDemoAiAnalysis()
 }
 
+const applyEditedComparisonValue = (row: ComparisonRow, columnIndex: number) => {
+  row.preferredColumn = columnIndex
+  declarationDraft.value = applyComparisonValueToDraft(declarationDraft.value || createEmptyDraft(), row, row.values[columnIndex] || '')
+}
 const updateComparisonCell = (rowIndex: number, columnIndex: number, value: string) => {
   const row = comparisonRows.value[rowIndex]
-
-  if (!row) {
-    return
-  }
-
+  if (!row) return
   row.values[columnIndex] = value
-  row.cellStatuses = row.values.map((_, index) => index === columnIndex ? 'unchecked' : row.cellStatuses?.[index] || 'unchecked')
-  row.status = 'unchecked'
-  row.issue = ''
-  row.recommendation = ''
-
+  extractedDocuments.value = applyComparisonEdit(extractedDocuments.value || {}, row, columnIndex, value)
+  const next = buildDeclarationDraftFromDocuments(extractedDocuments.value)
+  declarationDraft.value = mergeGeneratedDraft(declarationDraft.value || generatedDraft.value, generatedDraft.value, next)
+  generatedDraft.value = next
+  applyEditedComparisonValue(row, columnIndex)
+  const derived = buildComparisonRowsFromDocuments(extractedDocuments.value)
+  comparisonRows.value = comparisonRows.value.map(previous => derived.find(item => item.id === previous.id && item.cellChecks) || previous)
   scheduleAiCrossCheck()
 }
-
-
-const getDraftKey = (groupTitle: string, label: string) => {
-  if (groupTitle === 'Получатель') {
-    return `__receiver__${label}`
-  }
-
-  return label
-}
-
 const applyDeclarationDraft = (draft?: DeclarationDraft | null) => {
-  if (!draft) {
-    return
-  }
-
-  declarationDraft.value = draft
-
-  declarationGroups.value.forEach((group) => {
-    group.fields.forEach((field) => {
-      const groupSpecificValue = draft[getDraftKey(group.title, field.label)]
-      const commonValue = draft[field.label]
-      const value = groupSpecificValue ?? commonValue
-
-      if (typeof value === 'string') {
-        field.value = value
-      }
-    })
-  })
+  if (!draft) return
+  declarationDraft.value = canonicalDraft(draft)
+  generatedDraft.value = canonicalDraft(draft)
 }
-
-const getDeclarationFieldValue = (label: string) => {
-  for (const group of declarationGroups.value) {
-    const field = group.fields.find((item) => item.label === label)
-
-    if (field) {
-      return field.value
-    }
-  }
-
-  return ''
-}
-
-const setDeclarationFieldValue = (label: string, value: string) => {
-  for (const group of declarationGroups.value) {
-    const field = group.fields.find((item) => item.label === label)
-
-    if (field) {
-      field.value = value
-      return
-    }
-  }
+const getDeclarationFieldValue = (_label: string) => draftValue(declarationDraft.value || emptyDraft, 'g31-desc', selectedGoodsIndex.value)
+const setDeclarationFieldValue = (_label: string, value: string) => {
+  declarationDraft.value = updateDraftValue(declarationDraft.value || emptyDraft, 'g33-tnved', value, selectedGoodsIndex.value)
 }
 
 const applyAnalyzePayload = (response: AiAnalyzeResponse) => {
   extractedDocuments.value = response.documents || null
   applyAiCrossCheckResult(response)
   applyDeclarationDraft(response.declarationDraft)
-  tnvedSuggestions.value = []
-  tnvedSummary.value = ''
-  tnvedSource.value = ''
+  tnvedSuggestions.value = response.tnved?.suggestions || []
+  tnvedSummary.value = response.tnved?.summary || ''
+  tnvedSource.value = response.tnved?.source || ''
   tnvedConnection.value = null
   tnvedError.value = ''
 }
 
 const openDeclarationStep = () => {
-  if (declarationDraft.value) {
-    applyDeclarationDraft(declarationDraft.value)
-  }
-
+  declarationDraft.value ||= createEmptyDraft()
   goForwardToStep(3)
 }
 
 const requestTnvedSuggestions = async () => {
   isTnvedProcessing.value = true
   tnvedError.value = ''
-  tnvedSummary.value = 'ИИ подбирает предварительные коды ТН ВЭД...'
+  tnvedSummary.value = isDemo.value ? 'Загружаем сохранённые рекомендации исходного демо...' : 'ИИ подбирает предварительные коды ТН ВЭД...'
 
   try {
     const response = await $fetch<TnvedSuggestionResponse>('/api/aideclarant/tnved', {
@@ -802,6 +388,8 @@ const requestTnvedSuggestions = async () => {
       body: {
         documents: extractedDocuments.value,
         goodsText: getDeclarationFieldValue('31 Грузовые места и описание товаров'),
+        demoVersion: isDemo.value ? demoVersion.value : undefined,
+        allowAi: !isDemo.value,
       },
     })
 
@@ -820,21 +408,7 @@ const applyTnvedSuggestion = (suggestion: TnvedSuggestion) => {
   setDeclarationFieldValue('33 ТН ВЭД', suggestion.code)
 }
 
-const collectDeclarationDraftFromForm = (): DeclarationDraft => {
-  const draft: DeclarationDraft = {
-    title: 'НАЗВАНИЕ ДЕКЛАРАЦИИ',
-  }
-
-  declarationGroups.value.forEach((group) => {
-    group.fields.forEach((field) => {
-      draft[getDraftKey(group.title, field.label)] = field.value
-    })
-  })
-
-  declarationDraft.value = draft
-
-  return draft
-}
+const collectDeclarationDraftFromForm = (): DeclarationDraft => canonicalDraft(declarationDraft.value || emptyDraft)
 
 const exportDeclarationPdf = async () => {
   isPdfExportProcessing.value = true
@@ -880,13 +454,6 @@ const formatTnvedConfidence = (value: number) => {
   return `${Math.round(value * 100)}%`
 }
 
-const getDeclarationGroupStyle = (group: DeclarationGroup) => ({
-  '--declaration-columns': String(group.columns),
-})
-
-const getDeclarationFieldStyle = (field: DeclarationField) => ({
-  gridColumn: field.span ? `span ${field.span}` : undefined,
-})
 </script>
 
 <template>
@@ -902,6 +469,7 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
       </div>
 
       <div class="declarant-workspace">
+        <p v-if="aiError" class="export-error" role="alert">{{ aiError }}</p>
         <Transition name="stage-fade" mode="out-in">
           <section
             v-if="activeStep === 1"
@@ -993,6 +561,8 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
             key="comparison"
             class="comparison-stage"
           >
+            <p class="comparison-guidance">Изменения в таблице автоматически сохраняются в декларации.</p>
+            <p v-if="isDemo" class="comparison-guidance">Демо {{ demoVersion }}: исходная выдача зафиксирована; ваши правки действуют только в этой сессии.</p>
             <div class="comparison-table-wrap">
               <table class="comparison-table">
                 <thead>
@@ -1017,6 +587,9 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
                     >
                       <textarea
                         :value="row.values[columnIndex] ?? ''"
+                        :readonly="!!row.cellChecks || row.id === 'documents.present'"
+                        :title="row.cellNotes?.[columnIndex] || ''"
+                        :aria-label="`${row.attribute}: ${comparisonColumns[columnIndex]}`"
                         @input="updateComparisonCell(rowIndex, columnIndex, ($event.target as HTMLTextAreaElement).value)"
                       />
                     </td>
@@ -1025,6 +598,8 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
               </table>
             </div>
 
+            <p class="comparison-guidance">{{ aiSummary }}</p>
+            <ul class="comparison-issues"><li v-for="row in comparisonRows.filter(row => row.issue && (row.status === 'mismatch' || row.status === 'empty'))" :key="row.id || row.attribute">{{ row.attribute }}: {{ row.issue }}</li></ul>
             <button type="button" class="yellow-button comparison-next" :disabled="isAiProcessing" @click="openDeclarationStep">
               СФОРМИРОВАТЬ ДЕКЛАРАЦИЮ
             </button>
@@ -1035,135 +610,12 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
             key="document"
             class="document-stage"
           >
-            <div class="declaration-document">
-              <div class="declaration-document__title">
-                <h2>НАЗВАНИЕ ДЕКЛАРАЦИИ</h2>
-              </div>
-
-              <div class="declaration-top-grid">
-                <div class="declaration-left-column">
-                  <section class="declaration-group declaration-group--sender" :style="getDeclarationGroupStyle(senderGroup)">
-                    <h3>{{ senderGroup.title }}</h3>
-
-                    <div class="declaration-group__fields">
-                      <label
-                        v-for="field in senderGroup.fields"
-                        :key="`sender-${field.label}`"
-                        class="declaration-field"
-                        :class="{ 'declaration-field--textarea': field.textarea }"
-                        :style="getDeclarationFieldStyle(field)"
-                      >
-                        <span>{{ field.label }}</span>
-                        <input v-model="field.value" type="text" :placeholder="field.placeholder">
-                      </label>
-                    </div>
-                  </section>
-
-                  <section class="declaration-group declaration-group--receiver" :style="getDeclarationGroupStyle(receiverGroup)">
-                    <h3>{{ receiverGroup.title }}</h3>
-
-                    <div class="declaration-group__fields">
-                      <label
-                        v-for="field in receiverGroup.fields"
-                        :key="`receiver-${field.label}`"
-                        class="declaration-field"
-                        :class="{ 'declaration-field--textarea': field.textarea }"
-                        :style="getDeclarationFieldStyle(field)"
-                      >
-                        <span>{{ field.label }}</span>
-                        <input v-model="field.value" type="text" :placeholder="field.placeholder">
-                      </label>
-                    </div>
-                  </section>
-
-                  <section class="declaration-group declaration-group--transport" :style="getDeclarationGroupStyle(transportGroup)">
-                    <h3>{{ transportGroup.title }}</h3>
-
-                    <div class="declaration-group__fields">
-                      <label
-                        v-for="field in transportGroup.fields"
-                        :key="`transport-${field.label}`"
-                        class="declaration-field"
-                        :class="{ 'declaration-field--textarea': field.textarea }"
-                        :style="getDeclarationFieldStyle(field)"
-                      >
-                        <span>{{ field.label }}</span>
-                        <input v-model="field.value" type="text" :placeholder="field.placeholder">
-                      </label>
-                    </div>
-                  </section>
-                </div>
-
-                <div class="declaration-right-column">
-                  <section class="declaration-group declaration-group--general" :style="getDeclarationGroupStyle(generalGroup)">
-                    <h3>{{ generalGroup.title }}</h3>
-
-                    <div class="declaration-group__fields">
-                      <label
-                        v-for="field in generalGroup.fields"
-                        :key="`general-${field.label}`"
-                        class="declaration-field"
-                        :class="{ 'declaration-field--textarea': field.textarea }"
-                        :style="getDeclarationFieldStyle(field)"
-                      >
-                        <span>{{ field.label }}</span>
-                        <input v-model="field.value" type="text" :placeholder="field.placeholder">
-                      </label>
-                    </div>
-                  </section>
-
-                  <section class="declaration-group declaration-group--customs" :style="getDeclarationGroupStyle(customsGroup)">
-                    <h3>{{ customsGroup.title }}</h3>
-
-                    <div class="declaration-group__fields">
-                      <label
-                        v-for="field in customsGroup.fields"
-                        :key="`customs-${field.label}`"
-                        class="declaration-field"
-                        :class="{ 'declaration-field--textarea': field.textarea }"
-                        :style="getDeclarationFieldStyle(field)"
-                      >
-                        <span>{{ field.label }}</span>
-                        <input v-model="field.value" type="text" :placeholder="field.placeholder">
-                      </label>
-                    </div>
-                  </section>
-                </div>
-              </div>
-
-              <section class="declaration-group declaration-group--goods" :style="getDeclarationGroupStyle(goodsGroup)">
-                <h3>{{ goodsGroup.title }}</h3>
-
-                <div class="declaration-group__fields">
-                  <label
-                    v-for="field in goodsGroup.fields"
-                    :key="`goods-${field.label}`"
-                    class="declaration-field"
-                    :class="{ 'declaration-field--textarea': field.textarea }"
-                    :style="getDeclarationFieldStyle(field)"
-                  >
-                    <span>{{ field.label }}</span>
-
-                    <textarea
-                      v-if="field.textarea"
-                      v-model="field.value"
-                      :placeholder="field.placeholder"
-                    />
-
-                    <input
-                      v-else
-                      v-model="field.value"
-                      type="text"
-                      :placeholder="field.placeholder"
-                    >
-                  </label>
-                </div>
-              </section>
-
+            <DtDeclarationForm :model-value="declarationDraft || emptyDraft" @update:model-value="declarationDraft = $event" />
               <section class="tnved-panel">
                 <div class="tnved-panel__head">
                   <div>
                     <h3>Рекомендации по коду ТН ВЭД</h3>
+                    <label>Товар <select v-model.number="selectedGoodsIndex"><option v-for="n in Number(declarationDraft?.goodsCount || 1)" :key="n" :value="n - 1">{{ n }}</option></select></label>
                     <p>
                       Отдельное поле с предварительными вариантами. Финальный код должен проверить специалист.
                     </p>
@@ -1175,7 +627,7 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
                     :disabled="isTnvedProcessing"
                     @click="requestTnvedSuggestions"
                   >
-                    {{ isTnvedProcessing ? 'ПОДБИРАЕМ КОДЫ...' : 'ПРЕДЛОЖИТЬ КОДЫ ТНВЭД' }}
+                    {{ isTnvedProcessing ? 'ПОДБИРАЕМ КОДЫ...' : isDemo ? 'ПОКАЗАТЬ РЕКОМЕНДАЦИИ ДЕМО' : 'ПРЕДЛОЖИТЬ КОДЫ ТНВЭД' }}
                   </button>
                 </div>
 
@@ -1213,69 +665,6 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
                   </article>
                 </div>
               </section>
-
-              <section class="declaration-group declaration-group--payments" :style="getDeclarationGroupStyle(paymentsGroup)">
-                <h3>{{ paymentsGroup.title }}</h3>
-
-                <div class="declaration-group__fields">
-                  <label
-                    v-for="field in paymentsGroup.fields"
-                    :key="`payments-${field.label}`"
-                    class="declaration-field"
-                    :class="{ 'declaration-field--textarea': field.textarea }"
-                    :style="getDeclarationFieldStyle(field)"
-                  >
-                    <span>{{ field.label }}</span>
-                    <input v-model="field.value" type="text" :placeholder="field.placeholder">
-                  </label>
-                </div>
-              </section>
-
-              <section class="declaration-group declaration-group--declarant" :style="getDeclarationGroupStyle(declarantGroup)">
-                <h3>{{ declarantGroup.title }}</h3>
-
-                <div class="declaration-group__fields">
-                  <label
-                    v-for="field in declarantGroup.fields"
-                    :key="`declarant-${field.label}`"
-                    class="declaration-field declaration-field--textarea"
-                    :style="getDeclarationFieldStyle(field)"
-                  >
-                    <span>{{ field.label }}</span>
-                    <textarea v-model="field.value" :placeholder="field.placeholder" />
-                  </label>
-                </div>
-              </section>
-
-              <section class="declaration-group declaration-group--representative" :style="getDeclarationGroupStyle(representativeGroup)">
-                <h3>{{ representativeGroup.title }}</h3>
-
-                <div class="declaration-group__fields">
-                  <label
-                    v-for="field in representativeGroup.fields"
-                    :key="`representative-${field.label}`"
-                    class="declaration-field"
-                    :class="{ 'declaration-field--textarea': field.textarea }"
-                    :style="getDeclarationFieldStyle(field)"
-                  >
-                    <span>{{ field.label }}</span>
-
-                    <textarea
-                      v-if="field.textarea"
-                      v-model="field.value"
-                      :placeholder="field.placeholder"
-                    />
-
-                    <input
-                      v-else
-                      v-model="field.value"
-                      type="text"
-                      :placeholder="field.placeholder"
-                    >
-                  </label>
-                </div>
-              </section>
-            </div>
 
             <button
               type="button"
@@ -1324,6 +713,9 @@ const getDeclarationFieldStyle = (field: DeclarationField) => ({
 </template>
 
 <style scoped>
+.comparison-guidance{font-weight:400;font-size:13px;line-height:1.6;margin:12px 0;color:#e0e0e0;}
+.comparison-issues{font-weight:400;font-size:12px;line-height:1.6;max-height:180px;overflow:auto;}
+
 .declarant-page {
   min-height: 100vh;
   padding: 28px 32px 0px;

@@ -1,0 +1,5498 @@
+{
+  "version": "2026-10-16.2",
+  "frozenAt": "2026-10-16T03:34:42.403Z",
+  "provenance": "One-time fresh extraction, manually checked against all four bundled source PDFs on 2026-10-16. Recovered references, identifiers, item totals, both control-panel pallets and transport fields; removed hallucinated CMR net total and dates of referenced documents. No model calls during review. Raw extraction SHA256 e34a77940b04309d372c92316522bb4797c0c7ab13cddbd45f830812c18bdd2e",
+  "checksum": "92fb3bef1fddca560702fee93db0373a7a66511b454ac83a92f82b7d450fec41",
+  "payload": {
+    "documents": {
+      "agreement": {
+        "contract_number": "TI-GM/2025-012",
+        "contract_date": "2025-09-15",
+        "seller": {
+          "name": "Gerhardt Maschinen GmbH",
+          "address": "Komturstraße 10, 12099 Berlin, Germany",
+          "country": "Germany",
+          "vat_or_tax_id": "DE123456789",
+          "registration_number": "HRB 123456"
+        },
+        "buyer": {
+          "name": "ООО «ТехИмпорт Рус»",
+          "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "country": "Россия",
+          "inn": "7705123456",
+          "kpp": "770501001",
+          "ogrn": "1227700123456"
+        },
+        "subject": "Запасные части к упаковочному оборудованию производства Gerhardt Maschinen GmbH",
+        "incoterms": {
+          "rule": "FCA",
+          "place": "Berlin, Germany",
+          "version": "2020"
+        },
+        "currency": {
+          "code": "EUR"
+        },
+        "origin_country": "Germany",
+        "destination_country": "Russia",
+        "contract_ceiling_amount": 500000
+      },
+      "invoice": {
+        "invoice_number": "GM-INV-2025/384",
+        "invoice_date": "2025-10-10",
+        "seller": {
+          "name": "Gerhardt Maschinen GmbH",
+          "address": "Komturstraße 10, 12099 Berlin, Germany",
+          "country": "Germany",
+          "vat_or_tax_id": "DE123456789",
+          "registration_number": "HRB 123456"
+        },
+        "buyer": {
+          "name": "ООО «ТехИмпорт Рус»",
+          "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "country": "Россия",
+          "inn": "7705123456",
+          "kpp": "770501001",
+          "ogrn": "1227700123456"
+        },
+        "incoterms": {
+          "rule": "FCA",
+          "place": "Berlin, Germany",
+          "version": "2020"
+        },
+        "currency": {
+          "code": "EUR"
+        },
+        "total_amount": 7470,
+        "subtotal_ex_vat": 7470,
+        "vat_amount": 0,
+        "grand_total": 7470,
+        "charges": [],
+        "contract_reference": {
+          "number": "TI-GM/2025-012",
+          "date": "2025-09-15"
+        },
+        "payment_terms": "100% предоплата в течение 5 банковских дней с даты выставления инвойса.",
+        "bank_details": [
+          {
+            "account_name": "Gerhardt Maschinen GmbH",
+            "iban": "DE12 1002 0500 0001 2345 67",
+            "bic": "BEVODEBB"
+          }
+        ],
+        "items": [
+          {
+            "description": "Spare parts for packaging machines (комплектующие к упаковочному оборудованию), артикулы GM-SP-A100...A145",
+            "model_or_sku": "GM-SP-A100…A145",
+            "quantity": 250,
+            "uom": "pcs",
+            "origin_country": "",
+            "manufacturer": "",
+            "price_per_unit": 18,
+            "gross_weight_kg": null,
+            "net_weight_kg": null,
+            "line_total": 4500
+          },
+          {
+            "description": "Pneumatic unit GM-PN-U20",
+            "model_or_sku": "GM-PN-U20",
+            "quantity": 10,
+            "uom": "pcs",
+            "origin_country": "",
+            "manufacturer": "",
+            "price_per_unit": 125,
+            "gross_weight_kg": null,
+            "net_weight_kg": null,
+            "line_total": 1250
+          },
+          {
+            "description": "Control panel GM-CP-450",
+            "model_or_sku": "GM-CP-450",
+            "quantity": 2,
+            "uom": "pcs",
+            "origin_country": "",
+            "manufacturer": "",
+            "price_per_unit": 860,
+            "gross_weight_kg": null,
+            "net_weight_kg": null,
+            "line_total": 1720
+          }
+        ]
+      },
+      "packingList": {
+        "pl_number": "PL-2025/384",
+        "pl_date": "2025-10-10",
+        "invoice_ref": {
+          "number": "GM-INV-2025/384",
+          "date": "2025-10-10"
+        },
+        "packages": {
+          "total_packages": 12,
+          "package_type": "Cartons (boxes), Pallets",
+          "marks_and_numbers": "GM/TIR/10-2025/384/1-12"
+        },
+        "gross_weight_total": 1240,
+        "net_weight_total": 1060,
+        "dimensions_total": {
+          "volume_m3": 5.6,
+          "approximate": true
+        },
+        "items": [
+          {
+            "line_no": "1-8",
+            "description": "Spare parts",
+            "model_or_sku": "GM-SP-A100…A145",
+            "quantity": 250,
+            "uom": "pcs",
+            "net_weight": 520,
+            "gross_weight": 600,
+            "packaging": {
+              "packages_qty": 8,
+              "package_type": "Carton",
+              "marks_range": "GM/TIR/10-2025/384/1-8"
+            },
+            "dimensions": {
+              "length_cm": 60,
+              "width_cm": 40,
+              "height_cm": 35
+            }
+          },
+          {
+            "line_no": "9-10",
+            "description": "Pneumatic unit",
+            "model_or_sku": "GM-PN-U20",
+            "quantity": 10,
+            "uom": "pcs",
+            "net_weight": 120,
+            "gross_weight": 150,
+            "packaging": {
+              "packages_qty": 2,
+              "package_type": "Carton",
+              "marks_range": "GM/TIR/10-2025/384/9-10"
+            },
+            "dimensions": {
+              "length_cm": 60,
+              "width_cm": 40,
+              "height_cm": 35
+            }
+          },
+          {
+            "line_no": "11",
+            "description": "Control panel",
+            "model_or_sku": "GM-CP-450",
+            "quantity": 1,
+            "uom": "pc",
+            "net_weight": 200,
+            "gross_weight": 240,
+            "packaging": {
+              "packages_qty": 1,
+              "package_type": "Pallet",
+              "marks_range": "GM/TIR/10-2025/384/11"
+            },
+            "dimensions": {
+              "length_cm": 120,
+              "width_cm": 80,
+              "height_cm": 90
+            }
+          },
+          {
+            "line_no": "12",
+            "description": "Control panel",
+            "model_or_sku": "GM-CP-450",
+            "quantity": 1,
+            "uom": "pc",
+            "net_weight": 220,
+            "gross_weight": 250,
+            "packaging": {
+              "packages_qty": 1,
+              "package_type": "Pallet",
+              "marks_range": "GM/TIR/10-2025/384/12"
+            },
+            "dimensions": {
+              "length_cm": 120,
+              "width_cm": 80,
+              "height_cm": 95
+            }
+          }
+        ],
+        "packaging": "Cartons (boxes), Pallets",
+        "marks_and_numbers": "GM/TIR/10-2025/384/1-12",
+        "origin_country": "",
+        "manufacturer": "",
+        "contract_reference": {
+          "number": "TI-GM/2025-012",
+          "date": "2025-09-15"
+        },
+        "shipper": {
+          "name": "Gerhardt Maschinen GmbH",
+          "address": "Komturstraße 10, 12099 Berlin, Germany",
+          "country": "Germany",
+          "vat_or_tax_id": "DE123456789"
+        },
+        "consignee": {
+          "name": "ООО «ТехИмпорт Рус»",
+          "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "country": "Россия",
+          "inn": "7705123456"
+        }
+      },
+      "cmr": {
+        "consignor": {
+          "name": "Gerhardt Maschinen GmbH",
+          "address": "Komturstraße 10, 12099 Berlin, Germany",
+          "country": "Germany",
+          "vat_or_tax_id": "DE123456789"
+        },
+        "consignee": {
+          "name": "ООО «ТехИмпорт Рус»",
+          "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "country": "Россия",
+          "inn": "7705123456"
+        },
+        "place_and_date_taking_over": {
+          "place": "Berlin, Germany",
+          "country": "Germany",
+          "date": "2025-10-11"
+        },
+        "place_of_delivery": {
+          "place": "Москва",
+          "country": "Russia"
+        },
+        "packages_summary": {
+          "number_of_packages": 12,
+          "kind_of_packages": "10 cartons, 2 pallets",
+          "marks_and_numbers": "GM/TIR/10-2025/384/1-12"
+        },
+        "gross_weight_total_kg": 1240,
+        "transport": {
+          "tractor_plate": "DE-AB 1234",
+          "trailer_plate": "DE-TR 5678",
+          "volume_m3": 5.6
+        },
+        "carrier": "LLC «TransAuto Logistics»",
+        "route_countries": [
+          "DE",
+          "PL",
+          "BY",
+          "RU"
+        ],
+        "cmr_number": "",
+        "cmr_date": "2025-10-11",
+        "related_documents": [
+          {
+            "type": "Invoice",
+            "number": "GM-INV-2025/384",
+            "date": ""
+          },
+          {
+            "type": "Packing List",
+            "number": "PL-2025/384",
+            "date": ""
+          },
+          {
+            "type": "Contract",
+            "number": "TI-GM/2025-012",
+            "date": ""
+          }
+        ],
+        "items": [
+          {
+            "line_no": "1-8",
+            "description": "Spare parts",
+            "model_or_sku": "GM-SP-A100…A145",
+            "quantity": 250,
+            "uom": "pcs",
+            "net_weight": 520,
+            "gross_weight": 600,
+            "packaging": {
+              "packages_qty": 8,
+              "package_type": "Carton",
+              "marks_range": "GM/TIR/10-2025/384/1-8"
+            },
+            "dimensions": {
+              "length_cm": 60,
+              "width_cm": 40,
+              "height_cm": 35
+            }
+          },
+          {
+            "line_no": "9-10",
+            "description": "Pneumatic unit",
+            "model_or_sku": "GM-PN-U20",
+            "quantity": 10,
+            "uom": "pcs",
+            "net_weight": 120,
+            "gross_weight": 150,
+            "packaging": {
+              "packages_qty": 2,
+              "package_type": "Carton",
+              "marks_range": "GM/TIR/10-2025/384/9-10"
+            },
+            "dimensions": {
+              "length_cm": 60,
+              "width_cm": 40,
+              "height_cm": 35
+            }
+          },
+          {
+            "line_no": "11",
+            "description": "Control panel",
+            "model_or_sku": "GM-CP-450",
+            "quantity": 1,
+            "uom": "pc",
+            "net_weight": 200,
+            "gross_weight": 240,
+            "packaging": {
+              "packages_qty": 1,
+              "package_type": "Pallet",
+              "marks_range": "GM/TIR/10-2025/384/11"
+            },
+            "dimensions": {
+              "length_cm": 120,
+              "width_cm": 80,
+              "height_cm": 90
+            }
+          },
+          {
+            "line_no": "12",
+            "description": "Control panel",
+            "model_or_sku": "GM-CP-450",
+            "quantity": 1,
+            "uom": "pc",
+            "net_weight": 220,
+            "gross_weight": 250,
+            "packaging": {
+              "packages_qty": 1,
+              "package_type": "Pallet",
+              "marks_range": "GM/TIR/10-2025/384/12"
+            },
+            "dimensions": {
+              "length_cm": 120,
+              "width_cm": 80,
+              "height_cm": 95
+            }
+          }
+        ],
+        "incoterms": {
+          "rule": "FCA",
+          "place": "Berlin, Germany",
+          "version": "2020"
+        },
+        "transshipment": "Нет",
+        "notes": "Экспорт DE / Импорт RU, выпуск для внутреннего потребления"
+      }
+    },
+    "declarationDraft": {
+      "schemaVersion": "2",
+      "goodsCount": "3",
+      "g2-name": "Gerhardt Maschinen GmbH",
+      "g2-addr": "Komturstraße 10, 12099 Berlin, Germany",
+      "g2-ogrn": "",
+      "g2-inn": "",
+      "g1-dir": "ИМ",
+      "g1-proc": "",
+      "g1-ed": "",
+      "g3-sheet": "1",
+      "g3-total": "2",
+      "g4-lists": "",
+      "g5-goods": "3",
+      "g6-pkg": "12",
+      "g7-reference": "",
+      "g8-name": "ООО «ТехИмпорт Рус»",
+      "g8-addr": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+      "g8-ogrn": "1227700123456",
+      "g8-inn": "7705123456/770501001",
+      "g9-party": "",
+      "g10-unused": "",
+      "g11-trade": "DE",
+      "g11-unused": "",
+      "g12-total": "",
+      "g13-special": "",
+      "g14-name": "ООО «ТехИмпорт Рус»",
+      "g14-addr": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+      "g14-ogrn": "1227700123456",
+      "g14-inn": "7705123456/770501001",
+      "g15-name": "Германия",
+      "g15-code": "DE",
+      "g16-origin": "Германия",
+      "g17-name": "Россия",
+      "g17-code": "RU",
+      "g18-vehicle": "DE-AB 1234 / DE-TR 5678",
+      "g18-country": "",
+      "g19-cont": "",
+      "g20-code": "FCA",
+      "g20-place": "Berlin, Germany",
+      "g21-vehicle": "DE-AB 1234 / DE-TR 5678",
+      "g21-country": "",
+      "g22-cur": "EUR",
+      "g22-sum": "7470",
+      "g23-rate": "",
+      "g24-code": "",
+      "g24-feature": "",
+      "g24-unused": "",
+      "g25-mode": "",
+      "g26-mode": "",
+      "g27-unused": "",
+      "g28-unused": "",
+      "g29-office": "",
+      "g30-location": "",
+      "goods.0.g31-desc": "Spare parts for packaging machines (комплектующие к упаковочному оборудованию), артикулы GM-SP-A100...A145\nGM-SP-A100…A145\n250 pcs\nМест: 8\nGM/TIR/10-2025/384/1-12",
+      "goods.1.g31-desc": "Pneumatic unit GM-PN-U20\nGM-PN-U20\n10 pcs\nМест: 2\nGM/TIR/10-2025/384/1-12",
+      "goods.2.g31-desc": "Control panel GM-CP-450\nGM-CP-450\n2 pcs\nМест: 2\nGM/TIR/10-2025/384/1-12",
+      "goods.0.g32-num": "1",
+      "goods.1.g32-num": "2",
+      "goods.2.g32-num": "3",
+      "goods.0.g33-tnved": "",
+      "goods.1.g33-tnved": "",
+      "goods.2.g33-tnved": "",
+      "goods.0.g33-intellectual": "",
+      "goods.1.g33-intellectual": "",
+      "goods.2.g33-intellectual": "",
+      "goods.0.g33-additional": "",
+      "goods.1.g33-additional": "",
+      "goods.2.g33-additional": "",
+      "goods.0.g34-origin": "DE",
+      "goods.1.g34-origin": "DE",
+      "goods.2.g34-origin": "DE",
+      "goods.0.g35-gross": "600",
+      "goods.1.g35-gross": "150",
+      "goods.2.g35-gross": "490",
+      "goods.0.g36-preference": "",
+      "goods.1.g36-preference": "",
+      "goods.2.g36-preference": "",
+      "goods.0.g37-procedure": "",
+      "goods.1.g37-procedure": "",
+      "goods.2.g37-procedure": "",
+      "goods.0.g37-movement": "",
+      "goods.1.g37-movement": "",
+      "goods.2.g37-movement": "",
+      "goods.0.g38-net": "520",
+      "goods.1.g38-net": "120",
+      "goods.2.g38-net": "420",
+      "goods.0.g39-quota": "",
+      "goods.1.g39-quota": "",
+      "goods.2.g39-quota": "",
+      "goods.0.g40-previous": "",
+      "goods.1.g40-previous": "",
+      "goods.2.g40-previous": "",
+      "goods.0.g41-unit": "pcs",
+      "goods.1.g41-unit": "pcs",
+      "goods.2.g41-unit": "pcs",
+      "goods.0.g41-quantity": "250",
+      "goods.1.g41-quantity": "10",
+      "goods.2.g41-quantity": "2",
+      "goods.0.g42-amount": "4500",
+      "goods.1.g42-amount": "1250",
+      "goods.2.g42-amount": "1720",
+      "goods.0.g43-method": "",
+      "goods.1.g43-method": "",
+      "goods.2.g43-method": "",
+      "goods.0.g44-documents": "Контракт — TI-GM/2025-012 — 2025-09-15\nИнвойс — GM-INV-2025/384 — 2025-10-10\nУпаковочный лист — PL-2025/384 — 2025-10-10\nCMR — 2025-10-11",
+      "goods.1.g44-documents": "Контракт — TI-GM/2025-012 — 2025-09-15\nИнвойс — GM-INV-2025/384 — 2025-10-10\nУпаковочный лист — PL-2025/384 — 2025-10-10\nCMR — 2025-10-11",
+      "goods.2.g44-documents": "Контракт — TI-GM/2025-012 — 2025-09-15\nИнвойс — GM-INV-2025/384 — 2025-10-10\nУпаковочный лист — PL-2025/384 — 2025-10-10\nCMR — 2025-10-11",
+      "goods.0.g45-cval": "",
+      "goods.1.g45-cval": "",
+      "goods.2.g45-cval": "",
+      "goods.0.g46-statistical": "",
+      "goods.1.g46-statistical": "",
+      "goods.2.g46-statistical": "",
+      "goods.0.g48-deferral": "",
+      "goods.1.g48-deferral": "",
+      "goods.2.g48-deferral": "",
+      "goods.0.g47-payments": "",
+      "goods.1.g47-payments": "",
+      "goods.2.g47-payments": "",
+      "gB-payments": "",
+      "g49-warehouse": "",
+      "g51-transit": "",
+      "g53-destination": "",
+      "g54-certificate-number": "",
+      "g54-certificate-date": "",
+      "g54-inn": "",
+      "g54-contract-number": "",
+      "g54-contract-date": "",
+      "g54-surname": "",
+      "g54-firstname": "",
+      "g54-patronymic": "",
+      "g54-phone": "",
+      "g54-position": "",
+      "g54-identity-code": "",
+      "g54-identity-name": "",
+      "g54-identity-series": "",
+      "g54-identity-number": "",
+      "g54-identity-date": "",
+      "g54-identity-issuer": "",
+      "g54-authority-name": "",
+      "g54-authority-number": "",
+      "g54-authority-from": "",
+      "g54-authority-to": "",
+      "g54-print": "",
+      "g54-place": "",
+      "g54-submitted": "",
+      "g54-registered": "",
+      "g54-act": "",
+      "g2-same": "false",
+      "g2-contragent": "false",
+      "g8-same": "false",
+      "g8-contragent": "false"
+    },
+    "rows": [
+      {
+        "id": "documents.present",
+        "attribute": "Наличие исходного документа",
+        "values": [
+          "Документ загружен",
+          "Документ загружен",
+          "Документ загружен",
+          "Документ загружен"
+        ],
+        "applicable": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "contract.number",
+        "attribute": "Номер договора",
+        "kind": "reference",
+        "values": [
+          "TI-GM/2025-012",
+          "TI-GM/2025-012",
+          "TI-GM/2025-012",
+          "TI-GM/2025-012"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "contract_number"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "contract_reference.number"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "contract_reference.number"
+            ],
+            "numeric": false
+          },
+          null
+        ],
+        "draftKeys": [],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "contract.date",
+        "attribute": "Дата договора",
+        "kind": "date",
+        "values": [
+          "2025-09-15",
+          "2025-09-15",
+          "2025-09-15",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "contract_date"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "contract_reference.date"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "contract_reference.date"
+            ],
+            "numeric": false
+          },
+          null
+        ],
+        "draftKeys": [],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "invoice.number",
+        "attribute": "Номер инвойса",
+        "kind": "reference",
+        "values": [
+          "—",
+          "GM-INV-2025/384",
+          "GM-INV-2025/384",
+          "GM-INV-2025/384"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "invoice_number"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "invoice_ref.number"
+            ],
+            "numeric": false
+          },
+          null
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          true,
+          true,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "invoice.date",
+        "attribute": "Дата инвойса",
+        "kind": "date",
+        "values": [
+          "—",
+          "2025-10-10",
+          "2025-10-10",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "invoice_date"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "invoice_ref.date"
+            ],
+            "numeric": false
+          },
+          null
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          true,
+          true,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "packing.number",
+        "attribute": "Номер упаковочного листа",
+        "kind": "reference",
+        "values": [
+          "—",
+          "—",
+          "PL-2025/384",
+          "PL-2025/384"
+        ],
+        "bindings": [
+          null,
+          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "pl_number"
+            ],
+            "numeric": false
+          },
+          null
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "packing.date",
+        "attribute": "Дата упаковочного листа",
+        "kind": "date",
+        "values": [
+          "—",
+          "—",
+          "2025-10-10",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "pl_date"
+            ],
+            "numeric": false
+          },
+          null
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "similar",
+          "ignored"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.name",
+        "attribute": "Продавец: наименование",
+        "kind": "entity",
+        "values": [
+          "Gerhardt Maschinen GmbH",
+          "Gerhardt Maschinen GmbH",
+          "Gerhardt Maschinen GmbH",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.name"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.name"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.name"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.name"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-name"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.address",
+        "attribute": "Продавец: адрес",
+        "kind": "address",
+        "values": [
+          "Komturstraße 10, 12099 Berlin, Germany",
+          "Komturstraße 10, 12099 Berlin, Germany",
+          "Komturstraße 10, 12099 Berlin, Germany",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.address"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.address"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.address"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.legal_address"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-addr"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.inn",
+        "attribute": "Продавец: ИНН",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.inn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.inn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.inn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.inn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.kpp",
+        "attribute": "Продавец: КПП",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.kpp"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.kpp"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.kpp"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.kpp"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.vat",
+        "attribute": "Продавец: иностранный налоговый / регистрационный номер",
+        "kind": "identifier",
+        "values": [
+          "DE123456789",
+          "DE123456789",
+          "DE123456789",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.vat_or_tax_id"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.vat_or_tax_id"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.vat_or_tax_id"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.vat_or_reg_number"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.ogrn",
+        "attribute": "Продавец: ОГРН",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.ogrn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.ogrn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.ogrn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.ogrn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-ogrn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "sender.country",
+        "attribute": "Продавец: страна",
+        "kind": "country",
+        "values": [
+          "Germany",
+          "Germany",
+          "Germany",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "seller.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "seller.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "seller.country_code"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.name",
+        "attribute": "Покупатель: наименование",
+        "kind": "entity",
+        "values": [
+          "ООО «ТехИмпорт Рус»",
+          "ООО «ТехИмпорт Рус»",
+          "ООО «ТехИмпорт Рус»",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.name"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.name"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.name"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.name"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-name"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.address",
+        "attribute": "Покупатель: адрес",
+        "kind": "address",
+        "values": [
+          "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.address"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.address"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.address"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.legal_address"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-addr"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.inn",
+        "attribute": "Покупатель: ИНН",
+        "kind": "identifier",
+        "values": [
+          "7705123456",
+          "7705123456",
+          "7705123456",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.inn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.inn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.inn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.inn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.kpp",
+        "attribute": "Покупатель: КПП",
+        "kind": "identifier",
+        "values": [
+          "770501001",
+          "770501001",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.kpp"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.kpp"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.kpp"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.kpp"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.vat",
+        "attribute": "Покупатель: иностранный налоговый / регистрационный номер",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.vat_or_reg_number"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.vat_or_reg_number"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.vat_or_reg_number"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.vat_or_reg_number"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.ogrn",
+        "attribute": "Покупатель: ОГРН",
+        "kind": "identifier",
+        "values": [
+          "1227700123456",
+          "1227700123456",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.ogrn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.ogrn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.ogrn"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.ogrn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-ogrn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "receiver.country",
+        "attribute": "Покупатель: страна",
+        "kind": "country",
+        "values": [
+          "Россия",
+          "Россия",
+          "Россия",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "buyer.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "buyer.country_code"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.name",
+        "attribute": "Грузоотправитель: наименование",
+        "kind": "entity",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "Gerhardt Maschinen GmbH"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.name"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-name"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.address",
+        "attribute": "Грузоотправитель: адрес",
+        "kind": "address",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "Komturstraße 10, 12099 Berlin, Germany"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.address"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-addr"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.inn",
+        "attribute": "Грузоотправитель: ИНН",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.inn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.kpp",
+        "attribute": "Грузоотправитель: КПП",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.kpp"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.ogrn",
+        "attribute": "Грузоотправитель: ОГРН",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.ogrn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g2-ogrn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.vat_or_tax_id",
+        "attribute": "Грузоотправитель: иностранный налоговый номер",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "DE123456789"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.vat_or_tax_id"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignor.country",
+        "attribute": "Грузоотправитель: страна",
+        "kind": "country",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "Germany"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignor.country"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.name",
+        "attribute": "Грузополучатель: наименование",
+        "kind": "entity",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "ООО «ТехИмпорт Рус»"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.name"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-name"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.address",
+        "attribute": "Грузополучатель: адрес",
+        "kind": "address",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.address"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-addr"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.inn",
+        "attribute": "Грузополучатель: ИНН",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "7705123456"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.inn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.kpp",
+        "attribute": "Грузополучатель: КПП",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.kpp"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-inn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.ogrn",
+        "attribute": "Грузополучатель: ОГРН",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.ogrn"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g8-ogrn"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.vat_or_tax_id",
+        "attribute": "Грузополучатель: иностранный налоговый номер",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.vat_or_tax_id"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "consignee.country",
+        "attribute": "Грузополучатель: страна",
+        "kind": "country",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "Россия"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "consignee.country"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "dispatch.country",
+        "attribute": "Страна отправления",
+        "kind": "country",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "Germany"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "dispatch_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "dispatch_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "dispatch_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "place_and_date_taking_over.country"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g15-name",
+          "g15-code"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "destination.country",
+        "attribute": "Страна назначения",
+        "kind": "country",
+        "values": [
+          "Russia",
+          "Россия",
+          "—",
+          "Russia"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "destination_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "buyer.country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "destination_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "place_of_delivery.country"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g17-name",
+          "g17-code"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "incoterms.rule",
+        "attribute": "Инкотермс: условие",
+        "kind": "text",
+        "values": [
+          "FCA",
+          "FCA",
+          "—",
+          "FCA"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "incoterms.rule"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "incoterms.rule"
+            ],
+            "numeric": false
+          },
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "incoterms.rule"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g20-code"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "incoterms.place",
+        "attribute": "Инкотермс: место",
+        "kind": "address",
+        "values": [
+          "Berlin, Germany",
+          "Berlin, Germany",
+          "—",
+          "Berlin, Germany"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "incoterms.place"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "incoterms.place"
+            ],
+            "numeric": false
+          },
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "incoterms.place"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g20-place"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "incoterms.version",
+        "attribute": "Инкотермс: версия",
+        "kind": "text",
+        "values": [
+          "2020",
+          "2020",
+          "—",
+          "2020"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "incoterms.version"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "incoterms.version"
+            ],
+            "numeric": false
+          },
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "incoterms.version"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "currency",
+        "attribute": "Валюта",
+        "kind": "currency",
+        "values": [
+          "EUR",
+          "EUR",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "currency.code"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "currency.code"
+            ],
+            "numeric": false
+          },
+          null,
+          null
+        ],
+        "draftKeys": [
+          "g22-cur"
+        ],
+        "applicable": [
+          true,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          null,
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ok",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "amount.total",
+        "attribute": "Общая сумма",
+        "kind": "number",
+        "values": [
+          "—",
+          "7470",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "total_amount"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "total_amount"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "total_amount"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "total_amount"
+            ],
+            "numeric": true
+          }
+        ],
+        "draftKeys": [
+          "g22-sum"
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "similar",
+          "ignored",
+          "ignored"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "packages.total",
+        "attribute": "Общее количество мест",
+        "kind": "number",
+        "values": [
+          "—",
+          "—",
+          "12",
+          "12"
+        ],
+        "bindings": [
+          null,
+          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "packages.total_packages"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "packages_summary.number_of_packages"
+            ],
+            "numeric": true
+          }
+        ],
+        "draftKeys": [
+          "g6-pkg"
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "weight.gross",
+        "attribute": "Общий вес брутто, кг",
+        "kind": "weight",
+        "values": [
+          "—",
+          "—",
+          "1240",
+          "1240"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "gross_weight_total_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "gross_weight_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "gross_weight_total_kg"
+            ],
+            "numeric": true
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "weight.net",
+        "attribute": "Общий вес нетто, кг",
+        "kind": "weight",
+        "values": [
+          "—",
+          "—",
+          "1060",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "net_weight_total_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "net_weight_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "net_weight_total_kg"
+            ],
+            "numeric": true
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "similar",
+          "ignored"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "volume",
+        "attribute": "Общий объём, м³",
+        "kind": "volume",
+        "values": [
+          "—",
+          "—",
+          "5.6",
+          "5.6"
+        ],
+        "bindings": [
+          null,
+          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "dimensions_total.volume_m3"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "transport.volume_m3"
+            ],
+            "numeric": true
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "marking",
+        "attribute": "Маркировка грузовых мест",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "GM/TIR/10-2025/384/1-12",
+          "GM/TIR/10-2025/384/1-12"
+        ],
+        "bindings": [
+          null,
+          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "packages.marks_and_numbers"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "packages_summary.marks_and_numbers"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "shipment.date",
+        "attribute": "Дата принятия груза перевозчиком",
+        "kind": "date",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "2025-10-11"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "shipment_date"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "shipment_date"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "shipment_date"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "place_and_date_taking_over.date"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "cmr.date",
+        "attribute": "Дата транспортного документа",
+        "kind": "date",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "2025-10-11"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "cmr_date"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "route",
+        "attribute": "Маршрут",
+        "kind": "route",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "DE, PL, BY, RU"
+        ],
+        "bindings": [
+          {
+            "document": "agreement",
+            "paths": [
+              "route_countries"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "invoice",
+            "paths": [
+              "route_countries"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "route_countries"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "route_countries"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "transport.vehicle",
+        "attribute": "Транспортное средство",
+        "kind": "identifier",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "DE-AB 1234"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "transport.tractor_plate"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g18-vehicle"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "transport.country",
+        "attribute": "Страна регистрации ТС",
+        "kind": "country",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          null,
+          null,
+          {
+            "document": "cmr",
+            "paths": [
+              "transport.plate_country_code"
+            ],
+            "numeric": false
+          }
+        ],
+        "draftKeys": [
+          "g18-country"
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "missing-value"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Значение не найдено в извлечённых данных; проверьте оригинал."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "empty"
+        ],
+        "status": "empty",
+        "issue": "Не хватает данных для сравнения в ожидаемом документе.",
+        "recommendation": "Проверьте исходные документы и выберите значение для декларации."
+      },
+      {
+        "id": "goods.gmspa100a145.description",
+        "attribute": "GM-SP-A100…A145: описание",
+        "kind": "goods",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "Spare parts for packaging machines (комплектующие к упаковочному оборудованию), артикулы GM-SP-A100...A145",
+          "Spare parts",
+          "Spare parts"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.description"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.description"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.description"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.0.g31-desc"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "similar",
+          "similar",
+          "similar"
+        ],
+        "status": "similar",
+        "issue": "Близкие значения требуют подтверждения специалиста.",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmspa100a145.quantity",
+        "attribute": "GM-SP-A100…A145: количество",
+        "kind": "number",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "250",
+          "250",
+          "250"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.quantity"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.quantity"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.quantity"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.0.g41-quantity"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmspa100a145.unit",
+        "attribute": "GM-SP-A100…A145: единица измерения",
+        "kind": "text",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "pcs",
+          "pcs",
+          "pcs"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.uom"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.uom"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.uom"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.0.g41-unit"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmspa100a145.origin",
+        "attribute": "GM-SP-A100…A145: происхождение",
+        "kind": "country",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.origin_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.origin_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.origin_country"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "draftKeys": [
+          "goods.0.g34-origin"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmspa100a145.gross",
+        "attribute": "GM-SP-A100…A145: брутто, кг",
+        "kind": "weight",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "—",
+          "600",
+          "600"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.gross_weight_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.gross_weight"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.gross_weight"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "draftKeys": [
+          "goods.0.g35-gross"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmspa100a145.net",
+        "attribute": "GM-SP-A100…A145: нетто, кг",
+        "kind": "weight",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "—",
+          "520",
+          "520"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.net_weight_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.net_weight"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.net_weight"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "draftKeys": [
+          "goods.0.g38-net"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmspa100a145.amount",
+        "attribute": "GM-SP-A100…A145: сумма строки",
+        "kind": "number",
+        "sku": "GM-SP-A100…A145",
+        "values": [
+          "—",
+          "4500",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.0.line_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.0.line_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.0.line_total"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "draftKeys": [
+          "goods.0.g42-amount"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "similar",
+          "ignored",
+          "ignored"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.description",
+        "attribute": "GM-PN-U20: описание",
+        "kind": "goods",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "Pneumatic unit GM-PN-U20",
+          "Pneumatic unit",
+          "Pneumatic unit"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.description"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.description"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.description"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.1.g31-desc"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.quantity",
+        "attribute": "GM-PN-U20: количество",
+        "kind": "number",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "10",
+          "10",
+          "10"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.quantity"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.quantity"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.quantity"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.1.g41-quantity"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.unit",
+        "attribute": "GM-PN-U20: единица измерения",
+        "kind": "text",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "pcs",
+          "pcs",
+          "pcs"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.uom"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.uom"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.uom"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.1.g41-unit"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.origin",
+        "attribute": "GM-PN-U20: происхождение",
+        "kind": "country",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.origin_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.origin_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.origin_country"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "draftKeys": [
+          "goods.1.g34-origin"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.gross",
+        "attribute": "GM-PN-U20: брутто, кг",
+        "kind": "weight",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "—",
+          "150",
+          "150"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.gross_weight_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.gross_weight"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.gross_weight"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "draftKeys": [
+          "goods.1.g35-gross"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.net",
+        "attribute": "GM-PN-U20: нетто, кг",
+        "kind": "weight",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "—",
+          "120",
+          "120"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.net_weight_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.net_weight"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.net_weight"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "draftKeys": [
+          "goods.1.g38-net"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmpnu20.amount",
+        "attribute": "GM-PN-U20: сумма строки",
+        "kind": "number",
+        "sku": "GM-PN-U20",
+        "values": [
+          "—",
+          "1250",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.1.line_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.1.line_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.1.line_total"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "draftKeys": [
+          "goods.1.g42-amount"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "similar",
+          "ignored",
+          "ignored"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.description",
+        "attribute": "GM-CP-450: описание",
+        "kind": "goods",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "Control panel GM-CP-450",
+          "Control panel",
+          "Control panel"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.description"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.description",
+              "items.3.description"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.description",
+              "items.3.description"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.2.g31-desc"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.quantity",
+        "attribute": "GM-CP-450: количество",
+        "kind": "number",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "2",
+          "2",
+          "2"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.quantity"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.quantity",
+              "items.3.quantity"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.quantity",
+              "items.3.quantity"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.2.g41-quantity"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.unit",
+        "attribute": "GM-CP-450: единица измерения",
+        "kind": "text",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "pcs",
+          "pc",
+          "pc"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.uom"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.uom",
+              "items.3.uom"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.uom",
+              "items.3.uom"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "draftKeys": [
+          "goods.2.g41-unit"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.origin",
+        "attribute": "GM-CP-450: происхождение",
+        "kind": "country",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "—",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.origin_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.origin_country",
+              "items.3.origin_country"
+            ],
+            "numeric": false
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.origin_country",
+              "items.3.origin_country"
+            ],
+            "numeric": false
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "draftKeys": [
+          "goods.2.g34-origin"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ignored",
+          "ignored"
+        ],
+        "status": "ignored",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.gross",
+        "attribute": "GM-CP-450: брутто, кг",
+        "kind": "weight",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "—",
+          "490",
+          "490"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.gross_weight_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.gross_weight",
+              "items.3.gross_weight"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.gross_weight",
+              "items.3.gross_weight"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "draftKeys": [
+          "goods.2.g35-gross"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.net",
+        "attribute": "GM-CP-450: нетто, кг",
+        "kind": "weight",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "—",
+          "420",
+          "420"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.net_weight_kg"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.net_weight",
+              "items.3.net_weight"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.net_weight",
+              "items.3.net_weight"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "draftKeys": [
+          "goods.2.g38-net"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "status": "ok",
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "goods.gmcp450.amount",
+        "attribute": "GM-CP-450: сумма строки",
+        "kind": "number",
+        "sku": "GM-CP-450",
+        "values": [
+          "—",
+          "1720",
+          "—",
+          "—"
+        ],
+        "bindings": [
+          null,
+          {
+            "document": "invoice",
+            "paths": [
+              "items.2.line_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "packingList",
+            "paths": [
+              "items.2.line_total",
+              "items.3.line_total"
+            ],
+            "numeric": true
+          },
+          {
+            "document": "cmr",
+            "paths": [
+              "items.2.line_total",
+              "items.3.line_total"
+            ],
+            "numeric": true
+          }
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "draftKeys": [
+          "goods.2.g42-amount"
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "cellStatuses": [
+          "ignored",
+          "similar",
+          "ignored",
+          "ignored"
+        ],
+        "status": "similar",
+        "issue": "Значение есть только в одном документе; независимого подтверждения нет.",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.invoice.amount",
+        "attribute": "Инвойс: сумма товарных строк",
+        "values": [
+          "—",
+          "Указано: 7470; по строкам: 7470",
+          "—",
+          "—"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.invoice.prices",
+        "attribute": "Инвойс: количество × цена за единицу",
+        "values": [
+          "—",
+          "Указано: 7470; по строкам: 7470",
+          "—",
+          "—"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.invoice.line.0",
+        "attribute": "Инвойс, строка 1: количество × цена",
+        "values": [
+          "—",
+          "Указано: 4500; по строкам: 4500",
+          "—",
+          "—"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.invoice.line.1",
+        "attribute": "Инвойс, строка 2: количество × цена",
+        "values": [
+          "—",
+          "Указано: 1250; по строкам: 1250",
+          "—",
+          "—"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.invoice.line.2",
+        "attribute": "Инвойс, строка 3: количество × цена",
+        "values": [
+          "—",
+          "Указано: 1720; по строкам: 1720",
+          "—",
+          "—"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "applicable": [
+          false,
+          true,
+          false,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          null,
+          "not-applicable",
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ok",
+          "ignored",
+          "ignored"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.gross",
+        "attribute": "Сводный итог ↔ строки: брутто",
+        "values": [
+          "—",
+          "—",
+          "Указано: 1240; по строкам: 1240",
+          "Указано: 1240; по строкам: 1240"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.net",
+        "attribute": "Сводный итог ↔ строки: нетто",
+        "values": [
+          "—",
+          "—",
+          "Указано: 1060; по строкам: 1060",
+          "—"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ignored"
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          false
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          "not-applicable"
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          "Поле не обязательно для этого типа документа."
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ignored"
+        ],
+        "issue": "",
+        "recommendation": ""
+      },
+      {
+        "id": "internal.packages",
+        "attribute": "Сводный итог ↔ строки: количество мест",
+        "values": [
+          "—",
+          "—",
+          "Указано: 12; по строкам: 12",
+          "Указано: 12; по строкам: 12"
+        ],
+        "cellChecks": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "applicable": [
+          false,
+          false,
+          true,
+          true
+        ],
+        "absenceReasons": [
+          "not-applicable",
+          "not-applicable",
+          null,
+          null
+        ],
+        "cellNotes": [
+          "Поле не обязательно для этого типа документа.",
+          "Поле не обязательно для этого типа документа.",
+          "",
+          ""
+        ],
+        "status": "ok",
+        "cellStatuses": [
+          "ignored",
+          "ignored",
+          "ok",
+          "ok"
+        ],
+        "issue": "",
+        "recommendation": ""
+      }
+    ],
+    "summary": "Проверено строк: 81. Расхождения или недостающие данные: 1. Требуют подтверждения: 20.",
+    "source": "demo-cache",
+    "errors": [],
+    "demoMode": "fixed",
+    "tnved": {
+      "source": "demo-cache",
+      "summary": "Сохранённые предварительные варианты для демонстрационных товаров. Финальные коды выбираются по характеристикам каждой позиции.",
+      "suggestions": [
+        {
+          "code": "8422909000",
+          "title": "Части оборудования для упаковки или обёртывания товаров",
+          "confidence": 0.68,
+          "reason": "В документах указаны spare parts for packaging machines / запасные части к упаковочному оборудованию. Это базовый кандидат для основной группы товаров.",
+          "source": "local-fallback"
+        },
+        {
+          "code": "8537109800",
+          "title": "Пульты, панели и основания для электрического управления",
+          "confidence": 0.48,
+          "reason": "В составе партии есть control panel GM-CP-450. Для этой позиции может потребоваться отдельная классификация, если она декларируется отдельно.",
+          "source": "local-fallback"
+        },
+        {
+          "code": "8412310009",
+          "title": "Пневматические силовые установки линейного действия / прочие",
+          "confidence": 0.42,
+          "reason": "В составе партии есть pneumatic unit GM-PN-U20. Код примерный: нужна проверка характеристик узла и назначения.",
+          "source": "local-fallback"
+        }
+      ]
+    },
+    "demoFiles": [
+      {
+        "name": "ved-dogovor_TI-GM-2025-012.pdf",
+        "extension": "PDF",
+        "size": 167792
+      },
+      {
+        "name": "invoice_GM-INV-2025-384.pdf",
+        "extension": "PDF",
+        "size": 118656
+      },
+      {
+        "name": "packing_list_PL-2025-384.pdf",
+        "extension": "PDF",
+        "size": 120000
+      },
+      {
+        "name": "CMR.pdf",
+        "extension": "PDF",
+        "size": 30687
+      }
+    ]
+  }
+}
