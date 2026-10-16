@@ -35,8 +35,8 @@ watch(activeStep, async () => {
 })
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
-const acceptedExtensions = ['pdf', 'doc', 'docx', 'xlsx']
-const acceptedFileInputTypes = '.pdf,.doc,.docx,.xlsx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+const acceptedExtensions = ['pdf', 'docx', 'xlsx']
+const acceptedFileInputTypes = '.pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 const uploadedFiles = ref<UploadedFileItem[]>([])
 const isAiProcessing = ref(false)
@@ -147,7 +147,7 @@ const addFiles = (fileList: FileList | File[]) => {
       extension: extension.toUpperCase(),
       size: file.size,
       status: allowed ? 'uploaded' : 'error',
-      statusText: allowed ? 'загружен' : 'не загружен: неверный формат',
+      statusText: allowed ? 'загружен' : extension === 'doc' ? 'DOC: сохраните файл в DOCX или PDF' : 'не загружен: неверный формат',
       file: allowed ? file : undefined,
     })
   })
@@ -310,7 +310,8 @@ const runUploadedDocumentsAiAnalysis = async () => {
 
     goForwardToStep(2)
   } catch (error) {
-    aiError.value = error instanceof Error ? error.message : 'Не удалось считать документы через ИИ'
+    const serverMessage = (error as { data?: { message?: unknown } } | null)?.data?.message
+    aiError.value = typeof serverMessage === 'string' ? serverMessage : error instanceof Error ? error.message : 'Не удалось считать документы через ИИ'
   } finally {
     isAiProcessing.value = false
   }
@@ -531,7 +532,7 @@ const formatTnvedConfidence = (value: number) => {
               <div v-if="!uploadedFiles.length" class="upload-empty">
                 <img src="/aideclarant/import.svg" alt="" class="upload-empty__icon">
                 <p>Перетащите файлы сюда или нажмите на выбор</p>
-                <span>Форматы: PDF, DOC, DOCX, XLSX</span>
+                <span>Форматы: PDF, DOCX, XLSX</span>
               </div>
 
               <ul v-else class="upload-list">

@@ -37,6 +37,14 @@ export default defineEventHandler(async (event): Promise<AnalyzeResult> => {
     }
   }
 
+  if (!Object.keys(documents).length) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: 'No documents could be read',
+      message: errors.join('\n') || 'Не удалось прочитать документы. Загрузите PDF с текстовым слоем, DOCX или XLSX.',
+    })
+  }
+
   const rawRows = buildComparisonRowsFromDocuments(documents)
   const crossCheck = await runAiCrossCheck(rawRows)
   const declarationDraft = buildDeclarationDraftFromDocuments(documents)
