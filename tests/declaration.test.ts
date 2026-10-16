@@ -199,3 +199,17 @@ test('partial article matches and duplicate billing lines never allocate the sam
   expect(draftValue(draft, 'g35-gross', 1)).toBe('')
   expect(evaluateComparisonRow(buildComparisonRowsFromDocuments(documents).find(row => row.id === 'internal.invoice.duplicates')!).status).toBe('mismatch')
 })
+
+test('source edits preserve manual goods structure and target the remaining SKU after deletion', () => {
+  const documents = { invoice: { items: [{ model_or_sku: 'AB-1', description: 'First', quantity: 1 }, { model_or_sku: 'CD-2', description: 'Second', quantity: 2 }] } }
+  const original = buildDeclarationDraftFromDocuments(documents)
+  const edited = removeGoodsAt(original, 0)
+  const merged = mergeGeneratedDraft(edited, original, buildDeclarationDraftFromDocuments(documents))
+  expect(merged.goodsCount).toBe('1')
+  expect(draftValue(merged, 'g31-desc')).toContain('CD-2')
+  const secondRow = buildComparisonRowsFromDocuments(documents).find(row => row.id === 'goods.cd2.quantity')!
+  const updated = applyComparisonValueToDraft(merged, secondRow, '9')
+  expect(draftValue(updated, 'g41-quantity')).toBe('9')
+  const removedRow = buildComparisonRowsFromDocuments(documents).find(row => row.id === 'goods.ab1.quantity')!
+  expect(draftValue(applyComparisonValueToDraft(updated, removedRow, '7'), 'g41-quantity')).toBe('9')
+})

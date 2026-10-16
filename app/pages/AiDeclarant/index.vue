@@ -60,6 +60,9 @@ const comparisonRows = ref<ComparisonRow[]>([])
 const isDemo = ref(false)
 const demoVersion = ref('')
 const selectedGoodsIndex = ref(0)
+watch(() => Number(declarationDraft.value?.goodsCount || 1), (count) => {
+  selectedGoodsIndex.value = Math.max(0, Math.min(selectedGoodsIndex.value, count - 1))
+})
 const generatedDraft = ref<DeclarationDraft>(createEmptyDraft())
 const emptyDraft = createEmptyDraft()
 const stepItems: StepNumber[] = [1, 2, 3]

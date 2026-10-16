@@ -46,6 +46,7 @@ export const canonicalDraft = (input: DeclarationDraft): DeclarationDraft => {
   const draft = createEmptyDraft(count)
   if (input.schemaVersion === '2') {
     for (const key of Object.keys(draft)) if (typeof input[key] === 'string') draft[key] = input[key]!
+    if (input.goodsStructureEdited === 'true') draft.goodsStructureEdited = 'true'
   } else {
     for (const [old, key] of Object.entries(legacyKeys)) if (input[old]) draft[goodsControlKeys.has(key) ? goodsKey(0, key) : key] = input[old]!
     const parts = input['1 Декларация']?.split(/\s+/) || []
@@ -57,7 +58,7 @@ export const canonicalDraft = (input: DeclarationDraft): DeclarationDraft => {
 }
 export const resizeGoods = (input: DeclarationDraft, requested: number): DeclarationDraft => {
   const count = Math.max(1, Math.min(1000, Math.floor(requested) || 1))
-  const draft: DeclarationDraft = { ...createEmptyDraft(count), ...input, goodsCount: String(count) }
+  const draft: DeclarationDraft = { ...createEmptyDraft(count), ...input, goodsCount: String(count), goodsStructureEdited: 'true' }
   for (const key of Object.keys(draft)) if (key.startsWith('goods.') && Number(key.split('.')[1]) >= count) delete draft[key]
   for (let index = 0; index < count; index++) for (const key of goodsControlKeys) draft[goodsKey(index, key)] ??= ''
   return recalculateDraft(draft)
@@ -159,15 +160,27 @@ export const buildDeclarationDraftFromDocuments = (input: ExtractedDocuments): D
 export const mergeGeneratedDraft = (current: DeclarationDraft, previous: DeclarationDraft, next: DeclarationDraft) => {
   const merged = { ...next }
   for (const [key, value] of Object.entries(current)) if (key !== 'goodsCount' && value !== previous[key] && key in merged) merged[key] = value
+  if (current.goodsStructureEdited === 'true') {
+    for (const key of Object.keys(merged)) if (key.startsWith('goods.')) delete merged[key]
+    for (const [key, value] of Object.entries(current)) if (key.startsWith('goods.')) merged[key] = value
+    merged.goodsCount = current.goodsCount!
+    merged.goodsStructureEdited = 'true'
+  }
   return recalculateDraft(merged)
 }
 export const applyComparisonValueToDraft = (input: DeclarationDraft, row: ComparisonRow, value: string) => {
   const draft = { ...input }
-  for (const key of row.draftKeys || []) {
+  for (let key of row.draftKeys || []) {
+    if (key.startsWith('goods.') && input.goodsStructureEdited === 'true') {
+      const matches = Array.from({ length: Number(input.goodsCount) || 1 }, (_, index) => index).filter(index => row.sku && matchingItems([{ description: draftValue(input, 'g31-desc', index) }], { model_or_sku: row.sku }).length)
+      if (matches.length !== 1) continue
+      key = key.replace(/^goods\.\d+\./, `goods.${matches[0]}.`)
+    }
     if ((key.endsWith('-code') || key.endsWith('-origin')) && row.kind === 'country') draft[key] = countryCode(value)
     else if (key === 'g15-name' || key === 'g17-name' || key === 'g16-origin') draft[key] = countryName(value)
     else if (row.id?.endsWith('.inn') && key.endsWith('-inn')) draft[key] = [value === '—' ? '' : value, input[key]?.split('/')[1]].filter(Boolean).join('/')
     else if (row.id?.endsWith('.kpp') && key.endsWith('-inn')) draft[key] = [input[key]?.split('/')[0], value === '—' ? '' : value].filter(Boolean).join('/')
+    else if (row.kind === 'goods' && key.endsWith('.g31-desc') && row.sku && input[key]?.includes('\n' + row.sku)) draft[key] = (value === '—' ? '' : value) + input[key]!.slice(input[key]!.indexOf('\n' + row.sku))
     else draft[key] = value === '—' ? '' : value
   }
   return recalculateDraft(draft)
@@ -176,6 +189,7 @@ export type DeclarationCheck = { id: string; message: string }
 export const declarationChecks = (draft: DeclarationDraft): DeclarationCheck[] => {
   const checks: DeclarationCheck[] = []; const add = (id: string, message: string) => checks.push({ id, message })
   const count = Number(draft.goodsCount) || 1
+  if (draft.goodsStructureEdited === 'true') add('manual-goods', 'Список товаров изменён вручную: после правок исходных данных проверьте распределение весов и стоимости по карточкам. Правки сравнения привязываются к однозначному артикулу.')
   if (numberValue(draft['g5-goods']) !== count) add('goods-count', 'Графа 5 не совпадает с количеством товарных карточек.')
   if (numberValue(draft['g3-total']) !== 1 + Math.ceil(Math.max(0, count - 1) / 3)) add('sheets', 'Проверьте общее число листов в графе 3 по количеству товаров.')
   const assessed = new Map<string, number>()
