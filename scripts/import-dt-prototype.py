@@ -113,11 +113,7 @@ def render(node,goods=False):
         attrs['type']='button'; attrs['@click']=f"activeInfo = '{bynode[field]['id']}'"
         attrs['aria-label']='Правило заполнения: '+bynode[field]['label']
     if node.tag=='a' and node.has('link'):
-        field=node.parent
-        while field and field not in bynode: field=field.parent
-        link=field.attrs.get('data-cl-url') if field else None
-        if not link: return ''
-        attrs['href']=link; attrs['rel']='noopener noreferrer'; attrs['aria-label']='Открыть классификатор'
+        return ''
     if node in controls:
         c=controls[node]; key=c['key']; index='goodsIndex' if c['goods'] else '0'
         attrs.pop('id',None); attrs.pop('disabled',None)
@@ -128,6 +124,7 @@ def render(node,goods=False):
         if c['type']=='checkbox': attrs[':checked']=f"value('{key}') === 'true'"; attrs['@change']=f"changeCheckbox('{key}', $event)"
         else:
             attrs[':value']=f"value('{key}', {index})"; attrs['@input']=f"changeValue('{key}', $event, {index})"
+            attrs[':class']="{ 'is-missing': isMissing('"+key+"', "+index+") }"
             if key=='g54-print': attrs[':readonly']='true'
     attrs={k:v for k,v in attrs.items() if v is not None}
     attrtext=''.join(' '+k+'="'+(str(v) if k.startswith((':','@','v-')) else escape(str(v),quote=True))+'"' for k,v in attrs.items())
@@ -136,7 +133,7 @@ def render(node,goods=False):
     if node.tag=='textarea': children=''
     rendered = '<'+node.tag+attrtext+'>'+children+'</'+node.tag+'>'
     if goods and node in bynode and bynode[node]['graph'] == '44':
-        rendered += '\n<slot v-if="goodsIndex === 0" name="tnved" />'
+        rendered += '\n<div v-if="goodsIndex === 0 && $slots.tnved" class="goods-recommendations"><slot name="tnved" /></div>'
     return rendered
 ParserVoid={'input','br','hr','img','meta','link','source','wbr','area','base','embed','param','col'}
 parts=[]
@@ -144,8 +141,10 @@ for child in board.children:
     if isinstance(child,Node) and child.has('card') and any(f in bynode and bynode[f]['graph']=='31' for f in child.walk()):
         card=render(child,True)
         card=card.replace('<section ', '<section v-for="goodsIndex in goodsIndices" :key="goodsIndex" ',1)
-        card=card.replace('</h2>', ' <span v-if="goodsCount > 1">{{ goodsIndex + 1 }}</span></h2>',1)
-        card=card.replace('<div class="card-body">','<div class="goods-actions"><button type="button" @click="addGoods">Добавить товар</button><button v-if="goodsCount > 1" type="button" @click="removeGoods(goodsIndex)">Удалить этот товар</button></div><div class="card-body">',1)
+        card=card.replace('class="card col-12"', 'class="card col-12 goods-card"', 1)
+        header_start=card.index('<div class="card-head">')
+        header_end=card.index('</div>', header_start)+len('</div>')
+        card=card[:header_start]+'''<div class="card-head goods-head"><div class="goods-heading"><h2>Товар {{ goodsIndex + 1 }}</h2><span class="graphs">гр. 31–48, B</span></div><div class="goods-actions"><button type="button" @click="addGoods">Добавить товар</button><button v-if="goodsCount > 1" type="button" @click="removeGoods(goodsIndex)">Удалить этот товар</button></div></div>'''+card[header_end:]
         parts.append(card)
     else: parts.append(render(child))
 markup='\n'.join(line.rstrip() for line in ''.join(parts).splitlines())
@@ -153,15 +152,31 @@ css=source.split('<style>',1)[1].split('</style>',1)[0]
 # Preserve the prototype font import; selector rewriting must not touch class names.
 css=css.replace(':root{','.dt-prototype{')
 css=re.sub(r'(?m)^(\s*)body\s*\{',r'\1.dt-prototype{',css)
-css='\n'.join(line for line in css.splitlines() if not any(t in line for t in ['body.mode-source','data-source','.legend','.src-chip','.mode-switch','.mode-note','.drawer','.overlay','.fmt-switch','.xml-btn','.topbar','.pop','.spacer','.dl-btn']))
+css='\n'.join(line for line in css.splitlines() if not any(t in line for t in ['body.mode-source','data-source','.legend','.src-chip','.mode-switch','.mode-note','.drawer','.overlay','.fmt-switch','.xml-btn','.topbar','.pop','.spacer','.dl-btn','.field.required','.f-btn.link']))
 css+='''
 .dt-prototype{font-weight:400;line-height:normal;text-align:left;letter-spacing:normal;border-radius:10px;overflow:hidden;}
 .dt-prototype{width:100%;max-width:1380px;padding:18px;border:1px solid #111;background:#fff;border-radius:0;overflow:visible;}
 .dt-prototype .field input{line-height:normal;}
 .dt-prototype .board{max-width:none;padding:0;}
 .document-title{margin:0 0 16px;padding-bottom:10px;border-bottom:3px solid #0c5fd7;color:#2b2b2b;font-size:17px;font-weight:700;line-height:1.3;text-transform:uppercase;}
-.goods-actions{display:flex;gap:8px;padding:10px 18px 0;}
+.field input.is-missing,.field textarea.is-missing{border-color:var(--manual);background:var(--manual-bg);}
+.field input.is-missing::placeholder,.field textarea.is-missing::placeholder{color:#D08B82;}
+.goods-card{container-type:inline-size;background:#FAFBFD;border-color:#D9DFE8;border-radius:12px;box-shadow:0 2px 8px #1B233308;}
+.goods-head{align-items:center;background:#F1F4F9;padding:16px 20px;}
+.goods-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 12px;}
+.goods-head h2{font-size:15px;}
+.goods-actions{display:flex;flex-wrap:wrap;gap:8px;}
 .goods-actions button{border:1px solid var(--line);background:white;color:var(--accent-ink);padding:7px 12px;border-radius:6px;cursor:pointer;}
+.goods-actions button:hover{border-color:var(--accent);}
+.goods-card>.card-body{grid-template-columns:repeat(4,minmax(0,1fr));padding:20px;gap:16px;}
+.goods-card>.card-body>.row{display:contents;}
+.goods-card .field:has(textarea),.goods-recommendations{grid-column:1/-1;}
+.goods-card .field input{min-height:40px;}
+.goods-card .field textarea{min-height:88px;}
+.goods-card [data-field-group="field-40"] textarea{min-height:124px;}
+@container (max-width:1100px){.goods-card>.card-body{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@container (max-width:800px){.goods-card>.card-body{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@container (max-width:540px){.goods-card>.card-body{grid-template-columns:1fr;padding:16px;}.goods-head{padding:16px;}}
 .info-backdrop{position:fixed;inset:0;background:#10203c66;z-index:1000;display:grid;place-items:center;padding:20px;}
 .info-panel{position:relative;max-height:80vh;overflow:auto;max-width:520px;padding:24px;background:white;color:var(--ink);border-radius:10px;font-size:13px;}
 .info-panel h3{margin:0 30px 12px 0;}.info-panel p{line-height:1.6;}.info-panel a{color:var(--accent);}
@@ -180,6 +195,7 @@ const goodsIndices = computed(() => Array.from({ length: goodsCount.value }, (_,
 const inputId = (key: string, index = 0) => `dt-${key}-${index}`
 const value = (key: string, index = 0) => draftValue(props.modelValue, key, index)
 const isDisabled = (key: string) => declarationFields.some(field => field.controls.some(control => control.key === key && control.disabled)) || (/^g[28]-(name|addr|ogrn|inn)$/.test(key) && props.modelValue[`${key.slice(0, 2)}-same`] === 'true')
+const isMissing = (key: string, index = 0) => key !== 'g54-print' && !isDisabled(key) && value(key, index).trim() === ''
 const changeValue = (key: string, event: Event, index = 0) => emit('update:modelValue', updateDraftValue(props.modelValue, key, (event.target as HTMLInputElement).value, index))
 const changeCheckbox = (key: string, event: Event) => emit('update:modelValue', updateDraftValue(props.modelValue, key, (event.target as HTMLInputElement).checked ? 'true' : 'false'))
 const addGoods = () => emit('update:modelValue', resizeGoods(props.modelValue, goodsCount.value + 1))
