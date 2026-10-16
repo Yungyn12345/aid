@@ -23,7 +23,7 @@ WORKDIR /app
 
 ARG TYPST_VERSION=0.14.0
 
-RUN apk add --no-cache ca-certificates curl tar xz \
+RUN apk add --no-cache ca-certificates curl tar xz font-noto \
     && ARCH="$(uname -m)" \
     && if [ "$ARCH" = "x86_64" ]; then TYPST_ARCH="x86_64-unknown-linux-musl"; \
     elif [ "$ARCH" = "aarch64" ]; then TYPST_ARCH="aarch64-unknown-linux-musl"; \

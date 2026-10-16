@@ -24,7 +24,7 @@ export const runAiCrossCheck = async (rows: ComparisonRow[]): Promise<CrossCheck
 
     return {
       rows: checkedRows,
-      summary: aiResult.summary || summarizeCrossCheckRows(checkedRows),
+      summary: summarizeCrossCheckRows(checkedRows),
       source: 'gigachat',
       aiConnection: meta,
     }

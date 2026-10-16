@@ -7,12 +7,10 @@ import { promisify } from 'node:util'
 
 const execFileAsync = promisify(execFile)
 
-type TypstInputValue = string | number | boolean | null | undefined
-
 type CompileTypstPdfParams = {
   templatePath: string
   outputName?: string
-  data: Record<string, TypstInputValue>
+  data: Record<string, unknown>
 }
 
 const normalizeTypstBinaryCandidates = () => {
@@ -38,14 +36,6 @@ export const findTypstBinary = async () => {
   }
 
   throw new Error(`Typst binary not found. Install typst or set TYPST_BIN. Tried: ${errors.join(' | ')}`)
-}
-
-const stringifyDataValue = (value: TypstInputValue) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-
-  return String(value)
 }
 
 const compileWithTypstCli = async (typstBin: string, inputTyp: string, outputPdf: string, cwd: string) => {
@@ -77,12 +67,8 @@ export const compileTypstPdf = async (params: CompileTypstPdfParams) => {
     const dataPath = join(workDir, 'declaration-data.json')
     const template = await readFile(params.templatePath, 'utf8')
 
-    const data = Object.fromEntries(
-      Object.entries(params.data).map(([key, value]) => [key, stringifyDataValue(value)]),
-    )
-
     await writeFile(inputTyp, template, 'utf8')
-    await writeFile(dataPath, JSON.stringify(data, null, 2), 'utf8')
+    await writeFile(dataPath, JSON.stringify(params.data, null, 2), 'utf8')
     await compileWithTypstCli(typstBin, inputTyp, outputPdf, dirname(inputTyp))
 
     return await readFile(outputPdf)

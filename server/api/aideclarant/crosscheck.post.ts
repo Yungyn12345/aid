@@ -1,8 +1,9 @@
 import { runAiCrossCheck } from '../../utils/aideclarant/crosscheck'
 import type { ComparisonRow } from '../../utils/aideclarant/types'
+import { localCrossCheckRows } from '../../utils/aideclarant/comparison'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ rows?: ComparisonRow[] }>(event)
+  const body = await readBody<{ rows?: ComparisonRow[]; demoVersion?: string; allowAi?: boolean }>(event)
 
   if (!Array.isArray(body.rows)) {
     throw createError({
@@ -11,5 +12,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return await runAiCrossCheck(body.rows)
+  return body.demoVersion || body.allowAi === false ? localCrossCheckRows(body.rows) : await runAiCrossCheck(body.rows)
 })

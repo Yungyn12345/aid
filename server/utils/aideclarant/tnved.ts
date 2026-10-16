@@ -68,7 +68,7 @@ const normalizeSuggestions = (suggestions: unknown): TnvedSuggestion[] => {
     .slice(0, 5)
 }
 
-const localFallbackTnved = (): TnvedSuggestionResult => ({
+export const savedDemoTnved = (): TnvedSuggestionResult => ({
   source: 'local-fallback',
   summary: 'Показаны резервные рекомендации по описанию демо-товаров. Финальный код должен проверить специалист.',
   suggestions: [
@@ -94,6 +94,12 @@ const localFallbackTnved = (): TnvedSuggestionResult => ({
       source: 'local-fallback',
     },
   ],
+})
+
+const localFallbackTnved = (): TnvedSuggestionResult => ({
+  source: 'local-fallback',
+  summary: 'Автоматический подбор недоступен. Код по данным этих товаров не определён.',
+  suggestions: [],
 })
 
 export const suggestTnvedCodes = async (params: {
