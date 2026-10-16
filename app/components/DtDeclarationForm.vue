@@ -17,31 +17,31 @@ const addGoods = () => emit('update:modelValue', resizeGoods(props.modelValue, g
 const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(props.modelValue, index))
 </script>
 
-<template><div class="dt-prototype"><div class="form-head"><div class="form-head-inner"><h1>Декларация на товары (ДТ)</h1><small>Поля расположены в порядке официального документа · Решение КТС № 257</small></div><p>Значок ⓘ — правило заполнения графы, связь с другими графами и ссылка на страницу с разбором этой графы на alta.ru. Значок ⌘ — ссылка сразу на нужное приложение (классификатор). Розовая заливка — обязательные поля, серые неактивные — графы, которые декларант не заполняет.</p></div>
+<template><div class="dt-prototype"><h2 class="document-title">Декларация на товары</h2>
 <div class="board">
 
-  
+
   <div class="grid12" id="r1">
     <section class="card col-7">
       <div class="card-head"><h2><span class="head-num">2</span>Отправитель / Экспортёр</h2></div>
       <div class="card-body">
         <div class="chk-row"><input type="checkbox" :id="inputId('g2-same', 0)" data-field="g2-same" aria-label="Отправитель: СМ. ГРАФУ 14 ДТ" :disabled="isDisabled('g2-same')" :checked="value('g2-same') === 'true'" @change="changeCheckbox('g2-same', $event)"> Отметка «СМ. ГРАФУ 14 ДТ»
-          <span class="why">Ставится, если сведения об отправителе совпадают со сведениями о декларанте (графа 14).</span></div>
+          </div>
 
         <div class="chk-row"><input type="checkbox" :id="inputId('g2-contragent', 0)" data-field="g2-contragent" aria-label="Отправитель: КОНТРАГЕНТ" :disabled="isDisabled('g2-contragent')" :checked="value('g2-contragent') === 'true'" @change="changeCheckbox('g2-contragent', $event)"> Отметка «КОНТРАГЕНТ»
-          <span class="why">Особенность для импорта (ввоза): если перемещение осуществляется несколькими видами транспорта или транспортных средств (с перегрузкой, перевалкой) и на момент подачи ДТ декларант не может представить транспортный (перевозочный) документ, в соответствии с которым начата перевозка, — в графе указываются сведения об иностранном лице, участвующем во внешнеэкономической сделке, с указанием: КОНТРАГЕНТ.</span></div>
+          </div>
 
         <div class="field required" data-field-group="field-1">
           <span class="f-top"><span class="f-name">Наименование организации</span>
             <span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-1'" aria-label="Правило заполнения: Наименование организации">ⓘ</button></span></span>
-          
+
           <input placeholder="краткое наименование отправителя" :id="inputId('g2-name', 0)" data-field="g2-name" aria-label="Наименование организации — краткое наименование отправителя" :disabled="isDisabled('g2-name')" :value="value('g2-name', 0)" @input="changeValue('g2-name', $event, 0)">
         </div>
 
         <div class="field required" data-field-group="field-2">
           <span class="f-top"><span class="f-name">Адрес</span>
             <span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-2'" aria-label="Правило заполнения: Адрес">ⓘ</button></span></span>
-          
+
           <textarea placeholder="страна, индекс, город, улица, дом" :id="inputId('g2-addr', 0)" data-field="g2-addr" aria-label="Адрес — страна, индекс, город, улица, дом" :disabled="isDisabled('g2-addr')" :value="value('g2-addr', 0)" @input="changeValue('g2-addr', $event, 0)"></textarea>
         </div>
 
@@ -64,7 +64,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         <div class="field required" data-field-group="field-5">
           <span class="f-top"><span class="f-badge">1</span><span class="f-name">Декларация</span>
             <span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-5'" aria-label="Правило заполнения: Декларация">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril1" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-          
+
           <div class="subrow">
             <input class="code short" placeholder="ИМ/ЭК" :id="inputId('g1-dir', 0)" data-field="g1-dir" aria-label="Декларация — ИМ/ЭК" :disabled="isDisabled('g1-dir')" :value="value('g1-dir', 0)" @input="changeValue('g1-dir', $event, 0)">
             <input class="code short" placeholder="код" :id="inputId('g1-proc', 0)" data-field="g1-proc" aria-label="Декларация — код" :disabled="isDisabled('g1-proc')" :value="value('g1-proc', 0)" @input="changeValue('g1-proc', $event, 0)">
@@ -74,7 +74,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         <div class="row">
           <div class="field" data-field-group="field-6">
             <span class="f-top"><span class="f-badge">3</span><span class="f-name">Форма</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-6'" aria-label="Правило заполнения: Форма">ⓘ</button></span></span>
-            
+
             <div class="subrow"><input class="code short" placeholder="лист" :id="inputId('g3-sheet', 0)" data-field="g3-sheet" aria-label="Форма — лист" :disabled="isDisabled('g3-sheet')" :value="value('g3-sheet', 0)" @input="changeValue('g3-sheet', $event, 0)"><input class="code short" placeholder="всего" :id="inputId('g3-total', 0)" data-field="g3-total" aria-label="Форма — всего" :disabled="isDisabled('g3-total')" :value="value('g3-total', 0)" @input="changeValue('g3-total', $event, 0)"></div>
           </div>
           <div class="field" data-field-group="field-7">
@@ -100,28 +100,28 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
     </section>
   </div>
 
-  
+
   <div class="grid12" id="r2">
     <section class="card col-7">
       <div class="card-head"><h2><span class="head-num">8</span>Получатель</h2></div>
       <div class="card-body">
         <div class="chk-row"><input type="checkbox" :id="inputId('g8-same', 0)" data-field="g8-same" aria-label="Получатель: СМ. ГРАФУ 14 ДТ" :disabled="isDisabled('g8-same')" :checked="value('g8-same') === 'true'" @change="changeCheckbox('g8-same', $event)"> Отметка «СМ. ГРАФУ 14 ДТ»
-          <span class="why">Ставится, если сведения о получателе совпадают со сведениями о декларанте (графа 14).</span></div>
+          </div>
 
         <div class="chk-row"><input type="checkbox" :id="inputId('g8-contragent', 0)" data-field="g8-contragent" aria-label="Получатель: КОНТРАГЕНТ" :disabled="isDisabled('g8-contragent')" :checked="value('g8-contragent') === 'true'" @change="changeCheckbox('g8-contragent', $event)"> Отметка «КОНТРАГЕНТ»
-          <span class="why">Особенность для экспорта (вывоза): если перемещение осуществляется несколькими видами транспорта или транспортных средств (с перегрузкой, перевалкой) и на момент подачи ДТ декларант не может представить последний транспортный (перевозочный) документ, составляемый в целях подтверждения факта заключения договора международной перевозки, — указываются сведения об иностранном лице, участвующем во внешнеэкономической сделке: наименование (ФИО физического лица) и его местонахождение (адрес), с указанием: КОНТРАГЕНТ.</span></div>
+          </div>
 
         <div class="field required" data-field-group="field-11">
           <span class="f-top"><span class="f-name">Наименование организации</span>
             <span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-11'" aria-label="Правило заполнения: Наименование организации">ⓘ</button></span></span>
-          
+
           <input placeholder="краткое наименование получателя" :id="inputId('g8-name', 0)" data-field="g8-name" aria-label="Наименование организации — краткое наименование получателя" :disabled="isDisabled('g8-name')" :value="value('g8-name', 0)" @input="changeValue('g8-name', $event, 0)">
         </div>
 
         <div class="field required" data-field-group="field-12">
           <span class="f-top"><span class="f-name">Адрес</span>
             <span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-12'" aria-label="Правило заполнения: Адрес">ⓘ</button></span></span>
-          
+
           <textarea placeholder="страна, индекс, город, улица, дом" :id="inputId('g8-addr', 0)" data-field="g8-addr" aria-label="Адрес — страна, индекс, город, улица, дом" :disabled="isDisabled('g8-addr')" :value="value('g8-addr', 0)" @input="changeValue('g8-addr', $event, 0)"></textarea>
         </div>
 
@@ -152,7 +152,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
           </div>
           <div class="field required" data-field-group="field-17">
             <span class="f-top"><span class="f-badge">11</span><span class="f-name">Торгующая страна</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-17'" aria-label="Правило заполнения: Торгующая страна">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril22" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-            
+
             <div class="subrow"><input class="code short" placeholder="код" :id="inputId('g11-trade', 0)" data-field="g11-trade" aria-label="Торгующая страна — код" :disabled="isDisabled('g11-trade')" :value="value('g11-trade', 0)" @input="changeValue('g11-trade', $event, 0)"><input class="code" placeholder="не заполняется" :id="inputId('g11-unused', 0)" data-field="g11-unused" aria-label="Торгующая страна — не заполняется" :disabled="isDisabled('g11-unused')" :value="value('g11-unused', 0)" @input="changeValue('g11-unused', $event, 0)"></div>
           </div>
         </div>
@@ -170,7 +170,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
     </section>
   </div>
 
-  
+
   <div class="grid12" id="r3">
     <section class="card col-7">
       <div class="card-head"><h2><span class="head-num">14</span>Декларант</h2></div>
@@ -201,7 +201,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
       <div class="card-body">
         <div class="field required" data-field-group="field-24">
           <span class="f-top"><span class="f-badge">15</span><span class="f-name">Страна отправления</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-24'" aria-label="Правило заполнения: Страна отправления">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril22" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-          
+
           <div class="subrow"><input placeholder="страна" :id="inputId('g15-name', 0)" data-field="g15-name" aria-label="Страна отправления — страна" :disabled="isDisabled('g15-name')" :value="value('g15-name', 0)" @input="changeValue('g15-name', $event, 0)"><span class="sep">код</span><input class="code short" placeholder="код" :id="inputId('g15-code', 0)" data-field="g15-code" aria-label="Страна отправления — код" :disabled="isDisabled('g15-code')" :value="value('g15-code', 0)" @input="changeValue('g15-code', $event, 0)"></div>
         </div>
 
@@ -212,14 +212,14 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
 
         <div class="field required" data-field-group="field-26">
           <span class="f-top"><span class="f-badge">17</span><span class="f-name">Страна назначения</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-26'" aria-label="Правило заполнения: Страна назначения">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril22" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-          
+
           <div class="subrow"><input placeholder="страна" :id="inputId('g17-name', 0)" data-field="g17-name" aria-label="Страна назначения — страна" :disabled="isDisabled('g17-name')" :value="value('g17-name', 0)" @input="changeValue('g17-name', $event, 0)"><span class="sep">код</span><input class="code short" placeholder="код" :id="inputId('g17-code', 0)" data-field="g17-code" aria-label="Страна назначения — код" :disabled="isDisabled('g17-code')" :value="value('g17-code', 0)" @input="changeValue('g17-code', $event, 0)"></div>
         </div>
       </div>
     </section>
   </div>
 
-  
+
   <section class="card col-12" id="r4" style="margin-bottom:18px;">
     <div class="card-head"><h2>Транспорт и условия поставки</h2><span class="graphs">гр. 18–30</span></div>
     <div class="card-body">
@@ -252,7 +252,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         </div>
         <div class="field required" data-field-group="field-33">
           <span class="f-top"><span class="f-badge">24</span><span class="f-name">Характер сделки</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-33'" aria-label="Правило заполнения: Характер сделки">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/07pr1003/#a04" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-          
+
           <div class="subrow"><input class="code short" placeholder="000" :id="inputId('g24-code', 0)" data-field="g24-code" aria-label="Характер сделки — 000" :disabled="isDisabled('g24-code')" :value="value('g24-code', 0)" @input="changeValue('g24-code', $event, 0)"><input class="code xshort" placeholder="00" :id="inputId('g24-feature', 0)" data-field="g24-feature" aria-label="Характер сделки — 00" :disabled="isDisabled('g24-feature')" :value="value('g24-feature', 0)" @input="changeValue('g24-feature', $event, 0)"><input class="code" placeholder="не заполняется" :id="inputId('g24-unused', 0)" data-field="g24-unused" aria-label="Характер сделки — не заполняется" :disabled="isDisabled('g24-unused')" :value="value('g24-unused', 0)" @input="changeValue('g24-unused', $event, 0)"></div>
         </div>
       </div>
@@ -287,7 +287,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
     </div>
   </section>
 
-  
+
   <section v-for="goodsIndex in goodsIndices" :key="goodsIndex" class="card col-12" style="margin-bottom:18px;" :id="'r5-' + goodsIndex">
     <div class="card-head"><h2>Товары <span v-if="goodsCount > 1">{{ goodsIndex + 1 }}</span></h2><span class="graphs">гр. 31–48, B</span></div>
     <div class="goods-actions"><button type="button" @click="addGoods">Добавить товар</button><button v-if="goodsCount > 1" type="button" @click="removeGoods(goodsIndex)">Удалить этот товар</button></div><div class="card-body">
@@ -303,7 +303,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         </div>
         <div class="field required" data-field-group="field-42">
           <span class="f-top"><span class="f-badge">33</span><span class="f-name">Код товара</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-42'" aria-label="Правило заполнения: Код товара">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tnved/" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-          
+
           <div class="subrow"><input class="code" placeholder="10 знаков ТН ВЭД" :id="inputId('g33-tnved', goodsIndex)" data-field="g33-tnved" :data-goods-index="goodsIndex" aria-label="Код товара — 10 знаков ТН ВЭД" :disabled="isDisabled('g33-tnved')" :value="value('g33-tnved', goodsIndex)" @input="changeValue('g33-tnved', $event, goodsIndex)"><input class="code xshort" placeholder="М/О" :id="inputId('g33-intellectual', goodsIndex)" data-field="g33-intellectual" :data-goods-index="goodsIndex" aria-label="Код товара — М/О" :disabled="isDisabled('g33-intellectual')" :value="value('g33-intellectual', goodsIndex)" @input="changeValue('g33-intellectual', $event, goodsIndex)"><input class="code short" placeholder="0000" :id="inputId('g33-additional', goodsIndex)" data-field="g33-additional" :data-goods-index="goodsIndex" aria-label="Код товара — 0000" :disabled="isDisabled('g33-additional')" :value="value('g33-additional', goodsIndex)" @input="changeValue('g33-additional', $event, goodsIndex)"></div>
         </div>
         <div class="field required" data-field-group="field-43">
@@ -348,7 +348,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         </div>
       </div>
 
-      <button class="tnved-btn">▤ Получить рекомендации по коду ТН ВЭД</button>
+
 
       <div class="field required" data-field-group="field-53">
         <span class="f-top"><span class="f-badge">44</span><span class="f-name">Дополнительная информация / представленные документы</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-53'" aria-label="Правило заполнения: Дополнительная информация / представленные документы">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril8" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
@@ -382,11 +382,11 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
     </div>
   </section>
 
-  
+
   <section class="card col-12 foot-block" id="r6" style="margin-bottom:18px;">
     <div class="card-head"><h2>Служебная информация</h2><span class="graphs">гр. 49, 51, 53</span></div>
     <div class="card-body">
-      <div class="hint-box">Графы 50 в декларации на товары не существует (этот номер используется только в транзитной декларации).</div>
+
       <div class="row">
         <div class="field" data-field-group="field-59">
           <span class="f-top"><span class="f-badge">49</span><span class="f-name">Реквизиты склада</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-59'" aria-label="Правило заполнения: Реквизиты склада">ⓘ</button></span></span>
@@ -404,7 +404,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
     </div>
   </section>
 
-  
+
   <section class="card col-12" id="r7">
     <div class="card-head"><h2><span class="head-num">54</span>Место и дата · сведения о декларанте и таможенном представителе</h2></div>
     <div class="card-body">
@@ -416,7 +416,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
               <div class="row">
                 <div class="field" data-field-group="field-62">
                   <span class="f-top"><span class="f-name">Св-во таможенного представителя</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-62'" aria-label="Правило заполнения: Св-во таможенного представителя">ⓘ</button></span></span>
-                  
+
                   <div class="subrow"><input placeholder="Номер" :id="inputId('g54-certificate-number', 0)" data-field="g54-certificate-number" aria-label="Св-во таможенного представителя — Номер" :disabled="isDisabled('g54-certificate-number')" :value="value('g54-certificate-number', 0)" @input="changeValue('g54-certificate-number', $event, 0)"><input class="code short" placeholder="Дата" :id="inputId('g54-certificate-date', 0)" data-field="g54-certificate-date" aria-label="Св-во таможенного представителя — Дата" :disabled="isDisabled('g54-certificate-date')" :value="value('g54-certificate-date', 0)" @input="changeValue('g54-certificate-date', $event, 0)"></div>
                 </div>
                 <div class="field" data-field-group="field-63">
@@ -426,7 +426,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
               </div>
               <div class="field" data-field-group="field-64">
                 <span class="f-top"><span class="f-name">Договор таможенного представителя с клиентом</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-64'" aria-label="Правило заполнения: Договор таможенного представителя с клиентом">ⓘ</button></span></span>
-                
+
                 <div class="subrow"><input placeholder="Номер" :id="inputId('g54-contract-number', 0)" data-field="g54-contract-number" aria-label="Договор таможенного представителя с клиентом — Номер" :disabled="isDisabled('g54-contract-number')" :value="value('g54-contract-number', 0)" @input="changeValue('g54-contract-number', $event, 0)"><input class="code short" placeholder="Дата" :id="inputId('g54-contract-date', 0)" data-field="g54-contract-date" aria-label="Договор таможенного представителя с клиентом — Дата" :disabled="isDisabled('g54-contract-date')" :value="value('g54-contract-date', 0)" @input="changeValue('g54-contract-date', $event, 0)"></div>
               </div>
             </div>
@@ -437,7 +437,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
             <div class="sub54-body">
               <div class="field required" data-field-group="field-65">
                 <span class="f-top"><span class="f-name">Декларант</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-65'" aria-label="Правило заполнения: Декларант">ⓘ</button></span></span>
-                
+
                 <div class="subrow"><input placeholder="Фамилия" :id="inputId('g54-surname', 0)" data-field="g54-surname" aria-label="Декларант — Фамилия" :disabled="isDisabled('g54-surname')" :value="value('g54-surname', 0)" @input="changeValue('g54-surname', $event, 0)"><input placeholder="Имя" :id="inputId('g54-firstname', 0)" data-field="g54-firstname" aria-label="Декларант — Имя" :disabled="isDisabled('g54-firstname')" :value="value('g54-firstname', 0)" @input="changeValue('g54-firstname', $event, 0)"><input placeholder="Отчество" :id="inputId('g54-patronymic', 0)" data-field="g54-patronymic" aria-label="Декларант — Отчество" :disabled="isDisabled('g54-patronymic')" :value="value('g54-patronymic', 0)" @input="changeValue('g54-patronymic', $event, 0)"></div>
               </div>
               <div class="row">
@@ -452,7 +452,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
               </div>
               <div class="field required" data-field-group="field-68">
                 <span class="f-top"><span class="f-name">Документ, удостоверяющий личность</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-68'" aria-label="Правило заполнения: Документ, удостоверяющий личность">ⓘ</button><a class="f-btn link" target="_blank" href="https://www.alta.ru/tamdoc/10sr0378/#pril8" rel="noopener noreferrer" aria-label="Открыть классификатор">⌘</a></span></span>
-                
+
                 <div class="subrow"><input class="code xshort" placeholder="Код" :id="inputId('g54-identity-code', 0)" data-field="g54-identity-code" aria-label="Документ, удостоверяющий личность — Код" :disabled="isDisabled('g54-identity-code')" :value="value('g54-identity-code', 0)" @input="changeValue('g54-identity-code', $event, 0)"><input placeholder="Краткое наим." :id="inputId('g54-identity-name', 0)" data-field="g54-identity-name" aria-label="Документ, удостоверяющий личность — Краткое наим." :disabled="isDisabled('g54-identity-name')" :value="value('g54-identity-name', 0)" @input="changeValue('g54-identity-name', $event, 0)"><input class="code xshort" placeholder="Серия" :id="inputId('g54-identity-series', 0)" data-field="g54-identity-series" aria-label="Документ, удостоверяющий личность — Серия" :disabled="isDisabled('g54-identity-series')" :value="value('g54-identity-series', 0)" @input="changeValue('g54-identity-series', $event, 0)"><input class="code short" placeholder="Номер" :id="inputId('g54-identity-number', 0)" data-field="g54-identity-number" aria-label="Документ, удостоверяющий личность — Номер" :disabled="isDisabled('g54-identity-number')" :value="value('g54-identity-number', 0)" @input="changeValue('g54-identity-number', $event, 0)"><span class="sep">от</span><input class="code short" placeholder="дата" :id="inputId('g54-identity-date', 0)" data-field="g54-identity-date" aria-label="Документ, удостоверяющий личность — дата" :disabled="isDisabled('g54-identity-date')" :value="value('g54-identity-date', 0)" @input="changeValue('g54-identity-date', $event, 0)"></div>
               </div>
               <div class="field required" data-field-group="field-69">
@@ -467,7 +467,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
             <div class="sub54-body">
               <div class="field required" data-field-group="field-70">
                 <span class="f-top"><span class="f-name">Документ, подтверждающий полномочия декларанта</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-70'" aria-label="Правило заполнения: Документ, подтверждающий полномочия декларанта">ⓘ</button></span></span>
-                
+
                 <div class="subrow"><input placeholder="Наименование" :id="inputId('g54-authority-name', 0)" data-field="g54-authority-name" aria-label="Документ, подтверждающий полномочия декларанта — Наименование" :disabled="isDisabled('g54-authority-name')" :value="value('g54-authority-name', 0)" @input="changeValue('g54-authority-name', $event, 0)"><input class="code short" placeholder="№" :id="inputId('g54-authority-number', 0)" data-field="g54-authority-number" aria-label="Документ, подтверждающий полномочия декларанта — №" :disabled="isDisabled('g54-authority-number')" :value="value('g54-authority-number', 0)" @input="changeValue('g54-authority-number', $event, 0)"><span class="sep">от</span><input class="code short" placeholder="дата" :id="inputId('g54-authority-from', 0)" data-field="g54-authority-from" aria-label="Документ, подтверждающий полномочия декларанта — дата" :disabled="isDisabled('g54-authority-from')" :value="value('g54-authority-from', 0)" @input="changeValue('g54-authority-from', $event, 0)"><span class="sep">до</span><input class="code short" placeholder="дата" :id="inputId('g54-authority-to', 0)" data-field="g54-authority-to" aria-label="Документ, подтверждающий полномочия декларанта — дата" :disabled="isDisabled('g54-authority-to')" :value="value('g54-authority-to', 0)" @input="changeValue('g54-authority-to', $event, 0)"></div>
               </div>
             </div>
@@ -477,7 +477,7 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
         <div>
           <div class="field" data-field-group="field-71">
             <span class="f-top"><span class="f-name">Печатная форма</span><span class="f-actions"><button class="f-btn info" type="button" @click="activeInfo = 'field-71'" aria-label="Правило заполнения: Печатная форма">ⓘ</button></span></span>
-            
+
             <textarea rows="12" placeholder="формируется автоматически из полей слева" style="min-height:240px" :id="inputId('g54-print', 0)" data-field="g54-print" aria-label="Печатная форма — формируется автоматически из полей слева" :disabled="isDisabled('g54-print')" :value="value('g54-print', 0)" @input="changeValue('g54-print', $event, 0)" :readonly="true"></textarea>
           </div>
           <div class="row" style="margin-top:12px">
@@ -502,7 +502,6 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
       </div>
     </div>
   </section>
-
 </div>
 <div v-if="info" class="info-backdrop" @click.self="activeInfo = ''" @keydown.esc="activeInfo = ''"><section class="info-panel" role="dialog" aria-modal="true" aria-labelledby="dt-info-title"><button class="info-close" type="button" aria-label="Закрыть правило" @click="activeInfo = ''">×</button><h3 id="dt-info-title">Графа {{ info.graph }} · {{ info.label }}</h3><p>{{ info.rule }}</p><p v-if="info.related">{{ info.related }}</p><p v-for="link in info.links" :key="link.url"><a :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></p></section></div>
 </div></template>
@@ -612,15 +611,10 @@ const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(p
 
   /* ---------- XML drawer ---------- */
 .dt-prototype{font-weight:400;line-height:normal;text-align:left;letter-spacing:normal;border-radius:10px;overflow:hidden;}
-.dt-prototype{width:100%;border-radius:0;overflow:visible;}
+.dt-prototype{width:100%;max-width:1380px;padding:18px;border:1px solid #111;background:#fff;border-radius:0;overflow:visible;}
 .dt-prototype .field input{line-height:normal;}
-.dt-prototype .board{padding:20px 24px 90px;}
-.form-head{position:sticky;top:0;z-index:40;background:var(--accent-ink);color:white;}
-.form-head::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#2452C8,#5C8DFF);}
-.form-head-inner{max-width:1480px;margin:0 auto;padding:14px 24px;}
-.form-head h1{margin:0;font-size:15px;font-weight:700;line-height:normal;}
-.form-head small{display:block;font-weight:400;font-size:11.5px;color:#AEBBDE;margin-top:2px;}
-.form-head p{max-width:1480px;margin:0 auto;padding:0 24px 14px;font-size:12.5px;color:#AEBBDE;line-height:1.5;}
+.dt-prototype .board{max-width:none;padding:0;}
+.document-title{margin:0 0 16px;padding-bottom:10px;border-bottom:3px solid #0c5fd7;color:#2b2b2b;font-size:17px;font-weight:700;line-height:1.3;text-transform:uppercase;}
 .goods-actions{display:flex;gap:8px;padding:10px 18px 0;}
 .goods-actions button{border:1px solid var(--line);background:white;color:var(--accent-ink);padding:7px 12px;border-radius:6px;cursor:pointer;}
 .info-backdrop{position:fixed;inset:0;background:#10203c66;z-index:1000;display:grid;place-items:center;padding:20px;}

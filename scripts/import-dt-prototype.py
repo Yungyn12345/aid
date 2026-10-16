@@ -97,7 +97,8 @@ schema+='export const allDeclarationControls = [...declarationFields.flatMap(fie
 from html import escape
 def render(node,goods=False):
     if isinstance(node,str): return node
-    if node.has('src-chip'): return ''
+    # Import the declaration itself, without the prototype's explanatory page UI.
+    if any(node.has(name) for name in ('src-chip', 'why', 'hint-box', 'tnved-btn')): return ''
     if node.has('field'):
         field=bynode[node]
         attrs={k:v for k,v in node.attrs.items() if k in ('class','style')}
@@ -144,7 +145,7 @@ for child in board.children:
         card=card.replace('<div class="card-body">','<div class="goods-actions"><button type="button" @click="addGoods">Добавить товар</button><button v-if="goodsCount > 1" type="button" @click="removeGoods(goodsIndex)">Удалить этот товар</button></div><div class="card-body">',1)
         parts.append(card)
     else: parts.append(render(child))
-markup=''.join(parts)
+markup='\n'.join(line.rstrip() for line in ''.join(parts).splitlines())
 css=source.split('<style>',1)[1].split('</style>',1)[0]
 # Preserve the prototype font import; selector rewriting must not touch class names.
 css=css.replace(':root{','.dt-prototype{')
@@ -152,15 +153,10 @@ css=re.sub(r'(?m)^(\s*)body\s*\{',r'\1.dt-prototype{',css)
 css='\n'.join(line for line in css.splitlines() if not any(t in line for t in ['body.mode-source','data-source','.legend','.src-chip','.mode-switch','.mode-note','.drawer','.overlay','.fmt-switch','.xml-btn','.topbar','.pop','.spacer','.dl-btn']))
 css+='''
 .dt-prototype{font-weight:400;line-height:normal;text-align:left;letter-spacing:normal;border-radius:10px;overflow:hidden;}
-.dt-prototype{width:100%;border-radius:0;overflow:visible;}
+.dt-prototype{width:100%;max-width:1380px;padding:18px;border:1px solid #111;background:#fff;border-radius:0;overflow:visible;}
 .dt-prototype .field input{line-height:normal;}
-.dt-prototype .board{padding:20px 24px 90px;}
-.form-head{position:sticky;top:0;z-index:40;background:var(--accent-ink);color:white;}
-.form-head::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#2452C8,#5C8DFF);}
-.form-head-inner{max-width:1480px;margin:0 auto;padding:14px 24px;}
-.form-head h1{margin:0;font-size:15px;font-weight:700;line-height:normal;}
-.form-head small{display:block;font-weight:400;font-size:11.5px;color:#AEBBDE;margin-top:2px;}
-.form-head p{max-width:1480px;margin:0 auto;padding:0 24px 14px;font-size:12.5px;color:#AEBBDE;line-height:1.5;}
+.dt-prototype .board{max-width:none;padding:0;}
+.document-title{margin:0 0 16px;padding-bottom:10px;border-bottom:3px solid #0c5fd7;color:#2b2b2b;font-size:17px;font-weight:700;line-height:1.3;text-transform:uppercase;}
 .goods-actions{display:flex;gap:8px;padding:10px 18px 0;}
 .goods-actions button{border:1px solid var(--line);background:white;color:var(--accent-ink);padding:7px 12px;border-radius:6px;cursor:pointer;}
 .info-backdrop{position:fixed;inset:0;background:#10203c66;z-index:1000;display:grid;place-items:center;padding:20px;}
@@ -187,7 +183,7 @@ const addGoods = () => emit('update:modelValue', resizeGoods(props.modelValue, g
 const removeGoods = (index: number) => emit('update:modelValue', removeGoodsAt(props.modelValue, index))
 </script>
 '''
-template='''\n<template><div class="dt-prototype"><div class="form-head"><div class="form-head-inner"><h1>Декларация на товары (ДТ)</h1><small>Поля расположены в порядке официального документа · Решение КТС № 257</small></div><p>Значок ⓘ — правило заполнения графы, связь с другими графами и ссылка на страницу с разбором этой графы на alta.ru. Значок ⌘ — ссылка сразу на нужное приложение (классификатор). Розовая заливка — обязательные поля, серые неактивные — графы, которые декларант не заполняет.</p></div>
+template='''\n<template><div class="dt-prototype"><h2 class="document-title">Декларация на товары</h2>
 <div class="board">'''+markup+'''</div>
 <div v-if="info" class="info-backdrop" @click.self="activeInfo = ''" @keydown.esc="activeInfo = ''"><section class="info-panel" role="dialog" aria-modal="true" aria-labelledby="dt-info-title"><button class="info-close" type="button" aria-label="Закрыть правило" @click="activeInfo = ''">×</button><h3 id="dt-info-title">Графа {{ info.graph }} · {{ info.label }}</h3><p>{{ info.rule }}</p><p v-if="info.related">{{ info.related }}</p><p v-for="link in info.links" :key="link.url"><a :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></p></section></div>
 </div></template>

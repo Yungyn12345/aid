@@ -472,13 +472,13 @@ const formatTnvedConfidence = (value: number) => {
 </script>
 
 <template>
-  <main class="declarant-page" :class="{ 'declarant-page--form': activeStep === 3 }">
-    <NuxtLink v-if="activeStep !== 3" to="/" aria-label="AI Doc" class="declarant-logo">
+  <main class="declarant-page">
+    <NuxtLink to="/" aria-label="AI Doc" class="declarant-logo">
       <img src="/aidoc/logo.svg" alt="AI Doc">
     </NuxtLink>
 
     <section class="declarant-shell">
-      <div v-if="activeStep !== 3" class="declarant-head">
+      <div class="declarant-head">
         <h1>{{ currentStageTitle }}</h1>
         <p>{{ currentStageSubtitle }}</p>
       </div>
@@ -739,13 +739,6 @@ const formatTnvedConfidence = (value: number) => {
   line-height: 1;
   letter-spacing: 0;
 }
-
-.declarant-page.declarant-page--form{padding:0;background:#E7EAF0;color:#1B2333;font-weight:400;line-height:1.4;}
-.declarant-page--form .declarant-shell{max-width:none;margin:0;}
-.declarant-page--form .document-stage{align-items:stretch;}
-.declarant-page--form .export-error{color:#b42318;}
-.declarant-page--form .export-button{align-self:center;margin-bottom:24px;}
-.declarant-page--form .stage-nav__button--back{background:#fff;color:#12306B;border:1px solid #D9DCE3;}
 
 .declarant-logo {
   display: inline-flex;
