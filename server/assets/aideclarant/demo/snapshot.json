@@ -1,8 +1,8 @@
 {
-  "version": "2026-10-16.2",
-  "frozenAt": "2026-10-16T03:34:42.403Z",
-  "provenance": "One-time fresh extraction, manually checked against all four bundled source PDFs on 2026-10-16. Recovered references, identifiers, item totals, both control-panel pallets and transport fields; removed hallucinated CMR net total and dates of referenced documents. No model calls during review. Raw extraction SHA256 e34a77940b04309d372c92316522bb4797c0c7ab13cddbd45f830812c18bdd2e",
-  "checksum": "92fb3bef1fddca560702fee93db0373a7a66511b454ac83a92f82b7d450fec41",
+  "version": "2026-10-16.3",
+  "frozenAt": "2026-10-16T03:49:56.671Z",
+  "provenance": "One-time fresh extraction, manually checked against all four bundled source PDFs on 2026-10-16. Recovered references, identifiers, item totals, both control-panel pallets and transport fields; removed hallucinated CMR net total and dates of referenced documents. No model calls during review. Raw extraction SHA256 e34a77940b04309d372c92316522bb4797c0c7ab13cddbd45f830812c18bdd2e Packing-list Seller/Buyer labels retain commercial roles; transport parties remain distinct.",
+  "checksum": "1f9fb5a8b9ec84c23362b426354a3641b867134983a0a9ee7a2bb17d2a684d43",
   "payload": {
     "documents": {
       "agreement": {
@@ -222,13 +222,13 @@
           "number": "TI-GM/2025-012",
           "date": "2025-09-15"
         },
-        "shipper": {
+        "seller": {
           "name": "Gerhardt Maschinen GmbH",
           "address": "Komturstraße 10, 12099 Berlin, Germany",
           "country": "Germany",
           "vat_or_tax_id": "DE123456789"
         },
-        "consignee": {
+        "buyer": {
           "name": "ООО «ТехИмпорт Рус»",
           "address": "125047, Россия, г. Москва, ул. Лесная, д. 5, оф. 12",
           "country": "Россия",
@@ -943,7 +943,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.name"
+              "seller.name"
             ],
             "numeric": false
           },
@@ -1014,7 +1014,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.address"
+              "seller.address"
             ],
             "numeric": false
           },
@@ -1085,7 +1085,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.inn"
+              "seller.inn"
             ],
             "numeric": false
           },
@@ -1156,7 +1156,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.kpp"
+              "seller.kpp"
             ],
             "numeric": false
           },
@@ -1227,7 +1227,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.vat_or_tax_id"
+              "seller.vat_or_tax_id"
             ],
             "numeric": false
           },
@@ -1296,7 +1296,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.ogrn"
+              "seller.ogrn"
             ],
             "numeric": false
           },
@@ -1367,7 +1367,7 @@
           {
             "document": "packingList",
             "paths": [
-              "shipper.country"
+              "seller.country"
             ],
             "numeric": false
           },
@@ -1436,7 +1436,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.name"
+              "buyer.name"
             ],
             "numeric": false
           },
@@ -1507,7 +1507,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.address"
+              "buyer.address"
             ],
             "numeric": false
           },
@@ -1578,7 +1578,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.inn"
+              "buyer.inn"
             ],
             "numeric": false
           },
@@ -1649,7 +1649,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.kpp"
+              "buyer.kpp"
             ],
             "numeric": false
           },
@@ -1720,7 +1720,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.vat_or_reg_number"
+              "buyer.vat_or_reg_number"
             ],
             "numeric": false
           },
@@ -1789,7 +1789,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.ogrn"
+              "buyer.ogrn"
             ],
             "numeric": false
           },
@@ -1860,7 +1860,7 @@
           {
             "document": "packingList",
             "paths": [
-              "consignee.country"
+              "buyer.country"
             ],
             "numeric": false
           },
@@ -1914,7 +1914,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.name"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -1967,7 +1973,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.address"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2020,7 +2032,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.inn"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2073,7 +2091,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.kpp"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2126,7 +2150,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.ogrn"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2179,7 +2209,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.vat_or_tax_id"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2230,7 +2266,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "shipper.country"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2281,7 +2323,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.name"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2334,7 +2382,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.address"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2387,7 +2441,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.inn"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2440,7 +2500,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.kpp"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2493,7 +2559,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.ogrn"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2546,7 +2618,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.vat_or_tax_id"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [
@@ -2597,7 +2675,13 @@
         "bindings": [
           null,
           null,
-          null,
+          {
+            "document": "packingList",
+            "paths": [
+              "consignee.country"
+            ],
+            "numeric": false
+          },
           {
             "document": "cmr",
             "paths": [

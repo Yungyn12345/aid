@@ -29,8 +29,8 @@ export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): Com
   add('packing.number', 'Номер упаковочного листа', [[], [], ['pl_number'], []], 'reference', [], [false, false, true, false])
   add('packing.date', 'Дата упаковочного листа', [[], [], ['pl_date'], []], 'date', [], [false, false, true, false])
   for (const [role, title, key, parties] of [
-    ['sender', 'Продавец', 'g2', ['seller', 'seller', 'shipper', 'seller']],
-    ['receiver', 'Покупатель', 'g8', ['buyer', 'buyer', 'consignee', 'buyer']],
+    ['sender', 'Продавец', 'g2', ['seller', 'seller', 'seller', 'seller']],
+    ['receiver', 'Покупатель', 'g8', ['buyer', 'buyer', 'buyer', 'buyer']],
   ] as const) {
     const transported = get(documents.cmr, key === 'g2' ? 'consignor.name' : 'consignee.name')
     const target = (suffix: string) => !text(transported) || normalizeText(text(transported)) === normalizeText(first(get(documents.invoice, `${parties[1]}.name`), get(documents.agreement, `${parties[0]}.name`))) ? [`${key}-${suffix}`] : []
@@ -43,7 +43,8 @@ export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): Com
     add(`${role}.country`, `${title}: страна`, parties.map(party => [`${party}.country_code`, `${party}.country`]), 'country', [], [false, false, false, false])
   }
   for (const [role, title, key] of [['consignor', 'Грузоотправитель', 'g2'], ['consignee', 'Грузополучатель', 'g8']] as const) {
-    for (const [part, label, kind, suffix] of [['name', 'наименование', 'entity', 'name'], ['address', 'адрес', 'address', 'addr'], ['inn', 'ИНН', 'identifier', 'inn'], ['kpp', 'КПП', 'identifier', 'inn'], ['ogrn', 'ОГРН', 'identifier', 'ogrn'], ['vat_or_tax_id', 'иностранный налоговый номер', 'identifier', ''], ['country', 'страна', 'country', '']] as const) add(`${role}.${part}`, `${title}: ${label}`, [[], [], [], part === 'address' ? [`${role}.address`, `${role}.legal_address`] : [`${role}.${part}`]], kind, suffix ? [`${key}-${suffix}`] : [], [false, false, false, part === 'name' || part === 'address'])
+    const packingRole = role === 'consignor' ? 'shipper' : 'consignee'
+    for (const [part, label, kind, suffix] of [['name', 'наименование', 'entity', 'name'], ['address', 'адрес', 'address', 'addr'], ['inn', 'ИНН', 'identifier', 'inn'], ['kpp', 'КПП', 'identifier', 'inn'], ['ogrn', 'ОГРН', 'identifier', 'ogrn'], ['vat_or_tax_id', 'иностранный налоговый номер', 'identifier', ''], ['country', 'страна', 'country', '']] as const) add(`${role}.${part}`, `${title}: ${label}`, [[], [], part === 'address' ? [`${packingRole}.address`, `${packingRole}.legal_address`] : [`${packingRole}.${part}`], part === 'address' ? [`${role}.address`, `${role}.legal_address`] : [`${role}.${part}`]], kind, suffix ? [`${key}-${suffix}`] : [], [false, false, false, part === 'name' || part === 'address'])
   }
   add('dispatch.country', 'Страна отправления', [['dispatch_country'], ['dispatch_country'], ['dispatch_country'], ['dispatch_country', 'place_and_date_taking_over.country', 'route_countries.0', 'consignor.country']], 'country', ['g15-name', 'g15-code'], [false, false, false, true])
   add('destination.country', 'Страна назначения', [['destination_country'], ['destination_country', 'buyer.country'], ['destination_country'], ['destination_country', 'place_of_delivery.country', 'consignee.country']], 'country', ['g17-name', 'g17-code'], [false, false, false, true])
@@ -124,7 +125,7 @@ export const buildComparisonRowsFromDocuments = (input: ExtractedDocuments): Com
     return { declared, calculated: sum(suffix === 'packages' ? values : values.map(weightKg)) }
   }))
   rows.unshift({ id: 'documents.present', attribute: 'Наличие исходного документа', values: documentOrder.map(kind => documents[kind] ? 'Документ загружен' : EMPTY), applicable: [true, true, true, true] })
-  for (const row of rows) row.absenceReasons = documentOrder.map((kind, column) => !documents[kind] ? 'missing-document' : !isEmptyComparisonValue(row.values[column] || '') ? null : row.applicable?.[column] === false ? 'not-applicable' : Array.isArray(documents[kind]?.extraction_issues) && (documents[kind]!.extraction_issues as string[]).some(issue => issue.includes(row.id || row.attribute)) ? 'unrecognized' : 'missing-value')
+  for (const row of rows) row.absenceReasons = documentOrder.map((kind, column) => !documents[kind] ? 'missing-document' : !isEmptyComparisonValue(row.values[column] || '') ? null : row.applicable?.[column] === false ? 'not-applicable' : Array.isArray(documents[kind]?.extraction_issues) && (documents[kind]!.extraction_issues as string[]).some(issue => text(issue).includes(row.id || row.attribute) || row.bindings?.[column]?.paths.some(path => text(issue).includes(path))) ? 'unrecognized' : 'missing-value')
   return rows
 }
 const inferKind = (row: ComparisonRow): NonNullable<ComparisonRow['kind']> => row.kind || (/инкотермс|incoterms|условия поставки/i.test(row.attribute) ? 'incoterms' : /дата/i.test(row.attribute) ? 'date' : /вес/i.test(row.attribute) ? 'weight' : /объ[её]м/i.test(row.attribute) ? 'volume' : /количество|сумма/i.test(row.attribute) ? 'number' : /описание/i.test(row.attribute) ? 'goods' : /маршрут/i.test(row.attribute) ? 'route' : /продавец|покупатель|получатель/i.test(row.attribute) ? 'entity' : /номер/i.test(row.attribute) ? 'reference' : 'text')

@@ -139,10 +139,12 @@ describe('document consistency and edits', () => {
     expect(evaluateComparisonRow(rows.find(row => row.id === 'invoice.date')!).cellNotes?.[1]).toContain('нечитаемое')
   })
   test('commercial parties are separate from consignor and consignee', () => {
-    const rows = buildComparisonRowsFromDocuments({ agreement: { seller: { name: 'Trading Ltd' } }, invoice: { seller: { name: 'Trading Ltd' } }, cmr: { consignor: { name: 'Factory GmbH' } } })
+    const rows = buildComparisonRowsFromDocuments({ agreement: { seller: { name: 'Trading Ltd' } }, invoice: { seller: { name: 'Trading Ltd' } }, packingList: { shipper: { name: 'Factory GmbH' } }, cmr: { consignor: { name: 'Factory GmbH' } } })
     const seller = rows.find(row => row.id === 'sender.name')!
     expect(evaluateComparisonRow(seller).status).toBe('ok')
     expect(seller.draftKeys).toEqual([])
+    expect(seller.values[2]).toBe('—')
+    expect(evaluateComparisonRow(rows.find(row => row.id === 'consignor.name')!).status).toBe('ok')
     expect(rows.find(row => row.id === 'consignor.name')?.values[3]).toBe('Factory GmbH')
   })
   test('totals detect omitted packages and do not turn incomplete lines into zero', () => {

@@ -17,6 +17,9 @@ export const getExtractionPrompt = (documentType: DocumentType, text: string) =>
 - даты возвращай в YYYY-MM-DD, если можешь уверенно определить.
 - числа возвращай числами, не строками.
 - Не объединяй наименование участника с адресом; сохраняй name, address/legal_address, country, inn, kpp, ogrn раздельно. Не смешивай продавца и отправителя, покупателя и получателя.
+- contract_reference, invoice_ref и related_documents: объекты с раздельными number и date (у related_documents также type). Нет даты в ссылке — оставь пустой date, не копируй дату текущего документа.
+- incoterms: {rule, place, version}; currency: {code}; packages: {total_packages, marks_and_numbers}; dimensions_total: {volume_m3}; packages_summary: {number_of_packages, marks_and_numbers}; transport: объект с явно указанными tractor_plate, trailer_plate, plate_country_code, volume_m3. Сохраняй исходные единицы, если перевод в кг/м³ неочевиден.
+- В упаковочном листе Seller/Buyer — seller/buyer, Shipper/Consignee — shipper/consignee. Не подменяй роли. Поля, которые не удалось прочитать, перечисляй в extraction_issues по именам полей; не заполняй их догадками.
 - Страны отправления и назначения извлекай как dispatch_country и destination_country только из явных сведений. Страна регистрации ТС не является страной отправления.
 - Для каждой позиции сохраняй артикул, количество, единицу, line_total, брутто и нетто; не ограничивайся первым товаром. Отдельные грузовые места одного артикула остаются отдельными строками.
 - shipment_date означает дату фактической отгрузки/приёмки. Дата упаковочного листа и дата CMR не заменяют её.
